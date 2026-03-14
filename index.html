@@ -8,9 +8,12 @@
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/forntend/app.css" />
+    <link rel="stylesheet" href="/frontend/app.css" />
   </head>
   <body>
+    <!-- ══════════════════════════════════════
+         LANDING PAGE
+    ══════════════════════════════════════ -->
     <div id="landing">
       <nav class="land-nav">
         <div class="land-logo">
@@ -26,10 +29,10 @@
         </div>
         <ul class="land-nav-links">
           <li><a class="active">HOME</a></li>
-          <li><a href="/forntend/about.html">ABOUT</a></li>
-          <li><a href="/forntend/services.html">SERVICES</a></li>
-          <li><a href="/forntend/hospital.html">HOSPITALS</a></li>
-          <li><a href="/forntend/contact.html">CONTACT</a></li>
+          <li><a href="/frontend/about.html">ABOUT</a></li>
+          <li><a href="/frontend/services.html">SERVICES</a></li>
+          <li><a href="/frontend/hospital.html">HOSPITALS</a></li>
+          <li><a href="/frontend/contact.html">CONTACT</a></li>
         </ul>
         <button class="land-search-btn">
           <svg viewBox="0 0 24 24" fill="none">
@@ -45,12 +48,9 @@
       </nav>
 
       <div class="land-hero">
-        <!-- ILLUSTRATION -->
         <div class="logo">
           <img src="/images/logo.jpeg" alt="Logo" />
         </div>
-
-        <!-- HERO TEXT -->
         <div class="hero-content">
           <h1>Organ Donation Chain</h1>
           <p>
@@ -63,8 +63,6 @@
             ENTER DASHBOARD →
           </button>
         </div>
-
-        <!-- DOT NAVIGATION -->
         <div class="hero-dots">
           <div class="hero-dot active"></div>
           <div class="hero-dot"></div>
@@ -72,28 +70,23 @@
         </div>
       </div>
 
-      <!-- PINK WAVES -->
       <div class="land-waves">
         <svg
           viewBox="0 0 1440 320"
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <!-- solid base so no white shows through -->
           <rect x="0" y="0" width="1440" height="320" fill="#FCEEF0" />
-          <!-- back wave - lightest pink -->
           <path
             d="M0,160 C200,220 400,80 600,140 C800,200 1000,60 1200,120 C1320,150 1390,170 1440,160 L1440,320 L0,320Z"
             fill="#F7A0AC"
             opacity="0.5"
           />
-          <!-- mid wave - medium pink -->
           <path
             d="M0,200 C250,130 480,240 720,180 C960,120 1150,220 1440,170 L1440,320 L0,320Z"
             fill="#F2647A"
             opacity="0.55"
           />
-          <!-- front wave - strong red -->
           <path
             d="M0,240 C300,180 550,280 840,230 C1060,195 1260,260 1440,230 L1440,320 L0,320Z"
             fill="#E8344A"
@@ -102,18 +95,18 @@
         </svg>
       </div>
 
-      <!-- FOOTER -->
-       <!-- This is a comment 
       <div class="land-footer">
-        <div class="social-icon">f</div>
-        <div class="social-icon">t</div>
-        <div class="social-icon">in</div>
+        <div class="social-icon">linkdin</div>
+        <div class="social-icon">About</div>
+        <div class="social-icon">Contact</div>
       </div>
     </div>
-    -->
+    <!-- /landing -->
 
+    <!-- ══════════════════════════════════════
+         DASHBOARD APP
+    ══════════════════════════════════════ -->
     <div id="app" style="display: none; flex-direction: column">
-      <!-- TOP NAVBAR WITH DROPDOWNS -->
       <nav class="app-nav">
         <div
           class="app-logo"
@@ -141,13 +134,11 @@
             margin-right: 8px;
             flex-shrink: 0;
           "
-          title="Back to Home"
         >
           ← Home
         </button>
 
         <div class="nav-menu">
-          <!-- Dashboard direct -->
           <button
             class="nav-direct-btn active"
             id="nav-dash"
@@ -159,7 +150,6 @@
             Dashboard
           </button>
 
-          <!-- DONORS dropdown -->
           <div class="nav-group" id="ng-donors">
             <button class="nav-group-btn" onclick="toggleDD('ng-donors')">
               Donors <span class="chevron">▾</span>
@@ -173,7 +163,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">📋</div>
                 Register Donor
               </div>
               <div
@@ -183,7 +173,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">👥</div>
                 All Donors
               </div>
               <div class="dd-sep"></div>
@@ -195,7 +185,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🫀</div>
                 Living Donors
               </div>
               <div
@@ -205,13 +195,12 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🏥</div>
                 Deceased Donors
               </div>
             </div>
           </div>
 
-          <!-- RECIPIENTS dropdown -->
           <div class="nav-group" id="ng-recip">
             <button class="nav-group-btn" onclick="toggleDD('ng-recip')">
               Recipients <span class="chevron">▾</span>
@@ -225,7 +214,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">📝</div>
                 Add Recipient
               </div>
               <div
@@ -235,7 +224,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🧑‍🤝‍🧑</div>
                 All Recipients
               </div>
               <div
@@ -245,7 +234,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">⏳</div>
                 Waitlist
               </div>
               <div class="dd-sep"></div>
@@ -257,13 +246,12 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🗺️</div>
                 North / South / East / West
               </div>
             </div>
           </div>
 
-          <!-- ORGANS & MATCHING dropdown -->
           <div class="nav-group" id="ng-organs">
             <button class="nav-group-btn" onclick="toggleDD('ng-organs')">
               Organs & Matching <span class="chevron">▾</span>
@@ -276,7 +264,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🫁</div>
                 Organ Inventory
               </div>
               <div
@@ -286,7 +274,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🧬</div>
                 Compatibility Test
               </div>
               <div
@@ -296,13 +284,12 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🔗</div>
                 Donation Chain
               </div>
             </div>
           </div>
 
-          <!-- TRANSPLANTS dropdown -->
           <div class="nav-group" id="ng-trans">
             <button class="nav-group-btn" onclick="toggleDD('ng-trans')">
               Transplants <span class="chevron">▾</span>
@@ -315,7 +302,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">💉</div>
                 Transplant Records
               </div>
               <div
@@ -325,13 +312,12 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🩺</div>
                 Medical Details
               </div>
             </div>
           </div>
 
-          <!-- INFRASTRUCTURE dropdown -->
           <div class="nav-group" id="ng-infra">
             <button class="nav-group-btn" onclick="toggleDD('ng-infra')">
               Infrastructure <span class="chevron">▾</span>
@@ -344,7 +330,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">🏨</div>
                 Hospitals
               </div>
               <div
@@ -354,7 +340,7 @@
                   closeAll();
                 "
               >
-                <div class="dd-icon"></div>
+                <div class="dd-icon">👨‍⚕️</div>
                 Medical Staff
               </div>
             </div>
@@ -375,7 +361,6 @@
         </div>
       </nav>
 
-      <!-- APP CONTENT -->
       <div class="app-content">
         <!-- DASHBOARD -->
         <div id="apage-dashboard" class="apage active">
@@ -715,7 +700,8 @@
             <p>donor table — 128 records</p>
           </div>
           <div class="sbar">
-            <span></span><input placeholder="Search name, blood group, city…" />
+            <span>🔍</span
+            ><input placeholder="Search name, blood group, city…" />
           </div>
           <div class="tcard">
             <table>
@@ -965,7 +951,7 @@
             <h2>All Recipients</h2>
             <p>recipient table — 347 records</p>
           </div>
-          <div class="sbar"><span></span><input placeholder="Search…" /></div>
+          <div class="sbar"><span>🔍</span><input placeholder="Search…" /></div>
           <div class="tcard">
             <table>
               <thead>
@@ -1734,6 +1720,7 @@
       <!-- /app-content -->
     </div>
     <!-- /app -->
-    <script src="/forntend/app.js"></script>
+
+    <script src="/frontend/app.js"></script>
   </body>
 </html>

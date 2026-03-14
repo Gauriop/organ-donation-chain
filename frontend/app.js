@@ -1,21 +1,37 @@
+console.log("✅ app.js loaded");
 // ── LANDING ↔ DASHBOARD ─────────────────────────────────────
 function enterDashboard() {
   document.getElementById("landing").style.display = "none";
   const app = document.getElementById("app");
   app.style.display = "flex";
-  // allow scrolling inside app content (not body)
-  document.documentElement.style.overflow = "hidden";
-  document.body.style.overflow = "hidden";
+  app.style.flexDirection = "column";
 }
 
 function goHome() {
   document.getElementById("app").style.display = "none";
   const landing = document.getElementById("landing");
   landing.style.display = "flex";
-  // keep overflow hidden — landing also must not scroll
-  document.documentElement.style.overflow = "hidden";
-  document.body.style.overflow = "hidden";
+  landing.style.flexDirection = "column";
   window.scrollTo(0, 0);
+}
+
+// ── LANDING SECTIONS (Home / About) ──────────────────────────
+function showLandingPage(name) {
+  document.getElementById("lsection-home").style.display = "none";
+  const about = document.getElementById("lsection-about");
+  if (about) about.style.display = "none";
+
+  const el = document.getElementById("lsection-" + name);
+  if (el) {
+    el.style.display = "flex";
+    el.style.flexDirection = "column";
+  }
+
+  document
+    .querySelectorAll(".land-nav-links a")
+    .forEach((a) => a.classList.remove("active"));
+  const navEl = document.getElementById("lnav-" + name);
+  if (navEl) navEl.classList.add("active");
 }
 
 // ── DROPDOWN TOGGLE ──────────────────────────────────────────
@@ -44,11 +60,9 @@ function showPage(id) {
   const el = document.getElementById("apage-" + id);
   if (el) el.classList.add("active");
 
-  // scroll content area back to top on page change
   const content = document.querySelector(".app-content");
   if (content) content.scrollTop = 0;
 
-  // update dashboard direct button active state
   document
     .querySelectorAll(".nav-direct-btn")
     .forEach((b) => b.classList.remove("active"));
