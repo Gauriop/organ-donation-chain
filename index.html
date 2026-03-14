@@ -1,609 +1,1739 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>OrganLife — Organ Donation Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link rel='stylesheet'href='app.css'>
-</head>
-<body>
-
-<div id="landing">
-  <nav class="land-nav">
-    <div class="land-logo">
-      <div class="land-logo-icon">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="white"/></svg>
-      </div>
-      organlife
-    </div>
-    <ul class="land-nav-links">
-      <li><a class="active">HOME</a></li>
-      <li><a>ABOUT</a></li>
-      <li><a>SERVICES</a></li>
-      <li><a>HOSPITALS</a></li>
-      <li><a>CONTACT</a></li>
-    </ul>
-    <button class="land-search-btn">
-      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="white" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-  </nav>
-
-  <div class="land-hero">
-    <!-- ILLUSTRATION -->
-    <div class="hero-illustration">
-      <svg viewBox="0 0 580 420" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-        <!-- Hospital building bg -->
-        <rect x="160" y="40" width="100" height="140" rx="6" fill="#E8EDF8" opacity=".5"/>
-        <rect x="190" y="20" width="40" height="30" rx="4" fill="#E8EDF8" opacity=".5"/>
-        <rect x="202" y="28" width="16" height="16" fill="white" rx="2"/>
-        <path d="M208 32v8M204 36h8" stroke="#9BAFD0" stroke-width="2" stroke-linecap="round"/>
-        <rect x="170" y="80" width="20" height="25" rx="2" fill="white" opacity=".6"/>
-        <rect x="200" y="80" width="20" height="25" rx="2" fill="white" opacity=".6"/>
-        <rect x="230" y="80" width="20" height="25" rx="2" fill="white" opacity=".6"/>
-        <rect x="170" y="118" width="20" height="25" rx="2" fill="white" opacity=".6"/>
-        <rect x="230" y="118" width="20" height="25" rx="2" fill="white" opacity=".6"/>
-
-        <!-- IV Stand -->
-        <line x1="108" y1="120" x2="108" y2="310" stroke="#D0D5E8" stroke-width="2"/>
-        <line x1="88" y1="310" x2="128" y2="310" stroke="#D0D5E8" stroke-width="2"/>
-        <rect x="92" y="118" width="20" height="30" rx="10" fill="#F7A0AC" opacity=".7"/>
-        <line x1="108" y1="148" x2="108" y2="195" stroke="#F7A0AC" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <!-- IV bag tubes -->
-        <line x1="118" y1="120" x2="148" y2="162" stroke="#D0D5E8" stroke-width="1.5"/>
-
-        <!-- Big blood drop -->
-        <path d="M68 230 Q68 170 100 140 Q132 170 132 230 Q132 270 100 285 Q68 270 68 230Z" fill="url(#dropGrad)"/>
-        <path d="M88 210 Q95 200 108 208" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/>
-        <defs>
-          <linearGradient id="dropGrad" x1="68" y1="140" x2="132" y2="285" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#F2647A"/>
-            <stop offset="100%" stop-color="#C0182E"/>
-          </linearGradient>
-          <linearGradient id="dropSm" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#F2647A"/>
-            <stop offset="100%" stop-color="#E8344A"/>
-          </linearGradient>
-        </defs>
-
-        <!-- Patient chair -->
-        <rect x="60" y="270" width="90" height="50" rx="8" fill="#E8EDF8"/>
-        <rect x="60" y="270" width="90" height="14" rx="7" fill="#D0D8EE"/>
-        <rect x="140" y="270" width="14" height="50" rx="7" fill="#D0D8EE"/>
-        <!-- Patient figure sitting -->
-        <circle cx="115" cy="248" r="14" fill="#F5CBA7"/>
-        <rect x="98" y="262" width="34" height="28" rx="6" fill="#7986CB"/>
-        <line x1="115" y1="262" x2="108" y2="290" stroke="#F5CBA7" stroke-width="5" stroke-linecap="round"/>
-        <line x1="115" y1="262" x2="122" y2="290" stroke="#F5CBA7" stroke-width="5" stroke-linecap="round"/>
-
-        <!-- Cabinet / storage -->
-        <rect x="290" y="80" width="150" height="220" rx="10" fill="#F0F2F8" stroke="#DDE2F0" stroke-width="1.5"/>
-        <rect x="298" y="92" width="134" height="8" rx="4" fill="#DDE2F0"/>
-        <!-- Shelves with blood bags -->
-        <rect x="298" y="108" width="134" height="40" rx="4" fill="white"/>
-        <rect x="308" y="114" width="18" height="28" rx="4" fill="#F7A0AC"/>
-        <rect x="332" y="114" width="18" height="28" rx="4" fill="#F48FA0"/>
-        <rect x="356" y="114" width="18" height="28" rx="4" fill="#F7A0AC"/>
-        <rect x="380" y="114" width="18" height="28" rx="4" fill="#E8344A" opacity=".7"/>
-        <rect x="298" y="154" width="134" height="40" rx="4" fill="white"/>
-        <rect x="308" y="160" width="18" height="28" rx="4" fill="#F48FA0"/>
-        <rect x="332" y="160" width="18" height="28" rx="4" fill="#F7A0AC"/>
-        <rect x="356" y="160" width="18" height="28" rx="4" fill="#F48FA0"/>
-        <rect x="380" y="160" width="18" height="28" rx="4" fill="#F7A0AC"/>
-        <!-- Test tubes row -->
-        <rect x="298" y="200" width="134" height="40" rx="4" fill="white"/>
-        <rect x="310" y="206" width="8" height="24" rx="4" fill="#4A90D9"/>
-        <rect x="324" y="206" width="8" height="24" rx="4" fill="#E8344A" opacity=".8"/>
-        <rect x="338" y="206" width="8" height="24" rx="4" fill="#4A90D9"/>
-        <rect x="352" y="206" width="8" height="24" rx="4" fill="#F7A0AC"/>
-        <rect x="366" y="206" width="8" height="24" rx="4" fill="#4A90D9"/>
-        <rect x="380" y="206" width="8" height="24" rx="4" fill="#E8344A" opacity=".6"/>
-
-        <!-- Doctor figure -->
-        <circle cx="250" cy="198" r="16" fill="#F5CBA7"/>
-        <rect x="234" y="214" width="32" height="40" rx="6" fill="white"/>
-        <rect x="238" y="218" width="24" height="4" rx="2" fill="#E8EDF8"/>
-        <path d="M244 224 v8 M250 222 v10" stroke="#E8344A" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="234" y1="214" x2="218" y2="250" stroke="#F5CBA7" stroke-width="6" stroke-linecap="round"/>
-        <line x1="266" y1="214" x2="280" y2="240" stroke="#F5CBA7" stroke-width="6" stroke-linecap="round"/>
-        <line x1="234" y1="254" x2="248" y2="310" stroke="#ddd" stroke-width="5" stroke-linecap="round"/>
-        <line x1="266" y1="254" x2="252" y2="310" stroke="#ddd" stroke-width="5" stroke-linecap="round"/>
-
-        <!-- Red cross box -->
-        <rect x="208" y="290" width="50" height="40" rx="8" fill="#E8344A" opacity=".15" stroke="#E8344A" stroke-width="1.5"/>
-        <path d="M228 303v14M221 310h14" stroke="#E8344A" stroke-width="2.5" stroke-linecap="round"/>
-
-        <!-- Plants/leaves -->
-        <ellipse cx="62" cy="320" rx="22" ry="6" fill="#C8F0DB" opacity=".4"/>
-        <path d="M48 320 Q60 280 72 290 Q76 305 60 320Z" fill="#4CAF82" opacity=".55"/>
-        <path d="M68 320 Q78 270 88 282 Q90 300 72 320Z" fill="#4CAF82" opacity=".45"/>
-        <path d="M170 310 Q185 278 194 290 Q196 306 175 314Z" fill="#4CAF82" opacity=".4"/>
-
-        <!-- Decorative circles -->
-        <circle cx="400" cy="60" r="12" stroke="#E8344A" stroke-width="1.5" fill="none" opacity=".4"/>
-        <circle cx="52" cy="160" r="8" stroke="#E8344A" stroke-width="1.5" fill="none" opacity=".5"/>
-        <circle cx="480" cy="280" r="10" stroke="#4A90D9" stroke-width="1.5" fill="none" opacity=".35"/>
-        <!-- Dashed connecting lines -->
-        <path d="M108 165 Q180 120 250 145" stroke="#E8344A" stroke-width="1" stroke-dasharray="4 4" fill="none" opacity=".3"/>
-        <path d="M265 200 Q278 180 295 190" stroke="#E8344A" stroke-width="1" stroke-dasharray="4 4" fill="none" opacity=".3"/>
-      </svg>
-    </div>
-
-    <!-- HERO TEXT -->
-    <div class="hero-content">
-      <h1>Organ Donation Chain</h1>
-        <p>
-            One donor can save up to <strong>8 lives</strong>. 
-            Our platform connects hospitals, donors, and recipients across India 
-            to enable faster and more efficient organ matching giving patients 
-            a second chance at life.
-        </p>
-      <button class="read-more-btn" onclick="enterDashboard()">ENTER DASHBOARD →</button>
-    </div>
-
-    <!-- DOT NAVIGATION -->
-    <div class="hero-dots">
-      <div class="hero-dot active"></div>
-      <div class="hero-dot"></div>
-      <div class="hero-dot"></div>
-    </div>
-  </div>
-
-  <!-- PINK WAVES -->
-  <div class="land-waves">
-    <svg viewBox="0 0 1440 160" preserveAspectRatio="none">
-      <path d="M0,90 C180,150 380,10 600,70 C820,130 1020,20 1220,75 C1320,102 1390,118 1440,108 L1440,160 L0,160Z" fill="#FCEEF0"/>
-      <path d="M0,118 C280,70 520,148 840,102 C1020,78 1220,136 1440,95 L1440,160 L0,160Z" fill="#F7A0AC" opacity=".45"/>
-      <path d="M0,140 C360,105 700,158 1080,128 C1240,115 1370,142 1440,136 L1440,160 L0,160Z" fill="#E8344A" opacity=".28"/>
-    </svg>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="land-footer">
-    <div class="social-icon">f</div>
-    <div class="social-icon">t</div>
-    <div class="social-icon">in</div>
-  </div>
-</div>
-
-<div id="app" style="display:none;flex-direction:column;">
-
-  <!-- TOP NAVBAR WITH DROPDOWNS -->
-  <nav class="app-nav">
-    <div class="app-logo" onclick="showPage('dashboard')" style="cursor:pointer">
-      <div class="app-logo-icon">O+</div>
-      OrganLife
-    </div>
-    <button onclick="goHome()" style="display:flex;align-items:center;gap:6px;background:var(--light);border:1.5px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;flex-shrink:0;" title="Back to Home">
-      ← Home
-    </button>
-
-    <div class="nav-menu">
-      <!-- Dashboard direct -->
-      <button class="nav-direct-btn active" id="nav-dash" onclick="showPage('dashboard');setActiveDirect(this)">Dashboard</button>
-
-      <!-- DONORS dropdown -->
-      <div class="nav-group" id="ng-donors">
-        <button class="nav-group-btn" onclick="toggleDD('ng-donors')">
-          Donors <span class="chevron">▾</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>OrganLife — Organ Donation Platform</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/forntend/app.css" />
+  </head>
+  <body>
+    <div id="landing">
+      <nav class="land-nav">
+        <div class="land-logo">
+          <div class="land-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                fill="white"
+              />
+            </svg>
+          </div>
+          organlife
+        </div>
+        <ul class="land-nav-links">
+          <li><a class="active">HOME</a></li>
+          <li><a href="/forntend/about.html">ABOUT</a></li>
+          <li><a href="/forntend/services.html">SERVICES</a></li>
+          <li><a href="/forntend/hospital.html">HOSPITALS</a></li>
+          <li><a href="/forntend/contact.html">CONTACT</a></li>
+        </ul>
+        <button class="land-search-btn">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="white" stroke-width="2" />
+            <path
+              d="M16.5 16.5L21 21"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
         </button>
-        <div class="nav-dropdown">
-          <div class="dd-label">Manage</div>
-          <div class="dd-item" onclick="showPage('donor-reg');closeAll()"><div class="dd-icon"></div>Register Donor</div>
-          <div class="dd-item" onclick="showPage('donors-list');closeAll()"><div class="dd-icon"></div>All Donors</div>
-          <div class="dd-sep"></div>
-          <div class="dd-label">By Type</div>
-          <div class="dd-item" onclick="showPage('donor-living');closeAll()"><div class="dd-icon"></div>Living Donors</div>
-          <div class="dd-item" onclick="showPage('donor-deceased');closeAll()"><div class="dd-icon"></div>Deceased Donors</div>
+      </nav>
+
+      <div class="land-hero">
+        <!-- ILLUSTRATION -->
+        <div class="logo">
+          <img src="/images/logo.jpeg" alt="Logo" />
+        </div>
+
+        <!-- HERO TEXT -->
+        <div class="hero-content">
+          <h1>Organ Donation Chain</h1>
+          <p>
+            One donor can save up to <strong>8 lives</strong>. Our platform
+            connects hospitals, donors, and recipients across India to enable
+            faster and more efficient organ matching giving patients a second
+            chance at life.
+          </p>
+          <button class="read-more-btn" onclick="enterDashboard()">
+            ENTER DASHBOARD →
+          </button>
+        </div>
+
+        <!-- DOT NAVIGATION -->
+        <div class="hero-dots">
+          <div class="hero-dot active"></div>
+          <div class="hero-dot"></div>
+          <div class="hero-dot"></div>
         </div>
       </div>
 
-      <!-- RECIPIENTS dropdown -->
-      <div class="nav-group" id="ng-recip">
-        <button class="nav-group-btn" onclick="toggleDD('ng-recip')">
-          Recipients <span class="chevron">▾</span>
-        </button>
-        <div class="nav-dropdown">
-          <div class="dd-label">Manage</div>
-          <div class="dd-item" onclick="showPage('recipient-reg');closeAll()"><div class="dd-icon"></div>Add Recipient</div>
-          <div class="dd-item" onclick="showPage('recipients');closeAll()"><div class="dd-icon"></div>All Recipients</div>
-          <div class="dd-item" onclick="showPage('waitlist');closeAll()"><div class="dd-icon"></div>Waitlist</div>
-          <div class="dd-sep"></div>
-          <div class="dd-label">By Region</div>
-          <div class="dd-item" onclick="showPage('regions');closeAll()"><div class="dd-icon"></div>North / South / East / West</div>
-        </div>
+      <!-- PINK WAVES -->
+      <div class="land-waves">
+        <svg
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <!-- solid base so no white shows through -->
+          <rect x="0" y="0" width="1440" height="320" fill="#FCEEF0" />
+          <!-- back wave - lightest pink -->
+          <path
+            d="M0,160 C200,220 400,80 600,140 C800,200 1000,60 1200,120 C1320,150 1390,170 1440,160 L1440,320 L0,320Z"
+            fill="#F7A0AC"
+            opacity="0.5"
+          />
+          <!-- mid wave - medium pink -->
+          <path
+            d="M0,200 C250,130 480,240 720,180 C960,120 1150,220 1440,170 L1440,320 L0,320Z"
+            fill="#F2647A"
+            opacity="0.55"
+          />
+          <!-- front wave - strong red -->
+          <path
+            d="M0,240 C300,180 550,280 840,230 C1060,195 1260,260 1440,230 L1440,320 L0,320Z"
+            fill="#E8344A"
+            opacity="0.45"
+          />
+        </svg>
       </div>
 
-      <!-- ORGANS & MATCHING dropdown -->
-      <div class="nav-group" id="ng-organs">
-        <button class="nav-group-btn" onclick="toggleDD('ng-organs')">
-          Organs & Matching <span class="chevron">▾</span>
-        </button>
-        <div class="nav-dropdown">
-          <div class="dd-item" onclick="showPage('organs');closeAll()"><div class="dd-icon"></div>Organ Inventory</div>
-          <div class="dd-item" onclick="showPage('compatibility');closeAll()"><div class="dd-icon"></div>Compatibility Test</div>
-          <div class="dd-item" onclick="showPage('donation-chain');closeAll()"><div class="dd-icon"></div>Donation Chain</div>
-        </div>
-      </div>
-
-      <!-- TRANSPLANTS dropdown -->
-      <div class="nav-group" id="ng-trans">
-        <button class="nav-group-btn" onclick="toggleDD('ng-trans')">
-          Transplants <span class="chevron">▾</span>
-        </button>
-        <div class="nav-dropdown">
-          <div class="dd-item" onclick="showPage('transplants');closeAll()"><div class="dd-icon"></div>Transplant Records</div>
-          <div class="dd-item" onclick="showPage('transplant-medical');closeAll()"><div class="dd-icon"></div>Medical Details</div>
-        </div>
-      </div>
-
-      <!-- INFRASTRUCTURE dropdown -->
-      <div class="nav-group" id="ng-infra">
-        <button class="nav-group-btn" onclick="toggleDD('ng-infra')">
-          Infrastructure <span class="chevron">▾</span>
-        </button>
-        <div class="nav-dropdown">
-          <div class="dd-item" onclick="showPage('hospitals');closeAll()"><div class="dd-icon"></div>Hospitals</div>
-          <div class="dd-item" onclick="showPage('staff');closeAll()"><div class="dd-icon"></div>Medical Staff</div>
-        </div>
+      <!-- FOOTER -->
+       <!-- This is a comment 
+      <div class="land-footer">
+        <div class="social-icon">f</div>
+        <div class="social-icon">t</div>
+        <div class="social-icon">in</div>
       </div>
     </div>
+    -->
 
-    <div class="nav-right">
-      <button class="nav-add-btn" onclick="showPage('donor-reg');closeAll()">+ Add Donor</button>
-      <div class="nav-avatar">AD</div>
-    </div>
-  </nav>
+    <div id="app" style="display: none; flex-direction: column">
+      <!-- TOP NAVBAR WITH DROPDOWNS -->
+      <nav class="app-nav">
+        <div
+          class="app-logo"
+          onclick="showPage('dashboard')"
+          style="cursor: pointer"
+        >
+          <div class="app-logo-icon">O+</div>
+          OrganLife
+        </div>
+        <button
+          onclick="goHome()"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--light);
+            border: 1.5px solid var(--border);
+            color: var(--muted);
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: &quot;DM Sans&quot;, sans-serif;
+            margin-right: 8px;
+            flex-shrink: 0;
+          "
+          title="Back to Home"
+        >
+          ← Home
+        </button>
 
-  <!-- APP CONTENT -->
-  <div class="app-content">
+        <div class="nav-menu">
+          <!-- Dashboard direct -->
+          <button
+            class="nav-direct-btn active"
+            id="nav-dash"
+            onclick="
+              showPage('dashboard');
+              setActiveDirect(this);
+            "
+          >
+            Dashboard
+          </button>
 
-    <!-- DASHBOARD -->
-    <div id="apage-dashboard" class="apage active">
-      <div class="phead"><h2>Dashboard</h2><p>Overview of your organ donation network</p></div>
-      <div class="stat-row">
-        <div class="stat-card"><div class="s-label">Total Donors</div><div class="s-num s-red">128</div><div class="s-sub">↑ 12 this month</div></div>
-        <div class="stat-card"><div class="s-label">Recipients</div><div class="s-num s-blue">347</div><div class="s-sub">84 awaiting match</div></div>
-        <div class="stat-card"><div class="s-label">Transplants</div><div class="s-num s-green">89</div><div class="s-sub">↑ 7 this month</div></div>
-        <div class="stat-card"><div class="s-label">Waitlist</div><div class="s-num s-amber">263</div><div class="s-sub">Avg 14 months</div></div>
-      </div>
-      <div class="two-col">
-        <div>
+          <!-- DONORS dropdown -->
+          <div class="nav-group" id="ng-donors">
+            <button class="nav-group-btn" onclick="toggleDD('ng-donors')">
+              Donors <span class="chevron">▾</span>
+            </button>
+            <div class="nav-dropdown">
+              <div class="dd-label">Manage</div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('donor-reg');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Register Donor
+              </div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('donors-list');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                All Donors
+              </div>
+              <div class="dd-sep"></div>
+              <div class="dd-label">By Type</div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('donor-living');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Living Donors
+              </div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('donor-deceased');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Deceased Donors
+              </div>
+            </div>
+          </div>
+
+          <!-- RECIPIENTS dropdown -->
+          <div class="nav-group" id="ng-recip">
+            <button class="nav-group-btn" onclick="toggleDD('ng-recip')">
+              Recipients <span class="chevron">▾</span>
+            </button>
+            <div class="nav-dropdown">
+              <div class="dd-label">Manage</div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('recipient-reg');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Add Recipient
+              </div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('recipients');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                All Recipients
+              </div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('waitlist');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Waitlist
+              </div>
+              <div class="dd-sep"></div>
+              <div class="dd-label">By Region</div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('regions');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                North / South / East / West
+              </div>
+            </div>
+          </div>
+
+          <!-- ORGANS & MATCHING dropdown -->
+          <div class="nav-group" id="ng-organs">
+            <button class="nav-group-btn" onclick="toggleDD('ng-organs')">
+              Organs & Matching <span class="chevron">▾</span>
+            </button>
+            <div class="nav-dropdown">
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('organs');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Organ Inventory
+              </div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('compatibility');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Compatibility Test
+              </div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('donation-chain');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Donation Chain
+              </div>
+            </div>
+          </div>
+
+          <!-- TRANSPLANTS dropdown -->
+          <div class="nav-group" id="ng-trans">
+            <button class="nav-group-btn" onclick="toggleDD('ng-trans')">
+              Transplants <span class="chevron">▾</span>
+            </button>
+            <div class="nav-dropdown">
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('transplants');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Transplant Records
+              </div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('transplant-medical');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Medical Details
+              </div>
+            </div>
+          </div>
+
+          <!-- INFRASTRUCTURE dropdown -->
+          <div class="nav-group" id="ng-infra">
+            <button class="nav-group-btn" onclick="toggleDD('ng-infra')">
+              Infrastructure <span class="chevron">▾</span>
+            </button>
+            <div class="nav-dropdown">
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('hospitals');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Hospitals
+              </div>
+              <div
+                class="dd-item"
+                onclick="
+                  showPage('staff');
+                  closeAll();
+                "
+              >
+                <div class="dd-icon"></div>
+                Medical Staff
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <button
+            class="nav-add-btn"
+            onclick="
+              showPage('donor-reg');
+              closeAll();
+            "
+          >
+            + Add Donor
+          </button>
+          <div class="nav-avatar">AD</div>
+        </div>
+      </nav>
+
+      <!-- APP CONTENT -->
+      <div class="app-content">
+        <!-- DASHBOARD -->
+        <div id="apage-dashboard" class="apage active">
+          <div class="phead">
+            <h2>Dashboard</h2>
+            <p>Overview of your organ donation network</p>
+          </div>
+          <div class="stat-row">
+            <div class="stat-card">
+              <div class="s-label">Total Donors</div>
+              <div class="s-num s-red">128</div>
+              <div class="s-sub">↑ 12 this month</div>
+            </div>
+            <div class="stat-card">
+              <div class="s-label">Recipients</div>
+              <div class="s-num s-blue">347</div>
+              <div class="s-sub">84 awaiting match</div>
+            </div>
+            <div class="stat-card">
+              <div class="s-label">Transplants</div>
+              <div class="s-num s-green">89</div>
+              <div class="s-sub">↑ 7 this month</div>
+            </div>
+            <div class="stat-card">
+              <div class="s-label">Waitlist</div>
+              <div class="s-num s-amber">263</div>
+              <div class="s-sub">Avg 14 months</div>
+            </div>
+          </div>
+          <div class="two-col">
+            <div>
+              <div class="tcard">
+                <div class="tcard-head">
+                  <h3>Recent Transplant Records</h3>
+                  <button
+                    class="btn-sub"
+                    style="padding: 6px 14px; font-size: 12px"
+                    onclick="showPage('transplants')"
+                  >
+                    View All
+                  </button>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Organ</th>
+                      <th>Donor→Recipient</th>
+                      <th>Hospital</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>#TR-091</td>
+                      <td>Kidney</td>
+                      <td>D-045 → R-112</td>
+                      <td>KEM Mumbai</td>
+                      <td><span class="badge b-green">Successful</span></td>
+                    </tr>
+                    <tr>
+                      <td>#TR-090</td>
+                      <td>Liver</td>
+                      <td>D-038 → R-098</td>
+                      <td>AIIMS Delhi</td>
+                      <td><span class="badge b-green">Successful</span></td>
+                    </tr>
+                    <tr>
+                      <td>#TR-089</td>
+                      <td>Heart</td>
+                      <td>D-031 → R-074</td>
+                      <td>Apollo Chennai</td>
+                      <td><span class="badge b-amber">Monitoring</span></td>
+                    </tr>
+                    <tr>
+                      <td>#TR-088</td>
+                      <td>Cornea</td>
+                      <td>D-029 → R-061</td>
+                      <td>Fortis Pune</td>
+                      <td><span class="badge b-green">Successful</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tcard">
+                <div class="tcard-head">
+                  <h3>Critical Waitlist</h3>
+                  <button
+                    class="btn-sub"
+                    style="padding: 6px 14px; font-size: 12px"
+                    onclick="showPage('waitlist')"
+                  >
+                    Full List
+                  </button>
+                </div>
+                <div style="padding: 8px 16px">
+                  <div class="wl-item">
+                    <div class="wl-rank">1</div>
+                    <div class="wl-info">
+                      <div class="wl-name">Priya Desai</div>
+                      <div class="wl-detail">Heart • O+ • 482 days</div>
+                    </div>
+                    <span class="badge b-red">Critical</span>
+                  </div>
+                  <div class="wl-item">
+                    <div class="wl-rank">2</div>
+                    <div class="wl-info">
+                      <div class="wl-name">Arjun Mehta</div>
+                      <div class="wl-detail">Kidney • B+ • 394 days</div>
+                    </div>
+                    <span class="badge b-red">Critical</span>
+                  </div>
+                  <div class="wl-item">
+                    <div class="wl-rank">3</div>
+                    <div class="wl-info">
+                      <div class="wl-name">Sunita Rao</div>
+                      <div class="wl-detail">Liver • A- • 287 days</div>
+                    </div>
+                    <span class="badge b-amber">High</span>
+                  </div>
+                  <div class="wl-item">
+                    <div class="wl-rank">4</div>
+                    <div class="wl-info">
+                      <div class="wl-name">Vikram Nair</div>
+                      <div class="wl-detail">Lungs • AB+ • 241 days</div>
+                    </div>
+                    <span class="badge b-amber">High</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="tcard" style="padding: 20px">
+                <div class="tcard-head" style="padding: 0 0 14px">
+                  <h3>Active Donation Chains</h3>
+                </div>
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: var(--muted);
+                    margin-bottom: 8px;
+                  "
+                >
+                  CHAIN #DC-14
+                </div>
+                <div class="chain-row">
+                  <div class="cnode">
+                    <div class="cnode-circle cd">D</div>
+                    <div class="cnode-lbl">Donor</div>
+                  </div>
+                  <div class="carrow">→</div>
+                  <div class="cnode">
+                    <div class="cnode-circle ch">H</div>
+                    <div class="cnode-lbl">KEM</div>
+                  </div>
+                  <div class="carrow">→</div>
+                  <div class="cnode">
+                    <div class="cnode-circle cr">R</div>
+                    <div class="cnode-lbl">R-West</div>
+                  </div>
+                  <div class="carrow">→</div>
+                  <div class="cnode">
+                    <div class="cnode-circle cr">R</div>
+                    <div class="cnode-lbl">R-North</div>
+                  </div>
+                </div>
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: var(--muted);
+                    margin: 12px 0 8px;
+                  "
+                >
+                  CHAIN #DC-13
+                </div>
+                <div class="chain-row" style="border: none">
+                  <div class="cnode">
+                    <div class="cnode-circle cd">D</div>
+                    <div class="cnode-lbl">Deceased</div>
+                  </div>
+                  <div class="carrow">→</div>
+                  <div class="cnode">
+                    <div class="cnode-circle ch">H</div>
+                    <div class="cnode-lbl">AIIMS</div>
+                  </div>
+                  <div class="carrow">→</div>
+                  <div class="cnode">
+                    <div class="cnode-circle cr">R</div>
+                    <div class="cnode-lbl">R-South</div>
+                  </div>
+                </div>
+              </div>
+              <div class="three-col">
+                <div class="minfo">
+                  <h4>Hospitals</h4>
+                  <div class="irow">
+                    <span class="ik">Total</span><span class="iv">24</span>
+                  </div>
+                  <div class="irow">
+                    <span class="ik">Active</span
+                    ><span class="iv s-green">19</span>
+                  </div>
+                </div>
+                <div class="minfo">
+                  <h4>Staff</h4>
+                  <div class="irow">
+                    <span class="ik">Total</span><span class="iv">312</span>
+                  </div>
+                  <div class="irow">
+                    <span class="ik">Surgeons</span><span class="iv">48</span>
+                  </div>
+                </div>
+                <div class="minfo">
+                  <h4>Tests</h4>
+                  <div class="irow">
+                    <span class="ik">Done</span><span class="iv">1284</span>
+                  </div>
+                  <div class="irow">
+                    <span class="ik">Pending</span
+                    ><span class="iv s-amber">38</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REGISTER DONOR -->
+        <div id="apage-donor-reg" class="apage">
+          <div class="phead">
+            <h2>Register Donor</h2>
+            <p>donor / donor_living / donor_deceased tables</p>
+          </div>
+          <div class="fcard">
+            <h3>New Donor <span class="ftag">donor table</span></h3>
+            <div class="fgrid">
+              <div class="fg">
+                <label>First Name</label><input placeholder="Rahul" />
+              </div>
+              <div class="fg">
+                <label>Last Name</label><input placeholder="Sharma" />
+              </div>
+              <div class="fg">
+                <label>Date of Birth</label><input type="date" />
+              </div>
+              <div class="fg">
+                <label>Blood Group</label
+                ><select>
+                  <option>A+</option>
+                  <option>A-</option>
+                  <option>B+</option>
+                  <option>B-</option>
+                  <option>O+</option>
+                  <option>O-</option>
+                  <option>AB+</option>
+                  <option>AB-</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Phone</label><input placeholder="+91 98765 43210" />
+              </div>
+              <div class="fg"><label>Email</label><input type="email" /></div>
+              <div class="fg">
+                <label>City</label><input placeholder="Mumbai" />
+              </div>
+              <div class="fg">
+                <label>State</label
+                ><select>
+                  <option>Maharashtra</option>
+                  <option>Delhi</option>
+                  <option>Karnataka</option>
+                  <option>Tamil Nadu</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Donor Type</label
+                ><select id="dtype" onchange="toggleDT()">
+                  <option value="living">Living</option>
+                  <option value="deceased">Deceased</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>HLA Type</label><input placeholder="HLA-A, B, DR" />
+              </div>
+              <div class="fg full" id="lfield">
+                <label>Relationship to Recipient</label
+                ><input placeholder="Sibling / Spouse / Unrelated" />
+              </div>
+              <div class="fg full" id="dfield" style="display: none">
+                <label>Date of Brain Death Declaration</label
+                ><input type="datetime-local" />
+              </div>
+              <div class="fg full">
+                <label>Organs Pledged</label>
+                <div class="organ-grid">
+                  <label class="organ-pill"
+                    ><input type="checkbox" /> Heart</label
+                  >
+                  <label class="organ-pill"
+                    ><input type="checkbox" /> Kidney (L)</label
+                  >
+                  <label class="organ-pill"
+                    ><input type="checkbox" /> Kidney (R)</label
+                  >
+                  <label class="organ-pill"
+                    ><input type="checkbox" /> Liver</label
+                  >
+                  <label class="organ-pill"
+                    ><input type="checkbox" /> Lungs</label
+                  >
+                  <label class="organ-pill"
+                    ><input type="checkbox" /> Cornea</label
+                  >
+                  <label class="organ-pill"
+                    ><input type="checkbox" /> Pancreas</label
+                  >
+                  <label class="organ-pill"
+                    ><input type="checkbox" /> Skin</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="factions">
+              <button class="btn-sub" onclick="ok('da')">Save Donor</button
+              ><button class="btn-cancel">Cancel</button>
+            </div>
+            <div class="alert as" id="da">✓ Donor registered successfully!</div>
+          </div>
+        </div>
+
+        <!-- ALL DONORS -->
+        <div id="apage-donors-list" class="apage">
+          <div class="phead">
+            <h2>All Donors</h2>
+            <p>donor table — 128 records</p>
+          </div>
+          <div class="sbar">
+            <span></span><input placeholder="Search name, blood group, city…" />
+          </div>
           <div class="tcard">
-            <div class="tcard-head"><h3>Recent Transplant Records</h3><button class="btn-sub" style="padding:6px 14px;font-size:12px" onclick="showPage('transplants')">View All</button></div>
-            <table><thead><tr><th>ID</th><th>Organ</th><th>Donor→Recipient</th><th>Hospital</th><th>Status</th></tr></thead><tbody>
-              <tr><td>#TR-091</td><td>Kidney</td><td>D-045 → R-112</td><td>KEM Mumbai</td><td><span class="badge b-green">Successful</span></td></tr>
-              <tr><td>#TR-090</td><td>Liver</td><td>D-038 → R-098</td><td>AIIMS Delhi</td><td><span class="badge b-green">Successful</span></td></tr>
-              <tr><td>#TR-089</td><td>Heart</td><td>D-031 → R-074</td><td>Apollo Chennai</td><td><span class="badge b-amber">Monitoring</span></td></tr>
-              <tr><td>#TR-088</td><td>Cornea</td><td>D-029 → R-061</td><td>Fortis Pune</td><td><span class="badge b-green">Successful</span></td></tr>
-            </tbody></table>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Blood</th>
+                  <th>Type</th>
+                  <th>City</th>
+                  <th>Organs</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#D-128</td>
+                  <td>Rahul Sharma</td>
+                  <td><span class="badge b-red">O+</span></td>
+                  <td>Living</td>
+                  <td>Mumbai</td>
+                  <td>Kidney, Liver</td>
+                  <td><span class="badge b-green">Active</span></td>
+                </tr>
+                <tr>
+                  <td>#D-127</td>
+                  <td>Ananya Patel</td>
+                  <td><span class="badge b-blue">A+</span></td>
+                  <td>Deceased</td>
+                  <td>Delhi</td>
+                  <td>Heart, Cornea</td>
+                  <td><span class="badge b-amber">Matched</span></td>
+                </tr>
+                <tr>
+                  <td>#D-126</td>
+                  <td>Suresh Kumar</td>
+                  <td><span class="badge b-gray">B-</span></td>
+                  <td>Living</td>
+                  <td>Bangalore</td>
+                  <td>Kidney (L)</td>
+                  <td><span class="badge b-green">Active</span></td>
+                </tr>
+                <tr>
+                  <td>#D-125</td>
+                  <td>Meena Joshi</td>
+                  <td><span class="badge b-red">AB+</span></td>
+                  <td>Deceased</td>
+                  <td>Chennai</td>
+                  <td>Liver, Lungs</td>
+                  <td><span class="badge b-blue">In Surgery</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- LIVING DONORS -->
+        <div id="apage-donor-living" class="apage">
+          <div class="phead">
+            <h2>Living Donors</h2>
+            <p>donor_living table</p>
           </div>
           <div class="tcard">
-            <div class="tcard-head"><h3>Critical Waitlist</h3><button class="btn-sub" style="padding:6px 14px;font-size:12px" onclick="showPage('waitlist')">Full List</button></div>
-            <div style="padding:8px 16px">
-              <div class="wl-item"><div class="wl-rank">1</div><div class="wl-info"><div class="wl-name">Priya Desai</div><div class="wl-detail">Heart • O+ • 482 days</div></div><span class="badge b-red">Critical</span></div>
-              <div class="wl-item"><div class="wl-rank">2</div><div class="wl-info"><div class="wl-name">Arjun Mehta</div><div class="wl-detail">Kidney • B+ • 394 days</div></div><span class="badge b-red">Critical</span></div>
-              <div class="wl-item"><div class="wl-rank">3</div><div class="wl-info"><div class="wl-name">Sunita Rao</div><div class="wl-detail">Liver • A- • 287 days</div></div><span class="badge b-amber">High</span></div>
-              <div class="wl-item"><div class="wl-rank">4</div><div class="wl-info"><div class="wl-name">Vikram Nair</div><div class="wl-detail">Lungs • AB+ • 241 days</div></div><span class="badge b-amber">High</span></div>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Blood</th>
+                  <th>Relationship</th>
+                  <th>Organ</th>
+                  <th>Compat Score</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#DL-042</td>
+                  <td>Rahul Sharma</td>
+                  <td><span class="badge b-red">O+</span></td>
+                  <td>Sibling</td>
+                  <td>Kidney (L)</td>
+                  <td><span class="badge b-green">92%</span></td>
+                  <td><span class="badge b-green">Cleared</span></td>
+                </tr>
+                <tr>
+                  <td>#DL-041</td>
+                  <td>Ravi Nair</td>
+                  <td><span class="badge b-green">O-</span></td>
+                  <td>Spouse</td>
+                  <td>Kidney (R)</td>
+                  <td><span class="badge b-amber">74%</span></td>
+                  <td><span class="badge b-amber">Pending</span></td>
+                </tr>
+                <tr>
+                  <td>#DL-040</td>
+                  <td>Kavita Singh</td>
+                  <td><span class="badge b-blue">A+</span></td>
+                  <td>Parent</td>
+                  <td>Liver</td>
+                  <td><span class="badge b-green">88%</span></td>
+                  <td><span class="badge b-green">Cleared</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- DECEASED DONORS -->
+        <div id="apage-donor-deceased" class="apage">
+          <div class="phead">
+            <h2>Deceased Donors</h2>
+            <p>donor_deceased table</p>
+          </div>
+          <div class="tcard">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Blood</th>
+                  <th>Time of Death</th>
+                  <th>Viability</th>
+                  <th>Hospital</th>
+                  <th>Organs</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#DD-086</td>
+                  <td>Ananya Patel</td>
+                  <td><span class="badge b-blue">A+</span></td>
+                  <td>2026-03-12 02:14</td>
+                  <td><span class="badge b-green">Viable</span></td>
+                  <td>KEM Mumbai</td>
+                  <td>Heart, Cornea</td>
+                </tr>
+                <tr>
+                  <td>#DD-085</td>
+                  <td>Meena Joshi</td>
+                  <td><span class="badge b-red">AB+</span></td>
+                  <td>2026-03-11 18:40</td>
+                  <td><span class="badge b-amber">Limited</span></td>
+                  <td>AIIMS Delhi</td>
+                  <td>Liver, Lungs</td>
+                </tr>
+                <tr>
+                  <td>#DD-084</td>
+                  <td>Gopal Verma</td>
+                  <td><span class="badge b-green">O-</span></td>
+                  <td>2026-03-10 09:22</td>
+                  <td><span class="badge b-red">Expired</span></td>
+                  <td>Apollo</td>
+                  <td>Cornea</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ADD RECIPIENT -->
+        <div id="apage-recipient-reg" class="apage">
+          <div class="phead">
+            <h2>Add Recipient</h2>
+            <p>recipient table</p>
+          </div>
+          <div class="fcard">
+            <h3>New Recipient <span class="ftag">recipient table</span></h3>
+            <div class="fgrid">
+              <div class="fg">
+                <label>First Name</label><input placeholder="Priya" />
+              </div>
+              <div class="fg">
+                <label>Last Name</label><input placeholder="Desai" />
+              </div>
+              <div class="fg">
+                <label>Date of Birth</label><input type="date" />
+              </div>
+              <div class="fg">
+                <label>Blood Group</label
+                ><select>
+                  <option>A+</option>
+                  <option>A-</option>
+                  <option>B+</option>
+                  <option>B-</option>
+                  <option>O+</option>
+                  <option>O-</option>
+                  <option>AB+</option>
+                  <option>AB-</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Phone</label><input placeholder="+91 98765 43210" />
+              </div>
+              <div class="fg">
+                <label>Hospital</label
+                ><input placeholder="Admitting hospital" />
+              </div>
+              <div class="fg">
+                <label>Organ Needed</label
+                ><select>
+                  <option>Heart</option>
+                  <option>Kidney</option>
+                  <option>Liver</option>
+                  <option>Lungs</option>
+                  <option>Cornea</option>
+                  <option>Pancreas</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Urgency</label
+                ><select>
+                  <option>Normal</option>
+                  <option>High</option>
+                  <option>Critical</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Region</label
+                ><select>
+                  <option>North</option>
+                  <option>South</option>
+                  <option>East</option>
+                  <option>West</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Diagnosis</label
+                ><input placeholder="Medical condition" />
+              </div>
+              <div class="fg full">
+                <label>Clinical Notes</label
+                ><textarea placeholder="Additional notes..."></textarea>
+              </div>
+            </div>
+            <div class="factions">
+              <button class="btn-sub" onclick="ok('ra')">Save Recipient</button
+              ><button class="btn-cancel">Cancel</button>
+            </div>
+            <div class="alert as" id="ra">✓ Recipient added!</div>
+          </div>
+        </div>
+
+        <!-- ALL RECIPIENTS -->
+        <div id="apage-recipients" class="apage">
+          <div class="phead">
+            <h2>All Recipients</h2>
+            <p>recipient table — 347 records</p>
+          </div>
+          <div class="sbar"><span></span><input placeholder="Search…" /></div>
+          <div class="tcard">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Blood</th>
+                  <th>Organ</th>
+                  <th>Region</th>
+                  <th>Urgency</th>
+                  <th>Wait</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#R-347</td>
+                  <td>Priya Desai</td>
+                  <td><span class="badge b-red">O+</span></td>
+                  <td>Heart</td>
+                  <td>West</td>
+                  <td><span class="badge b-red">Critical</span></td>
+                  <td>482d</td>
+                  <td><span class="badge b-amber">Waiting</span></td>
+                </tr>
+                <tr>
+                  <td>#R-346</td>
+                  <td>Arjun Mehta</td>
+                  <td><span class="badge b-blue">B+</span></td>
+                  <td>Kidney</td>
+                  <td>North</td>
+                  <td><span class="badge b-red">Critical</span></td>
+                  <td>394d</td>
+                  <td><span class="badge b-amber">Waiting</span></td>
+                </tr>
+                <tr>
+                  <td>#R-345</td>
+                  <td>Sunita Rao</td>
+                  <td><span class="badge b-green">A-</span></td>
+                  <td>Liver</td>
+                  <td>South</td>
+                  <td><span class="badge b-amber">High</span></td>
+                  <td>287d</td>
+                  <td><span class="badge b-blue">Matched</span></td>
+                </tr>
+                <tr>
+                  <td>#R-344</td>
+                  <td>Vikram Nair</td>
+                  <td><span class="badge b-red">AB+</span></td>
+                  <td>Lungs</td>
+                  <td>North</td>
+                  <td><span class="badge b-amber">High</span></td>
+                  <td>241d</td>
+                  <td><span class="badge b-amber">Waiting</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- WAITLIST -->
+        <div id="apage-waitlist" class="apage">
+          <div class="phead">
+            <h2>Waitlist</h2>
+            <p>waitlist table — 263 waiting</p>
+          </div>
+          <div class="stat-row">
+            <div class="stat-card">
+              <div class="s-label">Critical</div>
+              <div class="s-num s-red">47</div>
+            </div>
+            <div class="stat-card">
+              <div class="s-label">High</div>
+              <div class="s-num s-amber">89</div>
+            </div>
+            <div class="stat-card">
+              <div class="s-label">Normal</div>
+              <div class="s-num s-blue">127</div>
+            </div>
+            <div class="stat-card">
+              <div class="s-label">Avg Wait</div>
+              <div class="s-num" style="font-size: 26px">14 mo</div>
+            </div>
+          </div>
+          <div class="tcard">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Recipient</th>
+                  <th>Blood</th>
+                  <th>Organ</th>
+                  <th>Hospital</th>
+                  <th>Days</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b style="color: var(--red)">#1</b></td>
+                  <td>Priya Desai</td>
+                  <td><span class="badge b-red">O+</span></td>
+                  <td>Heart</td>
+                  <td>KEM Mumbai</td>
+                  <td>482</td>
+                  <td><span class="badge b-red">Critical</span></td>
+                  <td><span class="badge b-amber">Waiting</span></td>
+                </tr>
+                <tr>
+                  <td><b style="color: var(--red)">#2</b></td>
+                  <td>Arjun Mehta</td>
+                  <td><span class="badge b-blue">B+</span></td>
+                  <td>Kidney</td>
+                  <td>AIIMS Delhi</td>
+                  <td>394</td>
+                  <td><span class="badge b-red">Critical</span></td>
+                  <td><span class="badge b-amber">Waiting</span></td>
+                </tr>
+                <tr>
+                  <td><b>#3</b></td>
+                  <td>Sunita Rao</td>
+                  <td><span class="badge b-green">A-</span></td>
+                  <td>Liver</td>
+                  <td>Apollo Chennai</td>
+                  <td>287</td>
+                  <td><span class="badge b-amber">High</span></td>
+                  <td><span class="badge b-blue">Matched</span></td>
+                </tr>
+                <tr>
+                  <td><b>#4</b></td>
+                  <td>Vikram Nair</td>
+                  <td><span class="badge b-red">AB+</span></td>
+                  <td>Lungs</td>
+                  <td>Manipal Blr</td>
+                  <td>241</td>
+                  <td><span class="badge b-amber">High</span></td>
+                  <td><span class="badge b-amber">Waiting</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- REGIONS -->
+        <div id="apage-regions" class="apage">
+          <div class="phead">
+            <h2>Recipients by Region</h2>
+            <p>
+              recipient_north / recipient_south / recipient_east /
+              recipient_west
+            </p>
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 16px;
+              margin-bottom: 20px;
+            "
+          >
+            <div class="rcard">
+              <div class="rcard-title">North Region</div>
+              <div class="rcard-sub">recipient_north — Delhi, UP, Punjab</div>
+              <div class="rbar">
+                <div
+                  class="rbar-fill"
+                  style="width: 72%; background: var(--blue)"
+                ></div>
+              </div>
+              <div style="display: flex; gap: 20px; font-size: 13px">
+                <span style="color: var(--muted)"
+                  >Recipients: <b style="color: var(--text)">94</b></span
+                ><span style="color: var(--muted)"
+                  >Critical: <b style="color: var(--red)">18</b></span
+                >
+              </div>
+            </div>
+            <div class="rcard">
+              <div class="rcard-title">South Region</div>
+              <div class="rcard-sub">recipient_south — TN, Kerala, AP</div>
+              <div class="rbar">
+                <div
+                  class="rbar-fill"
+                  style="width: 58%; background: var(--green)"
+                ></div>
+              </div>
+              <div style="display: flex; gap: 20px; font-size: 13px">
+                <span style="color: var(--muted)"
+                  >Recipients: <b style="color: var(--text)">78</b></span
+                ><span style="color: var(--muted)"
+                  >Critical: <b style="color: var(--red)">12</b></span
+                >
+              </div>
+            </div>
+            <div class="rcard">
+              <div class="rcard-title">East Region</div>
+              <div class="rcard-sub">recipient_east — WB, Odisha, Bihar</div>
+              <div class="rbar">
+                <div
+                  class="rbar-fill"
+                  style="width: 35%; background: var(--amber)"
+                ></div>
+              </div>
+              <div style="display: flex; gap: 20px; font-size: 13px">
+                <span style="color: var(--muted)"
+                  >Recipients: <b style="color: var(--text)">52</b></span
+                ><span style="color: var(--muted)"
+                  >Critical: <b style="color: var(--red)">7</b></span
+                >
+              </div>
+            </div>
+            <div class="rcard">
+              <div class="rcard-title">West Region</div>
+              <div class="rcard-sub">recipient_west — Maharashtra, Gujarat</div>
+              <div class="rbar">
+                <div class="rbar-fill" style="width: 88%"></div>
+              </div>
+              <div style="display: flex; gap: 20px; font-size: 13px">
+                <span style="color: var(--muted)"
+                  >Recipients: <b style="color: var(--text)">123</b></span
+                ><span style="color: var(--muted)"
+                  >Critical: <b style="color: var(--red)">22</b></span
+                >
+              </div>
             </div>
           </div>
         </div>
-        <div>
-          <div class="tcard" style="padding:20px">
-            <div class="tcard-head" style="padding:0 0 14px"><h3>Active Donation Chains</h3></div>
-            <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px">CHAIN #DC-14</div>
-            <div class="chain-row">
-              <div class="cnode"><div class="cnode-circle cd">D</div><div class="cnode-lbl">Donor</div></div>
-              <div class="carrow">→</div>
-              <div class="cnode"><div class="cnode-circle ch">H</div><div class="cnode-lbl">KEM</div></div>
-              <div class="carrow">→</div>
-              <div class="cnode"><div class="cnode-circle cr">R</div><div class="cnode-lbl">R-West</div></div>
-              <div class="carrow">→</div>
-              <div class="cnode"><div class="cnode-circle cr">R</div><div class="cnode-lbl">R-North</div></div>
+
+        <!-- ORGANS -->
+        <div id="apage-organs" class="apage">
+          <div class="phead">
+            <h2>Organ Inventory</h2>
+            <p>organ table</p>
+          </div>
+          <div class="tcard">
+            <table>
+              <thead>
+                <tr>
+                  <th>Organ ID</th>
+                  <th>Type</th>
+                  <th>Donor</th>
+                  <th>Blood</th>
+                  <th>Harvest Date</th>
+                  <th>Viability</th>
+                  <th>Hospital</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#ORG-284</td>
+                  <td>Kidney</td>
+                  <td>#D-128</td>
+                  <td><span class="badge b-red">O+</span></td>
+                  <td>2026-03-13</td>
+                  <td>36 hrs</td>
+                  <td>KEM Mumbai</td>
+                  <td><span class="badge b-green">Available</span></td>
+                </tr>
+                <tr>
+                  <td>#ORG-283</td>
+                  <td>Heart</td>
+                  <td>#DD-086</td>
+                  <td><span class="badge b-blue">A+</span></td>
+                  <td>2026-03-12</td>
+                  <td>4 hrs</td>
+                  <td>AIIMS Delhi</td>
+                  <td><span class="badge b-red">Urgent</span></td>
+                </tr>
+                <tr>
+                  <td>#ORG-282</td>
+                  <td>Liver</td>
+                  <td>#DD-085</td>
+                  <td><span class="badge b-red">AB+</span></td>
+                  <td>2026-03-11</td>
+                  <td>12 hrs</td>
+                  <td>Apollo</td>
+                  <td><span class="badge b-blue">In Transit</span></td>
+                </tr>
+                <tr>
+                  <td>#ORG-281</td>
+                  <td>Cornea</td>
+                  <td>#DD-084</td>
+                  <td><span class="badge b-green">O-</span></td>
+                  <td>2026-03-10</td>
+                  <td>14 days</td>
+                  <td>Eye Bank</td>
+                  <td><span class="badge b-green">Available</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- COMPATIBILITY -->
+        <div id="apage-compatibility" class="apage">
+          <div class="phead">
+            <h2>Compatibility Test</h2>
+            <p>compatibility_test table</p>
+          </div>
+          <div class="two-col">
+            <div class="fcard">
+              <h3>Run New Test <span class="ftag">compatibility_test</span></h3>
+              <div class="fgrid">
+                <div class="fg">
+                  <label>Donor ID</label><input placeholder="#D-128" />
+                </div>
+                <div class="fg">
+                  <label>Recipient ID</label><input placeholder="#R-347" />
+                </div>
+                <div class="fg">
+                  <label>Organ</label
+                  ><select>
+                    <option>Kidney</option>
+                    <option>Heart</option>
+                    <option>Liver</option>
+                    <option>Lungs</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>Test Type</label
+                  ><select>
+                    <option>Cross-match</option>
+                    <option>HLA Typing</option>
+                    <option>Full Panel</option>
+                  </select>
+                </div>
+              </div>
+              <div class="factions">
+                <button class="btn-sub" onclick="ok('ca')">Run Test</button>
+              </div>
+              <div class="alert as" id="ca">
+                ✓ Test queued — results in 24–48 hrs.
+              </div>
             </div>
-            <div style="font-size:11px;font-weight:700;color:var(--muted);margin:12px 0 8px">CHAIN #DC-13</div>
-            <div class="chain-row" style="border:none">
-              <div class="cnode"><div class="cnode-circle cd">D</div><div class="cnode-lbl">Deceased</div></div>
-              <div class="carrow">→</div>
-              <div class="cnode"><div class="cnode-circle ch">H</div><div class="cnode-lbl">AIIMS</div></div>
-              <div class="carrow">→</div>
-              <div class="cnode"><div class="cnode-circle cr">R</div><div class="cnode-lbl">R-South</div></div>
+            <div>
+              <div class="compat-grid">
+                <div class="compat-cell ch">
+                  <div class="cb">A+→A+</div>
+                  <div class="cp">95%</div>
+                </div>
+                <div class="compat-cell ch">
+                  <div class="cb">O-→Any</div>
+                  <div class="cp">Universal</div>
+                </div>
+                <div class="compat-cell cm">
+                  <div class="cb">B+→B+</div>
+                  <div class="cp">72%</div>
+                </div>
+                <div class="compat-cell cm">
+                  <div class="cb">AB+→AB+</div>
+                  <div class="cp">68%</div>
+                </div>
+                <div class="compat-cell cl">
+                  <div class="cb">A-→B+</div>
+                  <div class="cp">12%</div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="three-col">
-            <div class="minfo"><h4>Hospitals</h4><div class="irow"><span class="ik">Total</span><span class="iv">24</span></div><div class="irow"><span class="ik">Active</span><span class="iv s-green">19</span></div></div>
-            <div class="minfo"><h4>Staff</h4><div class="irow"><span class="ik">Total</span><span class="iv">312</span></div><div class="irow"><span class="ik">Surgeons</span><span class="iv">48</span></div></div>
-            <div class="minfo"><h4>Tests</h4><div class="irow"><span class="ik">Done</span><span class="iv">1284</span></div><div class="irow"><span class="ik">Pending</span><span class="iv s-amber">38</span></div></div>
+          <div class="tcard">
+            <div class="tcard-head"><h3>Test Log</h3></div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Test ID</th>
+                  <th>Donor</th>
+                  <th>Recipient</th>
+                  <th>Organ</th>
+                  <th>Score</th>
+                  <th>Result</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#CT-192</td>
+                  <td>#D-128</td>
+                  <td>#R-346</td>
+                  <td>Kidney</td>
+                  <td>92%</td>
+                  <td><span class="badge b-green">Compatible</span></td>
+                  <td>2026-03-12</td>
+                </tr>
+                <tr>
+                  <td>#CT-191</td>
+                  <td>#DD-086</td>
+                  <td>#R-347</td>
+                  <td>Heart</td>
+                  <td>87%</td>
+                  <td><span class="badge b-green">Compatible</span></td>
+                  <td>2026-03-11</td>
+                </tr>
+                <tr>
+                  <td>#CT-190</td>
+                  <td>#DD-085</td>
+                  <td>#R-345</td>
+                  <td>Liver</td>
+                  <td>64%</td>
+                  <td><span class="badge b-amber">Borderline</span></td>
+                  <td>2026-03-10</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- REGISTER DONOR -->
-    <div id="apage-donor-reg" class="apage">
-      <div class="phead"><h2>Register Donor</h2><p>donor / donor_living / donor_deceased tables</p></div>
-      <div class="fcard">
-        <h3>New Donor <span class="ftag">donor table</span></h3>
-        <div class="fgrid">
-          <div class="fg"><label>First Name</label><input placeholder="Rahul"/></div>
-          <div class="fg"><label>Last Name</label><input placeholder="Sharma"/></div>
-          <div class="fg"><label>Date of Birth</label><input type="date"/></div>
-          <div class="fg"><label>Blood Group</label><select><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
-          <div class="fg"><label>Phone</label><input placeholder="+91 98765 43210"/></div>
-          <div class="fg"><label>Email</label><input type="email"/></div>
-          <div class="fg"><label>City</label><input placeholder="Mumbai"/></div>
-          <div class="fg"><label>State</label><select><option>Maharashtra</option><option>Delhi</option><option>Karnataka</option><option>Tamil Nadu</option></select></div>
-          <div class="fg"><label>Donor Type</label><select id="dtype" onchange="toggleDT()"><option value="living">Living</option><option value="deceased">Deceased</option></select></div>
-          <div class="fg"><label>HLA Type</label><input placeholder="HLA-A, B, DR"/></div>
-          <div class="fg full" id="lfield"><label>Relationship to Recipient</label><input placeholder="Sibling / Spouse / Unrelated"/></div>
-          <div class="fg full" id="dfield" style="display:none"><label>Date of Brain Death Declaration</label><input type="datetime-local"/></div>
-          <div class="fg full"><label>Organs Pledged</label>
-            <div class="organ-grid">
-              <label class="organ-pill"><input type="checkbox"/> Heart</label>
-              <label class="organ-pill"><input type="checkbox"/> Kidney (L)</label>
-              <label class="organ-pill"><input type="checkbox"/> Kidney (R)</label>
-              <label class="organ-pill"><input type="checkbox"/> Liver</label>
-              <label class="organ-pill"><input type="checkbox"/> Lungs</label>
-              <label class="organ-pill"><input type="checkbox"/> Cornea</label>
-              <label class="organ-pill"><input type="checkbox"/> Pancreas</label>
-              <label class="organ-pill"><input type="checkbox"/> Skin</label>
+        <!-- DONATION CHAIN -->
+        <div id="apage-donation-chain" class="apage">
+          <div class="phead">
+            <h2>Donation Chain</h2>
+            <p>donation_chain + chain_link tables</p>
+          </div>
+          <div class="two-col">
+            <div class="tcard">
+              <div class="tcard-head"><h3>donation_chain</h3></div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Chain ID</th>
+                    <th>Started</th>
+                    <th>Links</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#DC-14</td>
+                    <td>2026-03-10</td>
+                    <td>3</td>
+                    <td><span class="badge b-green">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>#DC-13</td>
+                    <td>2026-03-05</td>
+                    <td>2</td>
+                    <td><span class="badge b-blue">Complete</span></td>
+                  </tr>
+                  <tr>
+                    <td>#DC-12</td>
+                    <td>2026-02-28</td>
+                    <td>4</td>
+                    <td><span class="badge b-blue">Complete</span></td>
+                  </tr>
+                  <tr>
+                    <td>#DC-11</td>
+                    <td>2026-02-14</td>
+                    <td>2</td>
+                    <td><span class="badge b-red">Broken</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tcard">
+              <div class="tcard-head"><h3>chain_link</h3></div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Link ID</th>
+                    <th>Chain</th>
+                    <th>Donor</th>
+                    <th>Recipient</th>
+                    <th>Organ</th>
+                    <th>Order</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#CL-38</td>
+                    <td>#DC-14</td>
+                    <td>#DL-042</td>
+                    <td>#R-347</td>
+                    <td>Kidney</td>
+                    <td>1</td>
+                  </tr>
+                  <tr>
+                    <td>#CL-37</td>
+                    <td>#DC-14</td>
+                    <td>#DL-041</td>
+                    <td>#R-346</td>
+                    <td>Kidney</td>
+                    <td>2</td>
+                  </tr>
+                  <tr>
+                    <td>#CL-36</td>
+                    <td>#DC-14</td>
+                    <td>#DL-040</td>
+                    <td>#R-344</td>
+                    <td>Liver</td>
+                    <td>3</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-        <div class="factions"><button class="btn-sub" onclick="ok('da')">Save Donor</button><button class="btn-cancel">Cancel</button></div>
-        <div class="alert as" id="da">✓ Donor registered successfully!</div>
-      </div>
-    </div>
 
-    <!-- ALL DONORS -->
-    <div id="apage-donors-list" class="apage">
-      <div class="phead"><h2>All Donors</h2><p>donor table — 128 records</p></div>
-      <div class="sbar"><span></span><input placeholder="Search name, blood group, city…"/></div>
-      <div class="tcard"><table>
-        <thead><tr><th>ID</th><th>Name</th><th>Blood</th><th>Type</th><th>City</th><th>Organs</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>#D-128</td><td>Rahul Sharma</td><td><span class="badge b-red">O+</span></td><td>Living</td><td>Mumbai</td><td>Kidney, Liver</td><td><span class="badge b-green">Active</span></td></tr>
-          <tr><td>#D-127</td><td>Ananya Patel</td><td><span class="badge b-blue">A+</span></td><td>Deceased</td><td>Delhi</td><td>Heart, Cornea</td><td><span class="badge b-amber">Matched</span></td></tr>
-          <tr><td>#D-126</td><td>Suresh Kumar</td><td><span class="badge b-gray">B-</span></td><td>Living</td><td>Bangalore</td><td>Kidney (L)</td><td><span class="badge b-green">Active</span></td></tr>
-          <tr><td>#D-125</td><td>Meena Joshi</td><td><span class="badge b-red">AB+</span></td><td>Deceased</td><td>Chennai</td><td>Liver, Lungs</td><td><span class="badge b-blue">In Surgery</span></td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- LIVING DONORS -->
-    <div id="apage-donor-living" class="apage">
-      <div class="phead"><h2>Living Donors</h2><p>donor_living table</p></div>
-      <div class="tcard"><table>
-        <thead><tr><th>ID</th><th>Name</th><th>Blood</th><th>Relationship</th><th>Organ</th><th>Compat Score</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>#DL-042</td><td>Rahul Sharma</td><td><span class="badge b-red">O+</span></td><td>Sibling</td><td>Kidney (L)</td><td><span class="badge b-green">92%</span></td><td><span class="badge b-green">Cleared</span></td></tr>
-          <tr><td>#DL-041</td><td>Ravi Nair</td><td><span class="badge b-green">O-</span></td><td>Spouse</td><td>Kidney (R)</td><td><span class="badge b-amber">74%</span></td><td><span class="badge b-amber">Pending</span></td></tr>
-          <tr><td>#DL-040</td><td>Kavita Singh</td><td><span class="badge b-blue">A+</span></td><td>Parent</td><td>Liver</td><td><span class="badge b-green">88%</span></td><td><span class="badge b-green">Cleared</span></td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- DECEASED DONORS -->
-    <div id="apage-donor-deceased" class="apage">
-      <div class="phead"><h2>Deceased Donors</h2><p>donor_deceased table</p></div>
-      <div class="tcard"><table>
-        <thead><tr><th>ID</th><th>Name</th><th>Blood</th><th>Time of Death</th><th>Viability</th><th>Hospital</th><th>Organs</th></tr></thead>
-        <tbody>
-          <tr><td>#DD-086</td><td>Ananya Patel</td><td><span class="badge b-blue">A+</span></td><td>2026-03-12 02:14</td><td><span class="badge b-green">Viable</span></td><td>KEM Mumbai</td><td>Heart, Cornea</td></tr>
-          <tr><td>#DD-085</td><td>Meena Joshi</td><td><span class="badge b-red">AB+</span></td><td>2026-03-11 18:40</td><td><span class="badge b-amber">Limited</span></td><td>AIIMS Delhi</td><td>Liver, Lungs</td></tr>
-          <tr><td>#DD-084</td><td>Gopal Verma</td><td><span class="badge b-green">O-</span></td><td>2026-03-10 09:22</td><td><span class="badge b-red">Expired</span></td><td>Apollo</td><td>Cornea</td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- ADD RECIPIENT -->
-    <div id="apage-recipient-reg" class="apage">
-      <div class="phead"><h2>Add Recipient</h2><p>recipient table</p></div>
-      <div class="fcard">
-        <h3>New Recipient <span class="ftag">recipient table</span></h3>
-        <div class="fgrid">
-          <div class="fg"><label>First Name</label><input placeholder="Priya"/></div>
-          <div class="fg"><label>Last Name</label><input placeholder="Desai"/></div>
-          <div class="fg"><label>Date of Birth</label><input type="date"/></div>
-          <div class="fg"><label>Blood Group</label><select><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
-          <div class="fg"><label>Phone</label><input placeholder="+91 98765 43210"/></div>
-          <div class="fg"><label>Hospital</label><input placeholder="Admitting hospital"/></div>
-          <div class="fg"><label>Organ Needed</label><select><option>Heart</option><option>Kidney</option><option>Liver</option><option>Lungs</option><option>Cornea</option><option>Pancreas</option></select></div>
-          <div class="fg"><label>Urgency</label><select><option>Normal</option><option>High</option><option>Critical</option></select></div>
-          <div class="fg"><label>Region</label><select><option>North</option><option>South</option><option>East</option><option>West</option></select></div>
-          <div class="fg"><label>Diagnosis</label><input placeholder="Medical condition"/></div>
-          <div class="fg full"><label>Clinical Notes</label><textarea placeholder="Additional notes..."></textarea></div>
-        </div>
-        <div class="factions"><button class="btn-sub" onclick="ok('ra')">Save Recipient</button><button class="btn-cancel">Cancel</button></div>
-        <div class="alert as" id="ra">✓ Recipient added!</div>
-      </div>
-    </div>
-
-    <!-- ALL RECIPIENTS -->
-    <div id="apage-recipients" class="apage">
-      <div class="phead"><h2>All Recipients</h2><p>recipient table — 347 records</p></div>
-      <div class="sbar"><span></span><input placeholder="Search…"/></div>
-      <div class="tcard"><table>
-        <thead><tr><th>ID</th><th>Name</th><th>Blood</th><th>Organ</th><th>Region</th><th>Urgency</th><th>Wait</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>#R-347</td><td>Priya Desai</td><td><span class="badge b-red">O+</span></td><td>Heart</td><td>West</td><td><span class="badge b-red">Critical</span></td><td>482d</td><td><span class="badge b-amber">Waiting</span></td></tr>
-          <tr><td>#R-346</td><td>Arjun Mehta</td><td><span class="badge b-blue">B+</span></td><td>Kidney</td><td>North</td><td><span class="badge b-red">Critical</span></td><td>394d</td><td><span class="badge b-amber">Waiting</span></td></tr>
-          <tr><td>#R-345</td><td>Sunita Rao</td><td><span class="badge b-green">A-</span></td><td>Liver</td><td>South</td><td><span class="badge b-amber">High</span></td><td>287d</td><td><span class="badge b-blue">Matched</span></td></tr>
-          <tr><td>#R-344</td><td>Vikram Nair</td><td><span class="badge b-red">AB+</span></td><td>Lungs</td><td>North</td><td><span class="badge b-amber">High</span></td><td>241d</td><td><span class="badge b-amber">Waiting</span></td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- WAITLIST -->
-    <div id="apage-waitlist" class="apage">
-      <div class="phead"><h2>Waitlist</h2><p>waitlist table — 263 waiting</p></div>
-      <div class="stat-row">
-        <div class="stat-card"><div class="s-label">Critical</div><div class="s-num s-red">47</div></div>
-        <div class="stat-card"><div class="s-label">High</div><div class="s-num s-amber">89</div></div>
-        <div class="stat-card"><div class="s-label">Normal</div><div class="s-num s-blue">127</div></div>
-        <div class="stat-card"><div class="s-label">Avg Wait</div><div class="s-num" style="font-size:26px">14 mo</div></div>
-      </div>
-      <div class="tcard"><table>
-        <thead><tr><th>Rank</th><th>Recipient</th><th>Blood</th><th>Organ</th><th>Hospital</th><th>Days</th><th>Priority</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><b style="color:var(--red)">#1</b></td><td>Priya Desai</td><td><span class="badge b-red">O+</span></td><td>Heart</td><td>KEM Mumbai</td><td>482</td><td><span class="badge b-red">Critical</span></td><td><span class="badge b-amber">Waiting</span></td></tr>
-          <tr><td><b style="color:var(--red)">#2</b></td><td>Arjun Mehta</td><td><span class="badge b-blue">B+</span></td><td>Kidney</td><td>AIIMS Delhi</td><td>394</td><td><span class="badge b-red">Critical</span></td><td><span class="badge b-amber">Waiting</span></td></tr>
-          <tr><td><b>#3</b></td><td>Sunita Rao</td><td><span class="badge b-green">A-</span></td><td>Liver</td><td>Apollo Chennai</td><td>287</td><td><span class="badge b-amber">High</span></td><td><span class="badge b-blue">Matched</span></td></tr>
-          <tr><td><b>#4</b></td><td>Vikram Nair</td><td><span class="badge b-red">AB+</span></td><td>Lungs</td><td>Manipal Blr</td><td>241</td><td><span class="badge b-amber">High</span></td><td><span class="badge b-amber">Waiting</span></td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- REGIONS -->
-    <div id="apage-regions" class="apage">
-      <div class="phead"><h2>Recipients by Region</h2><p>recipient_north / recipient_south / recipient_east / recipient_west</p></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-        <div class="rcard"><div class="rcard-title">North Region</div><div class="rcard-sub">recipient_north — Delhi, UP, Punjab</div><div class="rbar"><div class="rbar-fill" style="width:72%;background:var(--blue)"></div></div><div style="display:flex;gap:20px;font-size:13px"><span style="color:var(--muted)">Recipients: <b style="color:var(--text)">94</b></span><span style="color:var(--muted)">Critical: <b style="color:var(--red)">18</b></span></div></div>
-        <div class="rcard"><div class="rcard-title">South Region</div><div class="rcard-sub">recipient_south — TN, Kerala, AP</div><div class="rbar"><div class="rbar-fill" style="width:58%;background:var(--green)"></div></div><div style="display:flex;gap:20px;font-size:13px"><span style="color:var(--muted)">Recipients: <b style="color:var(--text)">78</b></span><span style="color:var(--muted)">Critical: <b style="color:var(--red)">12</b></span></div></div>
-        <div class="rcard"><div class="rcard-title">East Region</div><div class="rcard-sub">recipient_east — WB, Odisha, Bihar</div><div class="rbar"><div class="rbar-fill" style="width:35%;background:var(--amber)"></div></div><div style="display:flex;gap:20px;font-size:13px"><span style="color:var(--muted)">Recipients: <b style="color:var(--text)">52</b></span><span style="color:var(--muted)">Critical: <b style="color:var(--red)">7</b></span></div></div>
-        <div class="rcard"><div class="rcard-title">West Region</div><div class="rcard-sub">recipient_west — Maharashtra, Gujarat</div><div class="rbar"><div class="rbar-fill" style="width:88%"></div></div><div style="display:flex;gap:20px;font-size:13px"><span style="color:var(--muted)">Recipients: <b style="color:var(--text)">123</b></span><span style="color:var(--muted)">Critical: <b style="color:var(--red)">22</b></span></div></div>
-      </div>
-    </div>
-
-    <!-- ORGANS -->
-    <div id="apage-organs" class="apage">
-      <div class="phead"><h2>Organ Inventory</h2><p>organ table</p></div>
-      <div class="tcard"><table>
-        <thead><tr><th>Organ ID</th><th>Type</th><th>Donor</th><th>Blood</th><th>Harvest Date</th><th>Viability</th><th>Hospital</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>#ORG-284</td><td>Kidney</td><td>#D-128</td><td><span class="badge b-red">O+</span></td><td>2026-03-13</td><td>36 hrs</td><td>KEM Mumbai</td><td><span class="badge b-green">Available</span></td></tr>
-          <tr><td>#ORG-283</td><td>Heart</td><td>#DD-086</td><td><span class="badge b-blue">A+</span></td><td>2026-03-12</td><td>4 hrs</td><td>AIIMS Delhi</td><td><span class="badge b-red">Urgent</span></td></tr>
-          <tr><td>#ORG-282</td><td>Liver</td><td>#DD-085</td><td><span class="badge b-red">AB+</span></td><td>2026-03-11</td><td>12 hrs</td><td>Apollo</td><td><span class="badge b-blue">In Transit</span></td></tr>
-          <tr><td>#ORG-281</td><td>Cornea</td><td>#DD-084</td><td><span class="badge b-green">O-</span></td><td>2026-03-10</td><td>14 days</td><td>Eye Bank</td><td><span class="badge b-green">Available</span></td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- COMPATIBILITY -->
-    <div id="apage-compatibility" class="apage">
-      <div class="phead"><h2>Compatibility Test</h2><p>compatibility_test table</p></div>
-      <div class="two-col">
-        <div class="fcard">
-          <h3>Run New Test <span class="ftag">compatibility_test</span></h3>
-          <div class="fgrid">
-            <div class="fg"><label>Donor ID</label><input placeholder="#D-128"/></div>
-            <div class="fg"><label>Recipient ID</label><input placeholder="#R-347"/></div>
-            <div class="fg"><label>Organ</label><select><option>Kidney</option><option>Heart</option><option>Liver</option><option>Lungs</option></select></div>
-            <div class="fg"><label>Test Type</label><select><option>Cross-match</option><option>HLA Typing</option><option>Full Panel</option></select></div>
+        <!-- TRANSPLANTS -->
+        <div id="apage-transplants" class="apage">
+          <div class="phead">
+            <h2>Transplant Records</h2>
+            <p>transplant_record table</p>
           </div>
-          <div class="factions"><button class="btn-sub" onclick="ok('ca')">Run Test</button></div>
-          <div class="alert as" id="ca">✓ Test queued — results in 24–48 hrs.</div>
-        </div>
-        <div>
-          <div class="compat-grid">
-            <div class="compat-cell ch"><div class="cb">A+→A+</div><div class="cp">95%</div></div>
-            <div class="compat-cell ch"><div class="cb">O-→Any</div><div class="cp">Universal</div></div>
-            <div class="compat-cell cm"><div class="cb">B+→B+</div><div class="cp">72%</div></div>
-            <div class="compat-cell cm"><div class="cb">AB+→AB+</div><div class="cp">68%</div></div>
-            <div class="compat-cell cl"><div class="cb">A-→B+</div><div class="cp">12%</div></div>
+          <div class="tcard">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Donor</th>
+                  <th>Recipient</th>
+                  <th>Organ</th>
+                  <th>Hospital</th>
+                  <th>Surgeon</th>
+                  <th>Date</th>
+                  <th>Outcome</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#TR-091</td>
+                  <td>#D-128</td>
+                  <td>#R-346</td>
+                  <td>Kidney</td>
+                  <td>KEM Mumbai</td>
+                  <td>Dr. Mehta</td>
+                  <td>2026-03-13</td>
+                  <td><span class="badge b-green">Successful</span></td>
+                </tr>
+                <tr>
+                  <td>#TR-090</td>
+                  <td>#DD-085</td>
+                  <td>#R-345</td>
+                  <td>Liver</td>
+                  <td>AIIMS Delhi</td>
+                  <td>Dr. Singh</td>
+                  <td>2026-03-11</td>
+                  <td><span class="badge b-green">Successful</span></td>
+                </tr>
+                <tr>
+                  <td>#TR-089</td>
+                  <td>#DD-086</td>
+                  <td>#R-347</td>
+                  <td>Heart</td>
+                  <td>Apollo Chennai</td>
+                  <td>Dr. Rao</td>
+                  <td>2026-03-12</td>
+                  <td><span class="badge b-amber">Monitoring</span></td>
+                </tr>
+                <tr>
+                  <td>#TR-088</td>
+                  <td>#DL-039</td>
+                  <td>#R-343</td>
+                  <td>Cornea</td>
+                  <td>Fortis Pune</td>
+                  <td>Dr. Iyer</td>
+                  <td>2026-03-10</td>
+                  <td><span class="badge b-green">Successful</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
+
+        <!-- TRANSPLANT MEDICAL -->
+        <div id="apage-transplant-medical" class="apage">
+          <div class="phead">
+            <h2>Transplant Medical Details</h2>
+            <p>transplant_medical + transplant_details tables</p>
+          </div>
+          <div class="two-col">
+            <div class="tcard">
+              <div class="tcard-head"><h3>transplant_medical</h3></div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Record</th>
+                    <th>Drug</th>
+                    <th>Dosage</th>
+                    <th>Follow-up</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#TM-091</td>
+                    <td>#TR-091</td>
+                    <td>Tacrolimus</td>
+                    <td>0.1 mg/kg</td>
+                    <td>2026-03-20</td>
+                  </tr>
+                  <tr>
+                    <td>#TM-090</td>
+                    <td>#TR-090</td>
+                    <td>Cyclosporine</td>
+                    <td>5 mg/kg</td>
+                    <td>2026-03-18</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tcard">
+              <div class="tcard-head"><h3>transplant_details</h3></div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Record</th>
+                    <th>Duration</th>
+                    <th>Blood Loss</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#TD-091</td>
+                    <td>#TR-091</td>
+                    <td>3h 20m</td>
+                    <td>220 mL</td>
+                    <td>None</td>
+                  </tr>
+                  <tr>
+                    <td>#TD-090</td>
+                    <td>#TR-090</td>
+                    <td>6h 45m</td>
+                    <td>580 mL</td>
+                    <td>Minor bleed</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- HOSPITALS -->
+        <div id="apage-hospitals" class="apage">
+          <div class="phead">
+            <h2>Hospitals</h2>
+            <p>hospital table — 24 hospitals</p>
+          </div>
+          <div class="tcard">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>City</th>
+                  <th>State</th>
+                  <th>Capacity</th>
+                  <th>Active Ops</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#H-01</td>
+                  <td>KEM Hospital</td>
+                  <td>Mumbai</td>
+                  <td>Maharashtra</td>
+                  <td>120</td>
+                  <td>8</td>
+                  <td><span class="badge b-green">Active</span></td>
+                </tr>
+                <tr>
+                  <td>#H-02</td>
+                  <td>AIIMS</td>
+                  <td>Delhi</td>
+                  <td>Delhi</td>
+                  <td>200</td>
+                  <td>14</td>
+                  <td><span class="badge b-green">Active</span></td>
+                </tr>
+                <tr>
+                  <td>#H-03</td>
+                  <td>Apollo Hospital</td>
+                  <td>Chennai</td>
+                  <td>Tamil Nadu</td>
+                  <td>150</td>
+                  <td>6</td>
+                  <td><span class="badge b-green">Active</span></td>
+                </tr>
+                <tr>
+                  <td>#H-04</td>
+                  <td>Manipal Hospital</td>
+                  <td>Bangalore</td>
+                  <td>Karnataka</td>
+                  <td>90</td>
+                  <td>4</td>
+                  <td><span class="badge b-green">Active</span></td>
+                </tr>
+                <tr>
+                  <td>#H-05</td>
+                  <td>Fortis Hospital</td>
+                  <td>Pune</td>
+                  <td>Maharashtra</td>
+                  <td>80</td>
+                  <td>3</td>
+                  <td><span class="badge b-amber">Maintenance</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- STAFF -->
+        <div id="apage-staff" class="apage">
+          <div class="phead">
+            <h2>Medical Staff</h2>
+            <p>medical_staff table — 312 staff</p>
+          </div>
+          <div class="tcard">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Specialisation</th>
+                  <th>Hospital</th>
+                  <th>On-call</th>
+                  <th>Transplants</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#MS-048</td>
+                  <td>Dr. Rajesh Mehta</td>
+                  <td>Surgeon</td>
+                  <td>Renal</td>
+                  <td>KEM Mumbai</td>
+                  <td><span class="badge b-green">Yes</span></td>
+                  <td>47</td>
+                </tr>
+                <tr>
+                  <td>#MS-047</td>
+                  <td>Dr. Anita Singh</td>
+                  <td>Surgeon</td>
+                  <td>Hepatic</td>
+                  <td>AIIMS Delhi</td>
+                  <td><span class="badge b-green">Yes</span></td>
+                  <td>62</td>
+                </tr>
+                <tr>
+                  <td>#MS-046</td>
+                  <td>Dr. Suresh Rao</td>
+                  <td>Cardiologist</td>
+                  <td>Heart</td>
+                  <td>Apollo Chennai</td>
+                  <td><span class="badge b-gray">No</span></td>
+                  <td>29</td>
+                </tr>
+                <tr>
+                  <td>#MS-045</td>
+                  <td>Dr. Priya Iyer</td>
+                  <td>Ophthalmologist</td>
+                  <td>Corneal</td>
+                  <td>Fortis Pune</td>
+                  <td><span class="badge b-green">Yes</span></td>
+                  <td>84</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="tcard"><div class="tcard-head"><h3>Test Log</h3></div><table>
-        <thead><tr><th>Test ID</th><th>Donor</th><th>Recipient</th><th>Organ</th><th>Score</th><th>Result</th><th>Date</th></tr></thead>
-        <tbody>
-          <tr><td>#CT-192</td><td>#D-128</td><td>#R-346</td><td>Kidney</td><td>92%</td><td><span class="badge b-green">Compatible</span></td><td>2026-03-12</td></tr>
-          <tr><td>#CT-191</td><td>#DD-086</td><td>#R-347</td><td>Heart</td><td>87%</td><td><span class="badge b-green">Compatible</span></td><td>2026-03-11</td></tr>
-          <tr><td>#CT-190</td><td>#DD-085</td><td>#R-345</td><td>Liver</td><td>64%</td><td><span class="badge b-amber">Borderline</span></td><td>2026-03-10</td></tr>
-        </tbody>
-      </table></div>
+      <!-- /app-content -->
     </div>
-
-    <!-- DONATION CHAIN -->
-    <div id="apage-donation-chain" class="apage">
-      <div class="phead"><h2>Donation Chain</h2><p>donation_chain + chain_link tables</p></div>
-      <div class="two-col">
-        <div class="tcard"><div class="tcard-head"><h3>donation_chain</h3></div><table>
-          <thead><tr><th>Chain ID</th><th>Started</th><th>Links</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>#DC-14</td><td>2026-03-10</td><td>3</td><td><span class="badge b-green">Active</span></td></tr>
-            <tr><td>#DC-13</td><td>2026-03-05</td><td>2</td><td><span class="badge b-blue">Complete</span></td></tr>
-            <tr><td>#DC-12</td><td>2026-02-28</td><td>4</td><td><span class="badge b-blue">Complete</span></td></tr>
-            <tr><td>#DC-11</td><td>2026-02-14</td><td>2</td><td><span class="badge b-red">Broken</span></td></tr>
-          </tbody>
-        </table></div>
-        <div class="tcard"><div class="tcard-head"><h3>chain_link</h3></div><table>
-          <thead><tr><th>Link ID</th><th>Chain</th><th>Donor</th><th>Recipient</th><th>Organ</th><th>Order</th></tr></thead>
-          <tbody>
-            <tr><td>#CL-38</td><td>#DC-14</td><td>#DL-042</td><td>#R-347</td><td>Kidney</td><td>1</td></tr>
-            <tr><td>#CL-37</td><td>#DC-14</td><td>#DL-041</td><td>#R-346</td><td>Kidney</td><td>2</td></tr>
-            <tr><td>#CL-36</td><td>#DC-14</td><td>#DL-040</td><td>#R-344</td><td>Liver</td><td>3</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-    </div>
-
-    <!-- TRANSPLANTS -->
-    <div id="apage-transplants" class="apage">
-      <div class="phead"><h2>Transplant Records</h2><p>transplant_record table</p></div>
-      <div class="tcard"><table>
-        <thead><tr><th>ID</th><th>Donor</th><th>Recipient</th><th>Organ</th><th>Hospital</th><th>Surgeon</th><th>Date</th><th>Outcome</th></tr></thead>
-        <tbody>
-          <tr><td>#TR-091</td><td>#D-128</td><td>#R-346</td><td>Kidney</td><td>KEM Mumbai</td><td>Dr. Mehta</td><td>2026-03-13</td><td><span class="badge b-green">Successful</span></td></tr>
-          <tr><td>#TR-090</td><td>#DD-085</td><td>#R-345</td><td>Liver</td><td>AIIMS Delhi</td><td>Dr. Singh</td><td>2026-03-11</td><td><span class="badge b-green">Successful</span></td></tr>
-          <tr><td>#TR-089</td><td>#DD-086</td><td>#R-347</td><td>Heart</td><td>Apollo Chennai</td><td>Dr. Rao</td><td>2026-03-12</td><td><span class="badge b-amber">Monitoring</span></td></tr>
-          <tr><td>#TR-088</td><td>#DL-039</td><td>#R-343</td><td>Cornea</td><td>Fortis Pune</td><td>Dr. Iyer</td><td>2026-03-10</td><td><span class="badge b-green">Successful</span></td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- TRANSPLANT MEDICAL -->
-    <div id="apage-transplant-medical" class="apage">
-      <div class="phead"><h2>Transplant Medical Details</h2><p>transplant_medical + transplant_details tables</p></div>
-      <div class="two-col">
-        <div class="tcard"><div class="tcard-head"><h3>transplant_medical</h3></div><table>
-          <thead><tr><th>ID</th><th>Record</th><th>Drug</th><th>Dosage</th><th>Follow-up</th></tr></thead>
-          <tbody>
-            <tr><td>#TM-091</td><td>#TR-091</td><td>Tacrolimus</td><td>0.1 mg/kg</td><td>2026-03-20</td></tr>
-            <tr><td>#TM-090</td><td>#TR-090</td><td>Cyclosporine</td><td>5 mg/kg</td><td>2026-03-18</td></tr>
-          </tbody>
-        </table></div>
-        <div class="tcard"><div class="tcard-head"><h3>transplant_details</h3></div><table>
-          <thead><tr><th>ID</th><th>Record</th><th>Duration</th><th>Blood Loss</th><th>Notes</th></tr></thead>
-          <tbody>
-            <tr><td>#TD-091</td><td>#TR-091</td><td>3h 20m</td><td>220 mL</td><td>None</td></tr>
-            <tr><td>#TD-090</td><td>#TR-090</td><td>6h 45m</td><td>580 mL</td><td>Minor bleed</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-    </div>
-
-    <!-- HOSPITALS -->
-    <div id="apage-hospitals" class="apage">
-      <div class="phead"><h2>Hospitals</h2><p>hospital table — 24 hospitals</p></div>
-      <div class="tcard"><table>
-        <thead><tr><th>ID</th><th>Name</th><th>City</th><th>State</th><th>Capacity</th><th>Active Ops</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>#H-01</td><td>KEM Hospital</td><td>Mumbai</td><td>Maharashtra</td><td>120</td><td>8</td><td><span class="badge b-green">Active</span></td></tr>
-          <tr><td>#H-02</td><td>AIIMS</td><td>Delhi</td><td>Delhi</td><td>200</td><td>14</td><td><span class="badge b-green">Active</span></td></tr>
-          <tr><td>#H-03</td><td>Apollo Hospital</td><td>Chennai</td><td>Tamil Nadu</td><td>150</td><td>6</td><td><span class="badge b-green">Active</span></td></tr>
-          <tr><td>#H-04</td><td>Manipal Hospital</td><td>Bangalore</td><td>Karnataka</td><td>90</td><td>4</td><td><span class="badge b-green">Active</span></td></tr>
-          <tr><td>#H-05</td><td>Fortis Hospital</td><td>Pune</td><td>Maharashtra</td><td>80</td><td>3</td><td><span class="badge b-amber">Maintenance</span></td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- STAFF -->
-    <div id="apage-staff" class="apage">
-      <div class="phead"><h2>Medical Staff</h2><p>medical_staff table — 312 staff</p></div>
-      <div class="tcard"><table>
-        <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Specialisation</th><th>Hospital</th><th>On-call</th><th>Transplants</th></tr></thead>
-        <tbody>
-          <tr><td>#MS-048</td><td>Dr. Rajesh Mehta</td><td>Surgeon</td><td>Renal</td><td>KEM Mumbai</td><td><span class="badge b-green">Yes</span></td><td>47</td></tr>
-          <tr><td>#MS-047</td><td>Dr. Anita Singh</td><td>Surgeon</td><td>Hepatic</td><td>AIIMS Delhi</td><td><span class="badge b-green">Yes</span></td><td>62</td></tr>
-          <tr><td>#MS-046</td><td>Dr. Suresh Rao</td><td>Cardiologist</td><td>Heart</td><td>Apollo Chennai</td><td><span class="badge b-gray">No</span></td><td>29</td></tr>
-          <tr><td>#MS-045</td><td>Dr. Priya Iyer</td><td>Ophthalmologist</td><td>Corneal</td><td>Fortis Pune</td><td><span class="badge b-green">Yes</span></td><td>84</td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-  </div><!-- /app-content -->
-</div><!-- /app -->
-<script src="app.js"></script>
-</body>
+    <!-- /app -->
+    <script src="/forntend/app.js"></script>
+  </body>
 </html>
