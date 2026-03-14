@@ -1,5 +1,4 @@
 
-// ── LANDING ↔ DASHBOARD ─────────────────
 function enterDashboard(){
   document.getElementById('landing').style.display='none';
   const app=document.getElementById('app');
@@ -11,7 +10,6 @@ function goHome(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── DROPDOWN TOGGLE ─────────────────────
 function toggleDD(id){
   const grp=document.getElementById(id);
   const isOpen=grp.classList.contains('open');
@@ -25,12 +23,11 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('.nav-group')) closeAll();
 });
 
-// ── PAGE NAVIGATION ─────────────────────
 function showPage(id){
   document.querySelectorAll('.apage').forEach(p=>p.classList.remove('active'));
   const el=document.getElementById('apage-'+id);
   if(el) el.classList.add('active');
-  // update direct btn
+
   document.querySelectorAll('.nav-direct-btn').forEach(b=>b.classList.remove('active'));
   if(id==='dashboard') document.getElementById('nav-dash').classList.add('active');
   closeAll();
@@ -40,14 +37,12 @@ function setActiveDirect(btn){
   btn.classList.add('active');
 }
 
-// ── DONOR TYPE TOGGLE ───────────────────
 function toggleDT(){
   const v=document.getElementById('dtype').value;
   document.getElementById('lfield').style.display=v==='living'?'':'none';
   document.getElementById('dfield').style.display=v==='deceased'?'':'none';
 }
 
-// ── FORM SUCCESS ────────────────────────
 function ok(id){
   const el=document.getElementById(id);
   el.style.display='block';

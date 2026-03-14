@@ -9,9 +9,6 @@
 </head>
 <body>
 
-<!-- ══════════════════════════════════════
-     LANDING PAGE
-══════════════════════════════════════ -->
 <div id="landing">
   <nav class="land-nav">
     <div class="land-logo">
@@ -169,10 +166,6 @@
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     DASHBOARD APP
-══════════════════════════════════════ -->
 <div id="app" style="display:none;flex-direction:column;">
 
   <!-- TOP NAVBAR WITH DROPDOWNS -->
@@ -196,12 +189,12 @@
         </button>
         <div class="nav-dropdown">
           <div class="dd-label">Manage</div>
-          <div class="dd-item" onclick="showPage('donor-reg');closeAll()"><div class="dd-icon">📋</div>Register Donor</div>
-          <div class="dd-item" onclick="showPage('donors-list');closeAll()"><div class="dd-icon">👥</div>All Donors</div>
+          <div class="dd-item" onclick="showPage('donor-reg');closeAll()"><div class="dd-icon"></div>Register Donor</div>
+          <div class="dd-item" onclick="showPage('donors-list');closeAll()"><div class="dd-icon"></div>All Donors</div>
           <div class="dd-sep"></div>
           <div class="dd-label">By Type</div>
-          <div class="dd-item" onclick="showPage('donor-living');closeAll()"><div class="dd-icon">🫀</div>Living Donors</div>
-          <div class="dd-item" onclick="showPage('donor-deceased');closeAll()"><div class="dd-icon">🏥</div>Deceased Donors</div>
+          <div class="dd-item" onclick="showPage('donor-living');closeAll()"><div class="dd-icon"></div>Living Donors</div>
+          <div class="dd-item" onclick="showPage('donor-deceased');closeAll()"><div class="dd-icon"></div>Deceased Donors</div>
         </div>
       </div>
 
@@ -212,12 +205,12 @@
         </button>
         <div class="nav-dropdown">
           <div class="dd-label">Manage</div>
-          <div class="dd-item" onclick="showPage('recipient-reg');closeAll()"><div class="dd-icon">📝</div>Add Recipient</div>
-          <div class="dd-item" onclick="showPage('recipients');closeAll()"><div class="dd-icon">🧑‍🤝‍🧑</div>All Recipients</div>
-          <div class="dd-item" onclick="showPage('waitlist');closeAll()"><div class="dd-icon">⏳</div>Waitlist</div>
+          <div class="dd-item" onclick="showPage('recipient-reg');closeAll()"><div class="dd-icon"></div>Add Recipient</div>
+          <div class="dd-item" onclick="showPage('recipients');closeAll()"><div class="dd-icon"></div>All Recipients</div>
+          <div class="dd-item" onclick="showPage('waitlist');closeAll()"><div class="dd-icon"></div>Waitlist</div>
           <div class="dd-sep"></div>
           <div class="dd-label">By Region</div>
-          <div class="dd-item" onclick="showPage('regions');closeAll()"><div class="dd-icon">🗺️</div>North / South / East / West</div>
+          <div class="dd-item" onclick="showPage('regions');closeAll()"><div class="dd-icon"></div>North / South / East / West</div>
         </div>
       </div>
 
@@ -227,9 +220,9 @@
           Organs & Matching <span class="chevron">▾</span>
         </button>
         <div class="nav-dropdown">
-          <div class="dd-item" onclick="showPage('organs');closeAll()"><div class="dd-icon">🫁</div>Organ Inventory</div>
-          <div class="dd-item" onclick="showPage('compatibility');closeAll()"><div class="dd-icon">🧬</div>Compatibility Test</div>
-          <div class="dd-item" onclick="showPage('donation-chain');closeAll()"><div class="dd-icon">🔗</div>Donation Chain</div>
+          <div class="dd-item" onclick="showPage('organs');closeAll()"><div class="dd-icon"></div>Organ Inventory</div>
+          <div class="dd-item" onclick="showPage('compatibility');closeAll()"><div class="dd-icon"></div>Compatibility Test</div>
+          <div class="dd-item" onclick="showPage('donation-chain');closeAll()"><div class="dd-icon"></div>Donation Chain</div>
         </div>
       </div>
 
@@ -239,8 +232,8 @@
           Transplants <span class="chevron">▾</span>
         </button>
         <div class="nav-dropdown">
-          <div class="dd-item" onclick="showPage('transplants');closeAll()"><div class="dd-icon">💉</div>Transplant Records</div>
-          <div class="dd-item" onclick="showPage('transplant-medical');closeAll()"><div class="dd-icon">🩺</div>Medical Details</div>
+          <div class="dd-item" onclick="showPage('transplants');closeAll()"><div class="dd-icon"></div>Transplant Records</div>
+          <div class="dd-item" onclick="showPage('transplant-medical');closeAll()"><div class="dd-icon"></div>Medical Details</div>
         </div>
       </div>
 
@@ -250,8 +243,8 @@
           Infrastructure <span class="chevron">▾</span>
         </button>
         <div class="nav-dropdown">
-          <div class="dd-item" onclick="showPage('hospitals');closeAll()"><div class="dd-icon">🏨</div>Hospitals</div>
-          <div class="dd-item" onclick="showPage('staff');closeAll()"><div class="dd-icon">👨‍⚕️</div>Medical Staff</div>
+          <div class="dd-item" onclick="showPage('hospitals');closeAll()"><div class="dd-icon"></div>Hospitals</div>
+          <div class="dd-item" onclick="showPage('staff');closeAll()"><div class="dd-icon"></div>Medical Staff</div>
         </div>
       </div>
     </div>
@@ -365,7 +358,7 @@
     <!-- ALL DONORS -->
     <div id="apage-donors-list" class="apage">
       <div class="phead"><h2>All Donors</h2><p>donor table — 128 records</p></div>
-      <div class="sbar"><span>🔍</span><input placeholder="Search name, blood group, city…"/></div>
+      <div class="sbar"><span></span><input placeholder="Search name, blood group, city…"/></div>
       <div class="tcard"><table>
         <thead><tr><th>ID</th><th>Name</th><th>Blood</th><th>Type</th><th>City</th><th>Organs</th><th>Status</th></tr></thead>
         <tbody>
@@ -429,7 +422,7 @@
     <!-- ALL RECIPIENTS -->
     <div id="apage-recipients" class="apage">
       <div class="phead"><h2>All Recipients</h2><p>recipient table — 347 records</p></div>
-      <div class="sbar"><span>🔍</span><input placeholder="Search…"/></div>
+      <div class="sbar"><span></span><input placeholder="Search…"/></div>
       <div class="tcard"><table>
         <thead><tr><th>ID</th><th>Name</th><th>Blood</th><th>Organ</th><th>Region</th><th>Urgency</th><th>Wait</th><th>Status</th></tr></thead>
         <tbody>
