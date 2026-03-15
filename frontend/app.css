@@ -217,8 +217,8 @@ body {
   cursor: pointer;
 }
 .social-icon {
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   border: 1.5px solid var(--border);
   display: flex;
@@ -229,7 +229,6 @@ body {
   font-size: 12px;
   font-weight: 700;
 }
-
 /* ═══════════════════════════════════════
    DASHBOARD APP — full height, own scroll
 ═══════════════════════════════════════ */

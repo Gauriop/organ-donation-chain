@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Services — OrganLife</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/services.css" />
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="land-nav">
+      <a class="land-logo" href="/index.html">
+        <div class="land-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              fill="white"
+            />
+          </svg>
+        </div>
+        organlife
+      </a>
+      <ul class="land-nav-links">
+        <li><a href="../index.html">HOME</a></li>
+        <li><a href="/frontend/about.html">ABOUT</a></li>
+        <li><a class="active">SERVICES</a></li>
+        <li><a href="/frontend/hospital.html">HOSPITALS</a></li>
+        <li><a href="/frontend/contact.html">CONTACT</a></li>
+      </ul>
+      <button class="land-search-btn">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="7" stroke="white" stroke-width="2" />
+          <path
+            d="M16.5 16.5L21 21"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+    </nav>
+
+    <!-- HERO BANNER -->
+    <section class="services-hero">
+      <div class="hero-left">
+        <div class="hero-tag"><span class="dot"></span>What We Offer</div>
+        <h1>Our <span>Services</span></h1>
+        <p>
+          From donor registration to post-transplant care — OrganLife provides
+          end-to-end organ donation management services for hospitals, donors,
+          and recipients across India.
+        </p>
+      </div>
+      <div class="hero-right">
+        <div class="hero-stat-grid">
+          <div class="hstat">
+            <div class="hstat-num">8<span>+</span></div>
+            <div class="hstat-lbl">Core Services</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-num">24<span>/7</span></div>
+            <div class="hstat-lbl">Emergency Support</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-num">18</div>
+            <div class="hstat-lbl">DB Tables Managed</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-num">4</div>
+            <div class="hstat-lbl">Regions Covered</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE SERVICES -->
+    <section class="section">
+      <div class="section-tag">Core Services</div>
+      <h2 class="section-title">Everything You Need</h2>
+      <p class="section-sub">
+        A complete suite of tools built around your PostgreSQL database —
+        managing the full organ donation lifecycle.
+      </p>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon" style="background: #fdf0f2">🫀</div>
+          <h3>Donor Registration</h3>
+          <p>
+            Register living and deceased donors with full medical profiles —
+            blood group, HLA type, organ preferences, and next-of-kin details.
+            Data flows directly into the <code>donor</code>,
+            <code>donor_living</code>, and <code>donor_deceased</code> tables.
+          </p>
+          <div class="service-tags">
+            <span class="stag">donor table</span>
+            <span class="stag">donor_living</span>
+            <span class="stag">donor_deceased</span>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background: #eff6ff">🧑‍🤝‍🧑</div>
+          <h3>Recipient Management</h3>
+          <p>
+            Add and manage organ recipients with urgency levels, blood groups,
+            and regional assignments. Supports north, south, east, and west
+            region databases with priority-based waitlist management.
+          </p>
+          <div class="service-tags">
+            <span class="stag">recipient</span>
+            <span class="stag">recipient_north/south/east/west</span>
+            <span class="stag">waitlist</span>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background: #ecfdf5">🧬</div>
+          <h3>Compatibility Testing</h3>
+          <p>
+            Run cross-match and HLA typing tests between donors and recipients.
+            Our system scores compatibility and flags borderline or incompatible
+            pairs, reducing surgical risk and improving transplant success
+            rates.
+          </p>
+          <div class="service-tags">
+            <span class="stag">compatibility_test</span>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background: #fdf0f2">🔗</div>
+          <h3>Donation Chain Coordination</h3>
+          <p>
+            Build and manage multi-donor organ chains — linking living donors,
+            hospitals, and recipients in sequence. Each link is tracked in real
+            time ensuring no organ is wasted and chains complete successfully.
+          </p>
+          <div class="service-tags">
+            <span class="stag">donation_chain</span>
+            <span class="stag">chain_link</span>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background: #fffbeb">🫁</div>
+          <h3>Organ Inventory Tracking</h3>
+          <p>
+            Real-time tracking of harvested organs — type, viability window,
+            transport status, and hospital location. Critical for time-sensitive
+            organs like hearts (4hr window) and livers (12hr window).
+          </p>
+          <div class="service-tags">
+            <span class="stag">organ table</span>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background: #ecfdf5">💉</div>
+          <h3>Transplant Records</h3>
+          <p>
+            Full end-to-end transplant documentation — linking donor, recipient,
+            organ, surgeon, and hospital. Post-operative details including
+            immunosuppressant regimens, blood loss, duration, and follow-up
+            dates are tracked separately.
+          </p>
+          <div class="service-tags">
+            <span class="stag">transplant_record</span>
+            <span class="stag">transplant_medical</span>
+            <span class="stag">transplant_details</span>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background: #eff6ff">🏨</div>
+          <h3>Hospital Network</h3>
+          <p>
+            Manage your partner hospital network — capacity, active operations,
+            state coverage, and geographic coordinates. Connect hospitals to
+            donors, recipients, and surgical staff for seamless coordination.
+          </p>
+          <div class="service-tags">
+            <span class="stag">hospital table</span>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background: #fdf0f2">👨‍⚕️</div>
+          <h3>Medical Staff Directory</h3>
+          <p>
+            Maintain a complete directory of surgeons, cardiologists,
+            nephrologists, and support staff. Track specialisations, on-call
+            availability, transplant counts, and hospital assignments.
+          </p>
+          <div class="service-tags">
+            <span class="stag">medical_staff table</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW WE WORK -->
+    <section class="process-section">
+      <div
+        class="section-tag"
+        style="
+          background: rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.75);
+        "
+      >
+        Our Process
+      </div>
+      <h2 class="section-title" style="color: white">
+        How Our Services Work Together
+      </h2>
+      <p class="section-sub" style="color: rgba(255, 255, 255, 0.5)">
+        Every service connects to create a seamless organ donation pipeline from
+        registration to recovery.
+      </p>
+
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="pstep-num">01</div>
+          <div class="pstep-icon">📋</div>
+          <h4>Register</h4>
+          <p>
+            Donor and recipient data is captured and stored across the relevant
+            database tables with full medical profiles.
+          </p>
+        </div>
+        <div class="process-arrow">→</div>
+        <div class="process-step">
+          <div class="pstep-num">02</div>
+          <div class="pstep-icon">🧬</div>
+          <h4>Match</h4>
+          <p>
+            Compatibility tests run automatically to find the highest-scoring
+            donor-recipient pair from the waitlist.
+          </p>
+        </div>
+        <div class="process-arrow">→</div>
+        <div class="process-step">
+          <div class="pstep-num">03</div>
+          <div class="pstep-icon">🔗</div>
+          <h4>Chain</h4>
+          <p>
+            Donation chains are formed, organs are routed through partner
+            hospitals with real-time viability tracking.
+          </p>
+        </div>
+        <div class="process-arrow">→</div>
+        <div class="process-step">
+          <div class="pstep-num">04</div>
+          <div class="pstep-icon">💉</div>
+          <h4>Transplant</h4>
+          <p>
+            Surgery is performed and all post-operative data — drugs,
+            follow-ups, outcomes — are recorded immediately.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICE HIGHLIGHTS -->
+    <section class="section" style="background: var(--light)">
+      <div class="section-tag">Why Choose Us</div>
+      <h2 class="section-title">Service Highlights</h2>
+      <p class="section-sub">
+        Built specifically for organ donation management — not a generic
+        platform.
+      </p>
+
+      <div class="highlights-grid">
+        <div class="highlight-card">
+          <div class="h-icon">⚡</div>
+          <h4>Real-Time Matching</h4>
+          <p>
+            Organ viability windows are measured in hours. Our matching system
+            prioritises urgency and compatibility simultaneously.
+          </p>
+        </div>
+        <div class="highlight-card">
+          <div class="h-icon">🔒</div>
+          <h4>Secure Data Storage</h4>
+          <p>
+            All donor and recipient data is stored in a PostgreSQL database with
+            proper relational integrity across 18 tables.
+          </p>
+        </div>
+        <div class="highlight-card">
+          <div class="h-icon">🗺️</div>
+          <h4>Regional Coverage</h4>
+          <p>
+            North, South, East, and West recipient databases ensure organs are
+            matched within viable transport distances.
+          </p>
+        </div>
+        <div class="highlight-card">
+          <div class="h-icon">📊</div>
+          <h4>Live Dashboard</h4>
+          <p>
+            Full admin dashboard with real-time stats on donors, recipients,
+            transplants, waitlist, and donation chains.
+          </p>
+        </div>
+        <div class="highlight-card">
+          <div class="h-icon">🏥</div>
+          <h4>Hospital Integration</h4>
+          <p>
+            Partner hospitals are directly linked to donors, organs, surgeons,
+            and transplant records for full traceability.
+          </p>
+        </div>
+        <div class="highlight-card">
+          <div class="h-icon">📋</div>
+          <h4>Compliance Ready</h4>
+          <p>
+            Every transplant generates a complete audit trail across medical,
+            surgical, and administrative records.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <h2>Ready to Save Lives?</h2>
+      <p>
+        Join the OrganLife network — register your hospital, enrol donors, or
+        request an organ today.
+      </p>
+      <div class="cta-btns">
+        <a href="/index.html" class="cta-btn-primary">Enter Dashboard →</a>
+        <a href="/frontend/contact.html" class="cta-btn-outline">Contact Us</a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="services-footer">
+      <div class="footer-logo">Organ<span>Life</span></div>
+      <div class="footer-copy">
+        © 2026 OrganLife. Saving lives, one donor at a time.
+      </div>
+      <div class="footer-socials">
+        <div class="fsoc">f</div>
+        <div class="fsoc">t</div>
+        <div class="fsoc">in</div>
+      </div>
+    </footer>
+  </body>
+</html>

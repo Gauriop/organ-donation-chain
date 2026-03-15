@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Contact — OrganLife</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="contact.css" />
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="land-nav">
+      <a class="land-logo" href="/index.html">
+        <div class="land-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              fill="white"
+            />
+          </svg>
+        </div>
+        organlife
+      </a>
+      <ul class="land-nav-links">
+        <li><a href="/index.html">HOME</a></li>
+        <li><a href="/frontend/about.html">ABOUT</a></li>
+        <li><a href="/frontend/services.html">SERVICES</a></li>
+        <li><a href="/frontend/hospital.html">HOSPITALS</a></li>
+        <li><a class="active">CONTACT</a></li>
+      </ul>
+      <button class="land-search-btn">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="7" stroke="white" stroke-width="2" />
+          <path
+            d="M16.5 16.5L21 21"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="contact-hero">
+      <div class="hero-tag"><span class="dot"></span>Get in Touch</div>
+      <h1>Contact <span>Us</span></h1>
+      <p>
+        Whether you're a hospital looking to partner, a donor with questions, or
+        a patient seeking support — we're here 24×7.
+      </p>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <section class="contact-main">
+      <div class="contact-grid">
+        <!-- LEFT — INFO -->
+        <div class="contact-info">
+          <div class="info-card">
+            <div class="info-icon">📍</div>
+            <div>
+              <h4>Head Office</h4>
+              <p>
+                OrganLife Foundation, 4th Floor,<br />Medicity Tower, Bandra
+                Kurla Complex,<br />Mumbai, Maharashtra 400051
+              </p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">📞</div>
+            <div>
+              <h4>Phone</h4>
+              <p>+91 22 4567 8900 <span class="info-tag">General</span></p>
+              <p style="margin-top: 6px">
+                +91 22 4567 8911 <span class="info-tag urgent">Emergency</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">📧</div>
+            <div>
+              <h4>Email</h4>
+              <p>info@organlife.in</p>
+              <p style="margin-top: 6px">
+                hospitals@organlife.in
+                <span class="info-tag">Partnerships</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">🕐</div>
+            <div>
+              <h4>Availability</h4>
+              <p>Emergency Coordination: <b>24 × 7</b></p>
+              <p style="margin-top: 4px">
+                Admin & Partnerships: <b>Mon–Sat, 9 AM – 6 PM IST</b>
+              </p>
+            </div>
+          </div>
+
+          <!-- REGIONAL OFFICES -->
+          <div class="regional-section">
+            <div class="section-tag">Regional Offices</div>
+            <div class="regional-grid">
+              <div class="reg-card">
+                <div class="reg-region north-tag">North</div>
+                <div class="reg-name">Delhi NCR Office</div>
+                <div class="reg-info">011-4567-8902</div>
+              </div>
+              <div class="reg-card">
+                <div class="reg-region south-tag">South</div>
+                <div class="reg-name">Chennai Office</div>
+                <div class="reg-info">044-4567-8903</div>
+              </div>
+              <div class="reg-card">
+                <div class="reg-region east-tag">East</div>
+                <div class="reg-name">Kolkata Office</div>
+                <div class="reg-info">033-4567-8904</div>
+              </div>
+              <div class="reg-card">
+                <div class="reg-region west-tag">West</div>
+                <div class="reg-name">Mumbai HQ</div>
+                <div class="reg-info">022-4567-8900</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT — FORM -->
+        <div class="contact-form-wrap">
+          <h3>Send us a Message</h3>
+          <p class="form-sub">We'll get back to you within 24 hours.</p>
+
+          <div class="cf-grid">
+            <div class="cf-group">
+              <label>First Name</label>
+              <input id="fname" type="text" placeholder="Rahul" />
+            </div>
+            <div class="cf-group">
+              <label>Last Name</label>
+              <input id="lname" type="text" placeholder="Sharma" />
+            </div>
+            <div class="cf-group full">
+              <label>Email Address</label>
+              <input id="email" type="email" placeholder="rahul@email.com" />
+            </div>
+            <div class="cf-group full">
+              <label>Phone Number</label>
+              <input id="phone" type="tel" placeholder="+91 98765 43210" />
+            </div>
+            <div class="cf-group full">
+              <label>Subject</label>
+              <select id="subject">
+                <option value="">Select a subject</option>
+                <option>General Enquiry</option>
+                <option>Hospital Partnership</option>
+                <option>Donor Registration Help</option>
+                <option>Recipient / Patient Support</option>
+                <option>Emergency Coordination</option>
+                <option>Media / Press</option>
+                <option>Technical Support</option>
+              </select>
+            </div>
+            <div class="cf-group full">
+              <label>Message</label>
+              <textarea
+                id="message"
+                placeholder="How can we help you?"
+              ></textarea>
+            </div>
+          </div>
+
+          <button class="submit-btn" onclick="sendMessage()">
+            Send Message →
+          </button>
+          <div class="success-msg" id="success-msg">
+            ✓ Message sent! We'll get back to you within 24 hours.
+          </div>
+          <div class="error-msg" id="error-msg">
+            ⚠ Please fill in all required fields.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+
+      <div class="faq-grid">
+        <div class="faq-card">
+          <h4>How do I register as an organ donor?</h4>
+          <p>
+            Go to the dashboard and click "Register Donor" under the Donors
+            menu. Fill in your medical details, blood group, and select which
+            organs you wish to pledge.
+          </p>
+        </div>
+        <div class="faq-card">
+          <h4>How does the compatibility test work?</h4>
+          <p>
+            Our system performs cross-match and HLA typing analysis between
+            donors and recipients. A score above 80% is considered highly
+            compatible.
+          </p>
+        </div>
+        <div class="faq-card">
+          <h4>Can my hospital join the OrganLife network?</h4>
+          <p>
+            Yes! Email us at hospitals@organlife.in or use the contact form with
+            subject "Hospital Partnership". We'll onboard your team within 5
+            working days.
+          </p>
+        </div>
+        <div class="faq-card">
+          <h4>What is a donation chain?</h4>
+          <p>
+            A donation chain links multiple donor-recipient pairs in sequence —
+            allowing living donors to trigger a cascade of transplants across
+            different hospitals.
+          </p>
+        </div>
+        <div class="faq-card">
+          <h4>Is my data secure?</h4>
+          <p>
+            All data is stored in a secure PostgreSQL database with proper
+            access controls. Patient and donor records are only accessible to
+            authorised medical staff.
+          </p>
+        </div>
+        <div class="faq-card">
+          <h4>How do I request an organ for a patient?</h4>
+          <p>
+            Use the "Request Organ" form in the Recipients section of the
+            dashboard. Include the patient's blood group, organ needed, urgency
+            level, and hospital details.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="footer-logo">Organ<span>Life</span></div>
+      <div class="footer-copy">
+        © 2026 OrganLife. Saving lives, one donor at a time.
+      </div>
+      <div class="footer-socials">
+        <div class="fsoc">f</div>
+        <div class="fsoc">t</div>
+        <div class="fsoc">in</div>
+      </div>
+    </footer>
+
+    <script>
+      function sendMessage() {
+        const fname = document.getElementById("fname").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const subject = document.getElementById("subject").value;
+        const message = document.getElementById("message").value.trim();
+        const errEl = document.getElementById("error-msg");
+        const okEl = document.getElementById("success-msg");
+
+        errEl.style.display = "none";
+        okEl.style.display = "none";
+
+        if (!fname || !email || !subject || !message) {
+          errEl.style.display = "block";
+          setTimeout(() => (errEl.style.display = "none"), 4000);
+          return;
+        }
+
+        const btn = document.querySelector(".submit-btn");
+        btn.textContent = "Sending…";
+        btn.disabled = true;
+
+        setTimeout(() => {
+          btn.textContent = "Send Message →";
+          btn.disabled = false;
+          okEl.style.display = "block";
+          // clear form
+          ["fname", "lname", "email", "phone", "message"].forEach(
+            (id) => (document.getElementById(id).value = ""),
+          );
+          document.getElementById("subject").value = "";
+          setTimeout(() => (okEl.style.display = "none"), 5000);
+        }, 1200);
+      }
+    </script>
+  </body>
+</html>
