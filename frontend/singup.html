@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Sign Up — OrganLife</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="signup.css" />
+  </head>
+  <body>
+    <div class="page">
+      <!-- LEFT -->
+      <div class="left">
+        <a href="../index.html" class="left-logo">
+          <div class="logo-icon">O+</div>
+          <span class="logo-text">OrganLife</span>
+        </a>
+
+        <div class="left-steps">
+          <h2>Join the <span>Network</span><br />that Saves Lives</h2>
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-info">
+              <h4>Create your account</h4>
+              <p>
+                Choose your role — Admin, Hospital Coordinator, or Medical
+                Staff.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-info">
+              <h4>Access the dashboard</h4>
+              <p>
+                Manage donors, recipients, organs, and transplant records in
+                real time.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-info">
+              <h4>Make an impact</h4>
+              <p>
+                Every action on this platform has the potential to save a life.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="left-note">
+          <strong>🔒 Secure Access</strong><br />
+          All accounts are role-based with PostgreSQL row-level security. Your
+          data is protected by the same access controls used in clinical
+          environments.
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right">
+        <div class="form-box">
+          <div class="greeting">GET STARTED</div>
+          <h2>Create your account</h2>
+
+          <!-- ROLE -->
+          <div class="role-tabs">
+            <div class="role-tab active" onclick="selectRole(this, 'admin')">
+              <div class="r-icon">🛡️</div>
+              <div class="r-lbl">Admin</div>
+            </div>
+            <div class="role-tab" onclick="selectRole(this, 'coordinator')">
+              <div class="r-icon">🏥</div>
+              <div class="r-lbl">Coordinator</div>
+            </div>
+            <div class="role-tab" onclick="selectRole(this, 'doctor')">
+              <div class="r-icon">👨‍⚕️</div>
+              <div class="r-lbl">Medical Staff</div>
+            </div>
+          </div>
+
+          <div class="alert-err" id="signup-err">
+            ⚠ Please fill all required fields.
+          </div>
+          <div class="alert-ok" id="signup-ok">
+            ✓ Account created! Redirecting to login...
+          </div>
+
+          <!-- PERSONAL INFO -->
+          <div class="section-label">Personal Information</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>First Name *</label>
+              <input id="s-fname" placeholder="Rahul" />
+            </div>
+            <div class="field">
+              <label>Last Name *</label>
+              <input id="s-lname" placeholder="Sharma" />
+            </div>
+            <div class="field full">
+              <label>Email Address *</label>
+              <input
+                id="s-email"
+                type="email"
+                placeholder="rahul@organlife.in"
+              />
+            </div>
+            <div class="field full">
+              <label>Phone Number *</label>
+              <input id="s-phone" type="tel" placeholder="+91 98765 43210" />
+            </div>
+          </div>
+
+          <!-- PROFESSIONAL INFO -->
+          <div class="section-label" id="prof-section">
+            Professional Details
+          </div>
+          <div class="form-grid" id="prof-fields">
+            <div class="field full">
+              <label>Hospital / Institution</label>
+              <input id="s-hospital" placeholder="KEM Hospital Mumbai" />
+            </div>
+            <div class="field full" id="license-field">
+              <label>License Number</label>
+              <input id="s-license" placeholder="MED-2024-001" />
+            </div>
+          </div>
+
+          <!-- ACCOUNT CREDENTIALS -->
+          <div class="section-label">Account Credentials</div>
+          <div class="form-grid">
+            <div class="field full">
+              <label>Username *</label>
+              <input id="s-username" placeholder="rahul_kem" />
+            </div>
+            <div class="field full">
+              <label>Password *</label>
+              <input
+                id="s-pass1"
+                type="password"
+                placeholder="Min. 8 characters"
+                oninput="checkStrength(this.value)"
+              />
+              <div class="password-strength">
+                <div class="strength-bar" id="strength-bar"></div>
+              </div>
+              <div class="strength-label" id="strength-label"></div>
+            </div>
+            <div class="field full">
+              <label>Confirm Password *</label>
+              <input
+                id="s-pass2"
+                type="password"
+                placeholder="Re-enter password"
+              />
+            </div>
+          </div>
+
+          <label class="terms">
+            <input type="checkbox" id="terms-check" />
+            I agree to the <a href="#">Terms of Service</a> and
+            <a href="#">Privacy Policy</a>. I understand this account will be
+            used to access sensitive medical data.
+          </label>
+
+          <button class="btn-signup" onclick="doSignup()">
+            Create Account →
+          </button>
+
+          <div class="login-cta">
+            Already have an account?
+            <a href="/frontend/login.html">Sign in →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="signup.js">
+      s
+    </script>
+  </body>
+</html>

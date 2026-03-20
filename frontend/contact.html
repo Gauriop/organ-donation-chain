@@ -59,7 +59,7 @@
       <div class="contact-grid">
         <!-- LEFT — INFO -->
         <div class="contact-info">
-          <div class="info-card">
+          <div class="info-card fade-in d1">
             <div class="info-icon">📍</div>
             <div>
               <h4>Head Office</h4>
@@ -70,7 +70,7 @@
             </div>
           </div>
 
-          <div class="info-card">
+          <div class="info-card fade-in d2">
             <div class="info-icon">📞</div>
             <div>
               <h4>Phone</h4>
@@ -81,7 +81,7 @@
             </div>
           </div>
 
-          <div class="info-card">
+          <div class="info-card fade-in d3">
             <div class="info-icon">📧</div>
             <div>
               <h4>Email</h4>
@@ -93,7 +93,7 @@
             </div>
           </div>
 
-          <div class="info-card">
+          <div class="info-card fade-in d4">
             <div class="info-icon">🕐</div>
             <div>
               <h4>Availability</h4>
@@ -104,8 +104,7 @@
             </div>
           </div>
 
-          <!-- REGIONAL OFFICES -->
-          <div class="regional-section">
+          <div class="regional-section fade-in">
             <div class="section-tag">Regional Offices</div>
             <div class="regional-grid">
               <div class="reg-card">
@@ -133,26 +132,26 @@
         </div>
 
         <!-- RIGHT — FORM -->
-        <div class="contact-form-wrap">
+        <div class="contact-form-wrap fade-in d2">
           <h3>Send us a Message</h3>
           <p class="form-sub">We'll get back to you within 24 hours.</p>
 
           <div class="cf-grid">
             <div class="cf-group">
-              <label>First Name</label>
-              <input id="fname" type="text" placeholder="Rahul" />
+              <label>First Name</label
+              ><input id="fname" type="text" placeholder="Rahul" />
             </div>
             <div class="cf-group">
-              <label>Last Name</label>
-              <input id="lname" type="text" placeholder="Sharma" />
+              <label>Last Name</label
+              ><input id="lname" type="text" placeholder="Sharma" />
             </div>
             <div class="cf-group full">
-              <label>Email Address</label>
-              <input id="email" type="email" placeholder="rahul@email.com" />
+              <label>Email Address</label
+              ><input id="email" type="email" placeholder="rahul@email.com" />
             </div>
             <div class="cf-group full">
-              <label>Phone Number</label>
-              <input id="phone" type="tel" placeholder="+91 98765 43210" />
+              <label>Phone Number</label
+              ><input id="phone" type="tel" placeholder="+91 98765 43210" />
             </div>
             <div class="cf-group full">
               <label>Subject</label>
@@ -168,8 +167,8 @@
               </select>
             </div>
             <div class="cf-group full">
-              <label>Message</label>
-              <textarea
+              <label>Message</label
+              ><textarea
                 id="message"
                 placeholder="How can we help you?"
               ></textarea>
@@ -193,9 +192,8 @@
     <section class="faq-section">
       <div class="section-tag">FAQ</div>
       <h2 class="section-title">Frequently Asked Questions</h2>
-
       <div class="faq-grid">
-        <div class="faq-card">
+        <div class="faq-card fade-in d1">
           <h4>How do I register as an organ donor?</h4>
           <p>
             Go to the dashboard and click "Register Donor" under the Donors
@@ -203,7 +201,7 @@
             organs you wish to pledge.
           </p>
         </div>
-        <div class="faq-card">
+        <div class="faq-card fade-in d2">
           <h4>How does the compatibility test work?</h4>
           <p>
             Our system performs cross-match and HLA typing analysis between
@@ -211,7 +209,7 @@
             compatible.
           </p>
         </div>
-        <div class="faq-card">
+        <div class="faq-card fade-in d1">
           <h4>Can my hospital join the OrganLife network?</h4>
           <p>
             Yes! Email us at hospitals@organlife.in or use the contact form with
@@ -219,7 +217,7 @@
             working days.
           </p>
         </div>
-        <div class="faq-card">
+        <div class="faq-card fade-in d2">
           <h4>What is a donation chain?</h4>
           <p>
             A donation chain links multiple donor-recipient pairs in sequence —
@@ -227,7 +225,7 @@
             different hospitals.
           </p>
         </div>
-        <div class="faq-card">
+        <div class="faq-card fade-in d3">
           <h4>Is my data secure?</h4>
           <p>
             All data is stored in a secure PostgreSQL database with proper
@@ -235,7 +233,7 @@
             authorised medical staff.
           </p>
         </div>
-        <div class="faq-card">
+        <div class="faq-card fade-in d4">
           <h4>How do I request an organ for a patient?</h4>
           <p>
             Use the "Request Organ" form in the Recipients section of the
@@ -259,40 +257,6 @@
       </div>
     </footer>
 
-    <script>
-      function sendMessage() {
-        const fname = document.getElementById("fname").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const subject = document.getElementById("subject").value;
-        const message = document.getElementById("message").value.trim();
-        const errEl = document.getElementById("error-msg");
-        const okEl = document.getElementById("success-msg");
-
-        errEl.style.display = "none";
-        okEl.style.display = "none";
-
-        if (!fname || !email || !subject || !message) {
-          errEl.style.display = "block";
-          setTimeout(() => (errEl.style.display = "none"), 4000);
-          return;
-        }
-
-        const btn = document.querySelector(".submit-btn");
-        btn.textContent = "Sending…";
-        btn.disabled = true;
-
-        setTimeout(() => {
-          btn.textContent = "Send Message →";
-          btn.disabled = false;
-          okEl.style.display = "block";
-          // clear form
-          ["fname", "lname", "email", "phone", "message"].forEach(
-            (id) => (document.getElementById(id).value = ""),
-          );
-          document.getElementById("subject").value = "";
-          setTimeout(() => (okEl.style.display = "none"), 5000);
-        }, 1200);
-      }
-    </script>
+    <script src="contact.js"></script>
   </body>
 </html>

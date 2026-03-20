@@ -418,3 +418,72 @@ body {
   border-color: var(--red);
   color: white;
 }
+.fade-in {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: none;
+}
+.d1 {
+  transition-delay: 0.06s;
+}
+.d2 {
+  transition-delay: 0.12s;
+}
+.d3 {
+  transition-delay: 0.18s;
+}
+.d4 {
+  transition-delay: 0.24s;
+}
+.d5 {
+  transition-delay: 0.3s;
+}
+.d6 {
+  transition-delay: 0.36s;
+}
+.land-nav.scrolled {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.09);
+}
+/* hero elements animate on load */
+.page-hero > div > *,
+.page-hero .hstat {
+  animation: heroFade 0.65s ease both;
+}
+.page-hero h1 {
+  animation-delay: 0.1s;
+}
+.page-hero p {
+  animation-delay: 0.2s;
+}
+.page-hero .hstat:nth-child(1) {
+  animation-delay: 0.25s;
+}
+.page-hero .hstat:nth-child(2) {
+  animation-delay: 0.33s;
+}
+.page-hero .hstat:nth-child(3) {
+  animation-delay: 0.41s;
+}
+.page-hero .hstat:nth-child(4) {
+  animation-delay: 0.49s;
+}
+@keyframes heroFade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* counter number style */
+[data-count] {
+  font-variant-numeric: tabular-nums;
+}

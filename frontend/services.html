@@ -8,7 +8,7 @@
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/frontend/services.css" />
+    <link rel="stylesheet" href="services.css" />
   </head>
   <body>
     <!-- NAV -->
@@ -25,7 +25,7 @@
         organlife
       </a>
       <ul class="land-nav-links">
-        <li><a href="../index.html">HOME</a></li>
+        <li><a href="/index.html">HOME</a></li>
         <li><a href="/frontend/about.html">ABOUT</a></li>
         <li><a class="active">SERVICES</a></li>
         <li><a href="/frontend/hospital.html">HOSPITALS</a></li>
@@ -58,19 +58,23 @@
       <div class="hero-right">
         <div class="hero-stat-grid">
           <div class="hstat">
-            <div class="hstat-num">8<span>+</span></div>
+            <div class="hstat-num">
+              <span data-count="8" data-suffix="+">8+</span>
+            </div>
             <div class="hstat-lbl">Core Services</div>
           </div>
           <div class="hstat">
-            <div class="hstat-num">24<span>/7</span></div>
+            <div class="hstat-num">
+              <span data-count="24" data-suffix="/7">24/7</span>
+            </div>
             <div class="hstat-lbl">Emergency Support</div>
           </div>
           <div class="hstat">
-            <div class="hstat-num">18</div>
+            <div class="hstat-num"><span data-count="18">18</span></div>
             <div class="hstat-lbl">DB Tables Managed</div>
           </div>
           <div class="hstat">
-            <div class="hstat-num">4</div>
+            <div class="hstat-num"><span data-count="4">4</span></div>
             <div class="hstat-lbl">Regions Covered</div>
           </div>
         </div>
@@ -87,7 +91,7 @@
       </p>
 
       <div class="services-grid">
-        <div class="service-card">
+        <div class="service-card fade-in d1">
           <div class="service-icon" style="background: #fdf0f2">🫀</div>
           <h3>Donor Registration</h3>
           <p>
@@ -97,13 +101,13 @@
             <code>donor_living</code>, and <code>donor_deceased</code> tables.
           </p>
           <div class="service-tags">
-            <span class="stag">donor table</span>
-            <span class="stag">donor_living</span>
-            <span class="stag">donor_deceased</span>
+            <span class="stag">donor table</span
+            ><span class="stag">donor_living</span
+            ><span class="stag">donor_deceased</span>
           </div>
         </div>
 
-        <div class="service-card">
+        <div class="service-card fade-in d2">
           <div class="service-icon" style="background: #eff6ff">🧑‍🤝‍🧑</div>
           <h3>Recipient Management</h3>
           <p>
@@ -112,13 +116,13 @@
             region databases with priority-based waitlist management.
           </p>
           <div class="service-tags">
-            <span class="stag">recipient</span>
-            <span class="stag">recipient_north/south/east/west</span>
-            <span class="stag">waitlist</span>
+            <span class="stag">recipient</span
+            ><span class="stag">recipient_north/south/east/west</span
+            ><span class="stag">waitlist</span>
           </div>
         </div>
 
-        <div class="service-card">
+        <div class="service-card fade-in d3">
           <div class="service-icon" style="background: #ecfdf5">🧬</div>
           <h3>Compatibility Testing</h3>
           <p>
@@ -132,7 +136,7 @@
           </div>
         </div>
 
-        <div class="service-card">
+        <div class="service-card fade-in d1">
           <div class="service-icon" style="background: #fdf0f2">🔗</div>
           <h3>Donation Chain Coordination</h3>
           <p>
@@ -141,12 +145,12 @@
             time ensuring no organ is wasted and chains complete successfully.
           </p>
           <div class="service-tags">
-            <span class="stag">donation_chain</span>
-            <span class="stag">chain_link</span>
+            <span class="stag">donation_chain</span
+            ><span class="stag">chain_link</span>
           </div>
         </div>
 
-        <div class="service-card">
+        <div class="service-card fade-in d2">
           <div class="service-icon" style="background: #fffbeb">🫁</div>
           <h3>Organ Inventory Tracking</h3>
           <p>
@@ -154,12 +158,10 @@
             transport status, and hospital location. Critical for time-sensitive
             organs like hearts (4hr window) and livers (12hr window).
           </p>
-          <div class="service-tags">
-            <span class="stag">organ table</span>
-          </div>
+          <div class="service-tags"><span class="stag">organ table</span></div>
         </div>
 
-        <div class="service-card">
+        <div class="service-card fade-in d3">
           <div class="service-icon" style="background: #ecfdf5">💉</div>
           <h3>Transplant Records</h3>
           <p>
@@ -169,13 +171,13 @@
             dates are tracked separately.
           </p>
           <div class="service-tags">
-            <span class="stag">transplant_record</span>
-            <span class="stag">transplant_medical</span>
-            <span class="stag">transplant_details</span>
+            <span class="stag">transplant_record</span
+            ><span class="stag">transplant_medical</span
+            ><span class="stag">transplant_details</span>
           </div>
         </div>
 
-        <div class="service-card">
+        <div class="service-card fade-in d1">
           <div class="service-icon" style="background: #eff6ff">🏨</div>
           <h3>Hospital Network</h3>
           <p>
@@ -188,7 +190,7 @@
           </div>
         </div>
 
-        <div class="service-card">
+        <div class="service-card fade-in d2">
           <div class="service-icon" style="background: #fdf0f2">👨‍⚕️</div>
           <h3>Medical Staff Directory</h3>
           <p>
@@ -223,7 +225,7 @@
       </p>
 
       <div class="process-steps">
-        <div class="process-step">
+        <div class="process-step fade-in d1">
           <div class="pstep-num">01</div>
           <div class="pstep-icon">📋</div>
           <h4>Register</h4>
@@ -233,7 +235,7 @@
           </p>
         </div>
         <div class="process-arrow">→</div>
-        <div class="process-step">
+        <div class="process-step fade-in d2">
           <div class="pstep-num">02</div>
           <div class="pstep-icon">🧬</div>
           <h4>Match</h4>
@@ -243,7 +245,7 @@
           </p>
         </div>
         <div class="process-arrow">→</div>
-        <div class="process-step">
+        <div class="process-step fade-in d3">
           <div class="pstep-num">03</div>
           <div class="pstep-icon">🔗</div>
           <h4>Chain</h4>
@@ -253,7 +255,7 @@
           </p>
         </div>
         <div class="process-arrow">→</div>
-        <div class="process-step">
+        <div class="process-step fade-in d4">
           <div class="pstep-num">04</div>
           <div class="pstep-icon">💉</div>
           <h4>Transplant</h4>
@@ -275,7 +277,7 @@
       </p>
 
       <div class="highlights-grid">
-        <div class="highlight-card">
+        <div class="highlight-card fade-in d1">
           <div class="h-icon">⚡</div>
           <h4>Real-Time Matching</h4>
           <p>
@@ -283,7 +285,7 @@
             prioritises urgency and compatibility simultaneously.
           </p>
         </div>
-        <div class="highlight-card">
+        <div class="highlight-card fade-in d2">
           <div class="h-icon">🔒</div>
           <h4>Secure Data Storage</h4>
           <p>
@@ -291,7 +293,7 @@
             proper relational integrity across 18 tables.
           </p>
         </div>
-        <div class="highlight-card">
+        <div class="highlight-card fade-in d3">
           <div class="h-icon">🗺️</div>
           <h4>Regional Coverage</h4>
           <p>
@@ -299,7 +301,7 @@
             matched within viable transport distances.
           </p>
         </div>
-        <div class="highlight-card">
+        <div class="highlight-card fade-in d1">
           <div class="h-icon">📊</div>
           <h4>Live Dashboard</h4>
           <p>
@@ -307,7 +309,7 @@
             transplants, waitlist, and donation chains.
           </p>
         </div>
-        <div class="highlight-card">
+        <div class="highlight-card fade-in d2">
           <div class="h-icon">🏥</div>
           <h4>Hospital Integration</h4>
           <p>
@@ -315,7 +317,7 @@
             and transplant records for full traceability.
           </p>
         </div>
-        <div class="highlight-card">
+        <div class="highlight-card fade-in d3">
           <div class="h-icon">📋</div>
           <h4>Compliance Ready</h4>
           <p>
@@ -351,5 +353,7 @@
         <div class="fsoc">in</div>
       </div>
     </footer>
+
+    <script src="services.js"></script>
   </body>
 </html>
