@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/frontend/app.css" />
   </head>
   <body>
+    <!-- ══════════════ LANDING ══════════════ -->
     <div id="landing">
       <nav class="land-nav">
         <div class="land-logo">
@@ -45,9 +46,7 @@
       </nav>
 
       <div class="land-hero">
-        <div class="logo">
-          <img src="/images/logo.jpeg" alt="Logo" />
-        </div>
+        <div class="logo"><img src="/images/logo.jpeg" alt="Logo" /></div>
         <div class="hero-content">
           <h1>Organ Donation Chain</h1>
           <p>
@@ -98,7 +97,9 @@
         <a href="/frontend/contact.html" class="social-icon">Contacts</a>
       </div>
     </div>
+    <!-- /landing -->
 
+    <!-- ══════════════ DASHBOARD APP ══════════════ -->
     <div id="app" style="display: none; flex-direction: column">
       <nav class="app-nav">
         <div
@@ -355,7 +356,7 @@
       </nav>
 
       <div class="app-content">
-        <!-- DASHBOARD -->
+        <!-- ── DASHBOARD ── -->
         <div id="apage-dashboard" class="apage active">
           <div class="phead">
             <h2>Dashboard</h2>
@@ -364,23 +365,23 @@
           <div class="stat-row">
             <div class="stat-card">
               <div class="s-label">Total Donors</div>
-              <div class="s-num s-red">128</div>
-              <div class="s-sub">↑ 12 this month</div>
+              <div class="s-num s-red" id="dash-donors">—</div>
+              <div class="s-sub">Registered donors</div>
             </div>
             <div class="stat-card">
               <div class="s-label">Recipients</div>
-              <div class="s-num s-blue">347</div>
-              <div class="s-sub">84 awaiting match</div>
+              <div class="s-num s-blue" id="dash-recipients">—</div>
+              <div class="s-sub">Active patients</div>
             </div>
             <div class="stat-card">
               <div class="s-label">Transplants</div>
-              <div class="s-num s-green">89</div>
-              <div class="s-sub">↑ 7 this month</div>
+              <div class="s-num s-green" id="dash-transplants">—</div>
+              <div class="s-sub">Completed</div>
             </div>
             <div class="stat-card">
               <div class="s-label">Waitlist</div>
-              <div class="s-num s-amber">263</div>
-              <div class="s-sub">Avg 14 months</div>
+              <div class="s-num s-amber" id="dash-waitlist">—</div>
+              <div class="s-sub">Awaiting organ</div>
             </div>
           </div>
           <div class="two-col">
@@ -406,34 +407,18 @@
                       <th>Status</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="dash-transplants-tbody">
                     <tr>
-                      <td>#TR-091</td>
-                      <td>Kidney</td>
-                      <td>D-045 → R-112</td>
-                      <td>KEM Mumbai</td>
-                      <td><span class="badge b-green">Successful</span></td>
-                    </tr>
-                    <tr>
-                      <td>#TR-090</td>
-                      <td>Liver</td>
-                      <td>D-038 → R-098</td>
-                      <td>AIIMS Delhi</td>
-                      <td><span class="badge b-green">Successful</span></td>
-                    </tr>
-                    <tr>
-                      <td>#TR-089</td>
-                      <td>Heart</td>
-                      <td>D-031 → R-074</td>
-                      <td>Apollo Chennai</td>
-                      <td><span class="badge b-amber">Monitoring</span></td>
-                    </tr>
-                    <tr>
-                      <td>#TR-088</td>
-                      <td>Cornea</td>
-                      <td>D-029 → R-061</td>
-                      <td>Fortis Pune</td>
-                      <td><span class="badge b-green">Successful</span></td>
+                      <td
+                        colspan="5"
+                        style="
+                          text-align: center;
+                          padding: 20px;
+                          color: var(--muted);
+                        "
+                      >
+                        Loading...
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -449,38 +434,11 @@
                     Full List
                   </button>
                 </div>
-                <div style="padding: 8px 16px">
-                  <div class="wl-item">
-                    <div class="wl-rank">1</div>
-                    <div class="wl-info">
-                      <div class="wl-name">Priya Desai</div>
-                      <div class="wl-detail">Heart • O+ • 482 days</div>
-                    </div>
-                    <span class="badge b-red">Critical</span>
-                  </div>
-                  <div class="wl-item">
-                    <div class="wl-rank">2</div>
-                    <div class="wl-info">
-                      <div class="wl-name">Arjun Mehta</div>
-                      <div class="wl-detail">Kidney • B+ • 394 days</div>
-                    </div>
-                    <span class="badge b-red">Critical</span>
-                  </div>
-                  <div class="wl-item">
-                    <div class="wl-rank">3</div>
-                    <div class="wl-info">
-                      <div class="wl-name">Sunita Rao</div>
-                      <div class="wl-detail">Liver • A- • 287 days</div>
-                    </div>
-                    <span class="badge b-amber">High</span>
-                  </div>
-                  <div class="wl-item">
-                    <div class="wl-rank">4</div>
-                    <div class="wl-info">
-                      <div class="wl-name">Vikram Nair</div>
-                      <div class="wl-detail">Lungs • AB+ • 241 days</div>
-                    </div>
-                    <span class="badge b-amber">High</span>
+                <div style="padding: 8px 16px" id="dash-waitlist-items">
+                  <div
+                    style="padding: 16px; color: var(--muted); font-size: 13px"
+                  >
+                    Loading...
                   </div>
                 </div>
               </div>
@@ -490,61 +448,9 @@
                 <div class="tcard-head" style="padding: 0 0 14px">
                   <h3>Active Donation Chains</h3>
                 </div>
-                <div
-                  style="
-                    font-size: 11px;
-                    font-weight: 700;
-                    color: var(--muted);
-                    margin-bottom: 8px;
-                  "
-                >
-                  CHAIN #DC-14
-                </div>
-                <div class="chain-row">
-                  <div class="cnode">
-                    <div class="cnode-circle cd">D</div>
-                    <div class="cnode-lbl">Donor</div>
-                  </div>
-                  <div class="carrow">→</div>
-                  <div class="cnode">
-                    <div class="cnode-circle ch">H</div>
-                    <div class="cnode-lbl">KEM</div>
-                  </div>
-                  <div class="carrow">→</div>
-                  <div class="cnode">
-                    <div class="cnode-circle cr">R</div>
-                    <div class="cnode-lbl">R-West</div>
-                  </div>
-                  <div class="carrow">→</div>
-                  <div class="cnode">
-                    <div class="cnode-circle cr">R</div>
-                    <div class="cnode-lbl">R-North</div>
-                  </div>
-                </div>
-                <div
-                  style="
-                    font-size: 11px;
-                    font-weight: 700;
-                    color: var(--muted);
-                    margin: 12px 0 8px;
-                  "
-                >
-                  CHAIN #DC-13
-                </div>
-                <div class="chain-row" style="border: none">
-                  <div class="cnode">
-                    <div class="cnode-circle cd">D</div>
-                    <div class="cnode-lbl">Deceased</div>
-                  </div>
-                  <div class="carrow">→</div>
-                  <div class="cnode">
-                    <div class="cnode-circle ch">H</div>
-                    <div class="cnode-lbl">AIIMS</div>
-                  </div>
-                  <div class="carrow">→</div>
-                  <div class="cnode">
-                    <div class="cnode-circle cr">R</div>
-                    <div class="cnode-lbl">R-South</div>
+                <div id="dash-chains">
+                  <div style="color: var(--muted); font-size: 13px">
+                    Loading...
                   </div>
                 </div>
               </div>
@@ -552,30 +458,26 @@
                 <div class="minfo">
                   <h4>Hospitals</h4>
                   <div class="irow">
-                    <span class="ik">Total</span><span class="iv">24</span>
-                  </div>
-                  <div class="irow">
-                    <span class="ik">Active</span
-                    ><span class="iv s-green">19</span>
+                    <span class="ik">Total</span
+                    ><span class="iv" id="dash-hosp-total">—</span>
                   </div>
                 </div>
                 <div class="minfo">
                   <h4>Staff</h4>
                   <div class="irow">
-                    <span class="ik">Total</span><span class="iv">312</span>
-                  </div>
-                  <div class="irow">
-                    <span class="ik">Surgeons</span><span class="iv">48</span>
+                    <span class="ik">Total</span
+                    ><span class="iv" id="dash-staff-total">—</span>
                   </div>
                 </div>
                 <div class="minfo">
                   <h4>Tests</h4>
                   <div class="irow">
-                    <span class="ik">Done</span><span class="iv">1284</span>
+                    <span class="ik">Done</span
+                    ><span class="iv" id="dash-tests-done">—</span>
                   </div>
                   <div class="irow">
                     <span class="ik">Pending</span
-                    ><span class="iv s-amber">38</span>
+                    ><span class="iv s-amber" id="dash-tests-pending">—</span>
                   </div>
                 </div>
               </div>
@@ -583,7 +485,7 @@
           </div>
         </div>
 
-        <!-- REGISTER DONOR -->
+        <!-- ── REGISTER DONOR ── -->
         <div id="apage-donor-reg" class="apage">
           <div class="phead">
             <h2>Register Donor</h2>
@@ -593,17 +495,20 @@
             <h3>New Donor <span class="ftag">donor table</span></h3>
             <div class="fgrid">
               <div class="fg">
-                <label>First Name</label><input placeholder="Rahul" />
+                <label>First Name</label
+                ><input id="d-fname" placeholder="Rahul" />
               </div>
               <div class="fg">
-                <label>Last Name</label><input placeholder="Sharma" />
+                <label>Last Name</label
+                ><input id="d-lname" placeholder="Sharma" />
               </div>
               <div class="fg">
-                <label>Date of Birth</label><input type="date" />
+                <label>Age</label
+                ><input id="d-age" type="number" placeholder="30" />
               </div>
               <div class="fg">
-                <label>Blood Group</label
-                ><select>
+                <label>Blood Group</label>
+                <select id="d-blood">
                   <option>A+</option>
                   <option>A-</option>
                   <option>B+</option>
@@ -615,30 +520,22 @@
                 </select>
               </div>
               <div class="fg">
-                <label>Phone</label><input placeholder="+91 98765 43210" />
-              </div>
-              <div class="fg"><label>Email</label><input type="email" /></div>
-              <div class="fg">
-                <label>City</label><input placeholder="Mumbai" />
+                <label>Phone</label
+                ><input id="d-phone" placeholder="+91 98765 43210" />
               </div>
               <div class="fg">
-                <label>State</label
-                ><select>
-                  <option>Maharashtra</option>
-                  <option>Delhi</option>
-                  <option>Karnataka</option>
-                  <option>Tamil Nadu</option>
-                </select>
+                <label>Email</label><input id="d-email" type="email" />
               </div>
               <div class="fg">
-                <label>Donor Type</label
-                ><select id="dtype" onchange="toggleDT()">
+                <label>Donor Type</label>
+                <select id="dtype" onchange="toggleDT()">
                   <option value="living">Living</option>
                   <option value="deceased">Deceased</option>
                 </select>
               </div>
               <div class="fg">
-                <label>HLA Type</label><input placeholder="HLA-A, B, DR" />
+                <label>Hospital ID</label
+                ><input id="d-hospital" type="number" placeholder="1" />
               </div>
               <div class="fg full" id="lfield">
                 <label>Relationship to Recipient</label
@@ -679,18 +576,23 @@
               </div>
             </div>
             <div class="factions">
-              <button class="btn-sub" onclick="ok('da')">Save Donor</button
-              ><button class="btn-cancel">Cancel</button>
+              <button class="btn-sub" onclick="submitDonor()">
+                Save Donor
+              </button>
+              <button class="btn-cancel">Cancel</button>
             </div>
             <div class="alert as" id="da">✓ Donor registered successfully!</div>
+            <div class="alert ae" id="da-err">
+              ⚠ Please fill all required fields.
+            </div>
           </div>
         </div>
 
-        <!-- ALL DONORS -->
+        <!-- ── ALL DONORS ── -->
         <div id="apage-donors-list" class="apage">
           <div class="phead">
             <h2>All Donors</h2>
-            <p>donor table — 128 records</p>
+            <p>donor table — live from database</p>
           </div>
           <div class="sbar">
             <span>🔍</span
@@ -704,54 +606,30 @@
                   <th>Name</th>
                   <th>Blood</th>
                   <th>Type</th>
-                  <th>City</th>
-                  <th>Organs</th>
+                  <th>Hospital</th>
+                  <th>Age</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-donors">
                 <tr>
-                  <td>#D-128</td>
-                  <td>Rahul Sharma</td>
-                  <td><span class="badge b-red">O+</span></td>
-                  <td>Living</td>
-                  <td>Mumbai</td>
-                  <td>Kidney, Liver</td>
-                  <td><span class="badge b-green">Active</span></td>
-                </tr>
-                <tr>
-                  <td>#D-127</td>
-                  <td>Ananya Patel</td>
-                  <td><span class="badge b-blue">A+</span></td>
-                  <td>Deceased</td>
-                  <td>Delhi</td>
-                  <td>Heart, Cornea</td>
-                  <td><span class="badge b-amber">Matched</span></td>
-                </tr>
-                <tr>
-                  <td>#D-126</td>
-                  <td>Suresh Kumar</td>
-                  <td><span class="badge b-gray">B-</span></td>
-                  <td>Living</td>
-                  <td>Bangalore</td>
-                  <td>Kidney (L)</td>
-                  <td><span class="badge b-green">Active</span></td>
-                </tr>
-                <tr>
-                  <td>#D-125</td>
-                  <td>Meena Joshi</td>
-                  <td><span class="badge b-red">AB+</span></td>
-                  <td>Deceased</td>
-                  <td>Chennai</td>
-                  <td>Liver, Lungs</td>
-                  <td><span class="badge b-blue">In Surgery</span></td>
+                  <td
+                    colspan="7"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- LIVING DONORS -->
+        <!-- ── LIVING DONORS ── -->
         <div id="apage-donor-living" class="apage">
           <div class="phead">
             <h2>Living Donors</h2>
@@ -764,46 +642,30 @@
                   <th>ID</th>
                   <th>Name</th>
                   <th>Blood</th>
-                  <th>Relationship</th>
-                  <th>Organ</th>
-                  <th>Compat Score</th>
+                  <th>Hospital</th>
+                  <th>Age</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-donor-living">
                 <tr>
-                  <td>#DL-042</td>
-                  <td>Rahul Sharma</td>
-                  <td><span class="badge b-red">O+</span></td>
-                  <td>Sibling</td>
-                  <td>Kidney (L)</td>
-                  <td><span class="badge b-green">92%</span></td>
-                  <td><span class="badge b-green">Cleared</span></td>
-                </tr>
-                <tr>
-                  <td>#DL-041</td>
-                  <td>Ravi Nair</td>
-                  <td><span class="badge b-green">O-</span></td>
-                  <td>Spouse</td>
-                  <td>Kidney (R)</td>
-                  <td><span class="badge b-amber">74%</span></td>
-                  <td><span class="badge b-amber">Pending</span></td>
-                </tr>
-                <tr>
-                  <td>#DL-040</td>
-                  <td>Kavita Singh</td>
-                  <td><span class="badge b-blue">A+</span></td>
-                  <td>Parent</td>
-                  <td>Liver</td>
-                  <td><span class="badge b-green">88%</span></td>
-                  <td><span class="badge b-green">Cleared</span></td>
+                  <td
+                    colspan="6"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- DECEASED DONORS -->
+        <!-- ── DECEASED DONORS ── -->
         <div id="apage-donor-deceased" class="apage">
           <div class="phead">
             <h2>Deceased Donors</h2>
@@ -816,46 +678,31 @@
                   <th>ID</th>
                   <th>Name</th>
                   <th>Blood</th>
-                  <th>Time of Death</th>
-                  <th>Viability</th>
+                  <th>Registered</th>
+                  <th>Status</th>
                   <th>Hospital</th>
                   <th>Organs</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-donor-deceased">
                 <tr>
-                  <td>#DD-086</td>
-                  <td>Ananya Patel</td>
-                  <td><span class="badge b-blue">A+</span></td>
-                  <td>2026-03-12 02:14</td>
-                  <td><span class="badge b-green">Viable</span></td>
-                  <td>KEM Mumbai</td>
-                  <td>Heart, Cornea</td>
-                </tr>
-                <tr>
-                  <td>#DD-085</td>
-                  <td>Meena Joshi</td>
-                  <td><span class="badge b-red">AB+</span></td>
-                  <td>2026-03-11 18:40</td>
-                  <td><span class="badge b-amber">Limited</span></td>
-                  <td>AIIMS Delhi</td>
-                  <td>Liver, Lungs</td>
-                </tr>
-                <tr>
-                  <td>#DD-084</td>
-                  <td>Gopal Verma</td>
-                  <td><span class="badge b-green">O-</span></td>
-                  <td>2026-03-10 09:22</td>
-                  <td><span class="badge b-red">Expired</span></td>
-                  <td>Apollo</td>
-                  <td>Cornea</td>
+                  <td
+                    colspan="7"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- ADD RECIPIENT -->
+        <!-- ── ADD RECIPIENT ── -->
         <div id="apage-recipient-reg" class="apage">
           <div class="phead">
             <h2>Add Recipient</h2>
@@ -865,17 +712,20 @@
             <h3>New Recipient <span class="ftag">recipient table</span></h3>
             <div class="fgrid">
               <div class="fg">
-                <label>First Name</label><input placeholder="Priya" />
+                <label>First Name</label
+                ><input id="r-fname" placeholder="Priya" />
               </div>
               <div class="fg">
-                <label>Last Name</label><input placeholder="Desai" />
+                <label>Last Name</label
+                ><input id="r-lname" placeholder="Desai" />
               </div>
               <div class="fg">
-                <label>Date of Birth</label><input type="date" />
+                <label>Age</label
+                ><input id="r-age" type="number" placeholder="35" />
               </div>
               <div class="fg">
-                <label>Blood Group</label
-                ><select>
+                <label>Blood Group</label>
+                <select id="r-blood">
                   <option>A+</option>
                   <option>A-</option>
                   <option>B+</option>
@@ -887,43 +737,32 @@
                 </select>
               </div>
               <div class="fg">
-                <label>Phone</label><input placeholder="+91 98765 43210" />
+                <label>Phone</label
+                ><input id="r-phone" placeholder="+91 98765 43210" />
               </div>
               <div class="fg">
-                <label>Hospital</label
-                ><input placeholder="Admitting hospital" />
+                <label>Hospital ID</label
+                ><input id="r-hospital" type="number" placeholder="1" />
               </div>
               <div class="fg">
-                <label>Organ Needed</label
-                ><select>
+                <label>Organ Needed</label>
+                <select id="r-organ">
                   <option>Heart</option>
                   <option>Kidney</option>
                   <option>Liver</option>
-                  <option>Lungs</option>
-                  <option>Cornea</option>
+                  <option>Lung</option>
                   <option>Pancreas</option>
+                  <option>Intestine</option>
                 </select>
               </div>
               <div class="fg">
-                <label>Urgency</label
-                ><select>
-                  <option>Normal</option>
+                <label>Urgency</label>
+                <select id="r-urgency">
+                  <option>Low</option>
+                  <option>Medium</option>
                   <option>High</option>
                   <option>Critical</option>
                 </select>
-              </div>
-              <div class="fg">
-                <label>Region</label
-                ><select>
-                  <option>North</option>
-                  <option>South</option>
-                  <option>East</option>
-                  <option>West</option>
-                </select>
-              </div>
-              <div class="fg">
-                <label>Diagnosis</label
-                ><input placeholder="Medical condition" />
               </div>
               <div class="fg full">
                 <label>Clinical Notes</label
@@ -931,18 +770,23 @@
               </div>
             </div>
             <div class="factions">
-              <button class="btn-sub" onclick="ok('ra')">Save Recipient</button
-              ><button class="btn-cancel">Cancel</button>
+              <button class="btn-sub" onclick="submitRecipient()">
+                Save Recipient
+              </button>
+              <button class="btn-cancel">Cancel</button>
             </div>
             <div class="alert as" id="ra">✓ Recipient added!</div>
+            <div class="alert ae" id="ra-err">
+              ⚠ Please fill all required fields.
+            </div>
           </div>
         </div>
 
-        <!-- ALL RECIPIENTS -->
+        <!-- ── ALL RECIPIENTS ── -->
         <div id="apage-recipients" class="apage">
           <div class="phead">
             <h2>All Recipients</h2>
-            <p>recipient table — 347 records</p>
+            <p>recipient table — live from database</p>
           </div>
           <div class="sbar"><span>🔍</span><input placeholder="Search…" /></div>
           <div class="tcard">
@@ -959,74 +803,46 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-recipients">
                 <tr>
-                  <td>#R-347</td>
-                  <td>Priya Desai</td>
-                  <td><span class="badge b-red">O+</span></td>
-                  <td>Heart</td>
-                  <td>West</td>
-                  <td><span class="badge b-red">Critical</span></td>
-                  <td>482d</td>
-                  <td><span class="badge b-amber">Waiting</span></td>
-                </tr>
-                <tr>
-                  <td>#R-346</td>
-                  <td>Arjun Mehta</td>
-                  <td><span class="badge b-blue">B+</span></td>
-                  <td>Kidney</td>
-                  <td>North</td>
-                  <td><span class="badge b-red">Critical</span></td>
-                  <td>394d</td>
-                  <td><span class="badge b-amber">Waiting</span></td>
-                </tr>
-                <tr>
-                  <td>#R-345</td>
-                  <td>Sunita Rao</td>
-                  <td><span class="badge b-green">A-</span></td>
-                  <td>Liver</td>
-                  <td>South</td>
-                  <td><span class="badge b-amber">High</span></td>
-                  <td>287d</td>
-                  <td><span class="badge b-blue">Matched</span></td>
-                </tr>
-                <tr>
-                  <td>#R-344</td>
-                  <td>Vikram Nair</td>
-                  <td><span class="badge b-red">AB+</span></td>
-                  <td>Lungs</td>
-                  <td>North</td>
-                  <td><span class="badge b-amber">High</span></td>
-                  <td>241d</td>
-                  <td><span class="badge b-amber">Waiting</span></td>
+                  <td
+                    colspan="8"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- WAITLIST -->
+        <!-- ── WAITLIST ── -->
         <div id="apage-waitlist" class="apage">
           <div class="phead">
             <h2>Waitlist</h2>
-            <p>waitlist table — 263 waiting</p>
+            <p>waitlist table — live from database</p>
           </div>
           <div class="stat-row">
             <div class="stat-card">
               <div class="s-label">Critical</div>
-              <div class="s-num s-red">47</div>
+              <div class="s-num s-red" id="wl-critical">—</div>
             </div>
             <div class="stat-card">
               <div class="s-label">High</div>
-              <div class="s-num s-amber">89</div>
+              <div class="s-num s-amber" id="wl-high">—</div>
             </div>
             <div class="stat-card">
               <div class="s-label">Normal</div>
-              <div class="s-num s-blue">127</div>
+              <div class="s-num s-blue" id="wl-normal">—</div>
             </div>
             <div class="stat-card">
-              <div class="s-label">Avg Wait</div>
-              <div class="s-num" style="font-size: 26px">14 mo</div>
+              <div class="s-label">Total</div>
+              <div class="s-num" id="wl-total">—</div>
             </div>
           </div>
           <div class="tcard">
@@ -1043,60 +859,29 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-waitlist">
                 <tr>
-                  <td><b style="color: var(--red)">#1</b></td>
-                  <td>Priya Desai</td>
-                  <td><span class="badge b-red">O+</span></td>
-                  <td>Heart</td>
-                  <td>KEM Mumbai</td>
-                  <td>482</td>
-                  <td><span class="badge b-red">Critical</span></td>
-                  <td><span class="badge b-amber">Waiting</span></td>
-                </tr>
-                <tr>
-                  <td><b style="color: var(--red)">#2</b></td>
-                  <td>Arjun Mehta</td>
-                  <td><span class="badge b-blue">B+</span></td>
-                  <td>Kidney</td>
-                  <td>AIIMS Delhi</td>
-                  <td>394</td>
-                  <td><span class="badge b-red">Critical</span></td>
-                  <td><span class="badge b-amber">Waiting</span></td>
-                </tr>
-                <tr>
-                  <td><b>#3</b></td>
-                  <td>Sunita Rao</td>
-                  <td><span class="badge b-green">A-</span></td>
-                  <td>Liver</td>
-                  <td>Apollo Chennai</td>
-                  <td>287</td>
-                  <td><span class="badge b-amber">High</span></td>
-                  <td><span class="badge b-blue">Matched</span></td>
-                </tr>
-                <tr>
-                  <td><b>#4</b></td>
-                  <td>Vikram Nair</td>
-                  <td><span class="badge b-red">AB+</span></td>
-                  <td>Lungs</td>
-                  <td>Manipal Blr</td>
-                  <td>241</td>
-                  <td><span class="badge b-amber">High</span></td>
-                  <td><span class="badge b-amber">Waiting</span></td>
+                  <td
+                    colspan="8"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- REGIONS -->
+        <!-- ── REGIONS ── -->
         <div id="apage-regions" class="apage">
           <div class="phead">
             <h2>Recipients by Region</h2>
-            <p>
-              recipient_north / recipient_south / recipient_east /
-              recipient_west
-            </p>
+            <p>recipient_north / south / east / west</p>
           </div>
           <div
             style="
@@ -1106,79 +891,83 @@
               margin-bottom: 20px;
             "
           >
-            <div class="rcard">
+            <div class="rcard" id="region-north">
               <div class="rcard-title">North Region</div>
               <div class="rcard-sub">recipient_north — Delhi, UP, Punjab</div>
               <div class="rbar">
                 <div
                   class="rbar-fill"
-                  style="width: 72%; background: var(--blue)"
+                  style="width: 0%; background: var(--blue)"
                 ></div>
               </div>
               <div style="display: flex; gap: 20px; font-size: 13px">
                 <span style="color: var(--muted)"
-                  >Recipients: <b style="color: var(--text)">94</b></span
-                ><span style="color: var(--muted)"
-                  >Critical: <b style="color: var(--red)">18</b></span
+                  >Recipients: <b style="color: var(--text)">—</b></span
+                >
+                <span style="color: var(--muted)"
+                  >Critical: <b style="color: var(--red)">—</b></span
                 >
               </div>
             </div>
-            <div class="rcard">
+            <div class="rcard" id="region-south">
               <div class="rcard-title">South Region</div>
               <div class="rcard-sub">recipient_south — TN, Kerala, AP</div>
               <div class="rbar">
                 <div
                   class="rbar-fill"
-                  style="width: 58%; background: var(--green)"
+                  style="width: 0%; background: var(--green)"
                 ></div>
               </div>
               <div style="display: flex; gap: 20px; font-size: 13px">
                 <span style="color: var(--muted)"
-                  >Recipients: <b style="color: var(--text)">78</b></span
-                ><span style="color: var(--muted)"
-                  >Critical: <b style="color: var(--red)">12</b></span
+                  >Recipients: <b style="color: var(--text)">—</b></span
+                >
+                <span style="color: var(--muted)"
+                  >Critical: <b style="color: var(--red)">—</b></span
                 >
               </div>
             </div>
-            <div class="rcard">
+            <div class="rcard" id="region-east">
               <div class="rcard-title">East Region</div>
               <div class="rcard-sub">recipient_east — WB, Odisha, Bihar</div>
               <div class="rbar">
                 <div
                   class="rbar-fill"
-                  style="width: 35%; background: var(--amber)"
+                  style="width: 0%; background: var(--amber)"
                 ></div>
               </div>
               <div style="display: flex; gap: 20px; font-size: 13px">
                 <span style="color: var(--muted)"
-                  >Recipients: <b style="color: var(--text)">52</b></span
-                ><span style="color: var(--muted)"
-                  >Critical: <b style="color: var(--red)">7</b></span
+                  >Recipients: <b style="color: var(--text)">—</b></span
+                >
+                <span style="color: var(--muted)"
+                  >Critical: <b style="color: var(--red)">—</b></span
                 >
               </div>
             </div>
-            <div class="rcard">
+            <div class="rcard" id="region-west">
               <div class="rcard-title">West Region</div>
               <div class="rcard-sub">recipient_west — Maharashtra, Gujarat</div>
               <div class="rbar">
-                <div class="rbar-fill" style="width: 88%"></div>
+                <div class="rbar-fill" style="width: 0%"></div>
               </div>
               <div style="display: flex; gap: 20px; font-size: 13px">
                 <span style="color: var(--muted)"
-                  >Recipients: <b style="color: var(--text)">123</b></span
-                ><span style="color: var(--muted)"
-                  >Critical: <b style="color: var(--red)">22</b></span
+                  >Recipients: <b style="color: var(--text)">—</b></span
+                >
+                <span style="color: var(--muted)"
+                  >Critical: <b style="color: var(--red)">—</b></span
                 >
               </div>
             </div>
           </div>
         </div>
 
-        <!-- ORGANS -->
+        <!-- ── ORGANS ── -->
         <div id="apage-organs" class="apage">
           <div class="phead">
             <h2>Organ Inventory</h2>
-            <p>organ table</p>
+            <p>organ table — live from database</p>
           </div>
           <div class="tcard">
             <table>
@@ -1194,53 +983,25 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-organs">
                 <tr>
-                  <td>#ORG-284</td>
-                  <td>Kidney</td>
-                  <td>#D-128</td>
-                  <td><span class="badge b-red">O+</span></td>
-                  <td>2026-03-13</td>
-                  <td>36 hrs</td>
-                  <td>KEM Mumbai</td>
-                  <td><span class="badge b-green">Available</span></td>
-                </tr>
-                <tr>
-                  <td>#ORG-283</td>
-                  <td>Heart</td>
-                  <td>#DD-086</td>
-                  <td><span class="badge b-blue">A+</span></td>
-                  <td>2026-03-12</td>
-                  <td>4 hrs</td>
-                  <td>AIIMS Delhi</td>
-                  <td><span class="badge b-red">Urgent</span></td>
-                </tr>
-                <tr>
-                  <td>#ORG-282</td>
-                  <td>Liver</td>
-                  <td>#DD-085</td>
-                  <td><span class="badge b-red">AB+</span></td>
-                  <td>2026-03-11</td>
-                  <td>12 hrs</td>
-                  <td>Apollo</td>
-                  <td><span class="badge b-blue">In Transit</span></td>
-                </tr>
-                <tr>
-                  <td>#ORG-281</td>
-                  <td>Cornea</td>
-                  <td>#DD-084</td>
-                  <td><span class="badge b-green">O-</span></td>
-                  <td>2026-03-10</td>
-                  <td>14 days</td>
-                  <td>Eye Bank</td>
-                  <td><span class="badge b-green">Available</span></td>
+                  <td
+                    colspan="8"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- COMPATIBILITY -->
+        <!-- ── COMPATIBILITY ── -->
         <div id="apage-compatibility" class="apage">
           <div class="phead">
             <h2>Compatibility Test</h2>
@@ -1251,18 +1012,20 @@
               <h3>Run New Test <span class="ftag">compatibility_test</span></h3>
               <div class="fgrid">
                 <div class="fg">
-                  <label>Donor ID</label><input placeholder="#D-128" />
+                  <label>Donor ID</label
+                  ><input id="ct-donor" placeholder="#D-1" />
                 </div>
                 <div class="fg">
-                  <label>Recipient ID</label><input placeholder="#R-347" />
+                  <label>Recipient ID</label
+                  ><input id="ct-recipient" placeholder="#R-1" />
                 </div>
                 <div class="fg">
                   <label>Organ</label
-                  ><select>
+                  ><select id="ct-organ">
                     <option>Kidney</option>
                     <option>Heart</option>
                     <option>Liver</option>
-                    <option>Lungs</option>
+                    <option>Lung</option>
                   </select>
                 </div>
                 <div class="fg">
@@ -1320,40 +1083,25 @@
                   <th>Date</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-compatibility">
                 <tr>
-                  <td>#CT-192</td>
-                  <td>#D-128</td>
-                  <td>#R-346</td>
-                  <td>Kidney</td>
-                  <td>92%</td>
-                  <td><span class="badge b-green">Compatible</span></td>
-                  <td>2026-03-12</td>
-                </tr>
-                <tr>
-                  <td>#CT-191</td>
-                  <td>#DD-086</td>
-                  <td>#R-347</td>
-                  <td>Heart</td>
-                  <td>87%</td>
-                  <td><span class="badge b-green">Compatible</span></td>
-                  <td>2026-03-11</td>
-                </tr>
-                <tr>
-                  <td>#CT-190</td>
-                  <td>#DD-085</td>
-                  <td>#R-345</td>
-                  <td>Liver</td>
-                  <td>64%</td>
-                  <td><span class="badge b-amber">Borderline</span></td>
-                  <td>2026-03-10</td>
+                  <td
+                    colspan="7"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- DONATION CHAIN -->
+        <!-- ── DONATION CHAIN ── -->
         <div id="apage-donation-chain" class="apage">
           <div class="phead">
             <h2>Donation Chain</h2>
@@ -1371,30 +1119,18 @@
                     <th>Status</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="tbody-chains">
                   <tr>
-                    <td>#DC-14</td>
-                    <td>2026-03-10</td>
-                    <td>3</td>
-                    <td><span class="badge b-green">Active</span></td>
-                  </tr>
-                  <tr>
-                    <td>#DC-13</td>
-                    <td>2026-03-05</td>
-                    <td>2</td>
-                    <td><span class="badge b-blue">Complete</span></td>
-                  </tr>
-                  <tr>
-                    <td>#DC-12</td>
-                    <td>2026-02-28</td>
-                    <td>4</td>
-                    <td><span class="badge b-blue">Complete</span></td>
-                  </tr>
-                  <tr>
-                    <td>#DC-11</td>
-                    <td>2026-02-14</td>
-                    <td>2</td>
-                    <td><span class="badge b-red">Broken</span></td>
+                    <td
+                      colspan="4"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -1412,30 +1148,18 @@
                     <th>Order</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="tbody-chain-links">
                   <tr>
-                    <td>#CL-38</td>
-                    <td>#DC-14</td>
-                    <td>#DL-042</td>
-                    <td>#R-347</td>
-                    <td>Kidney</td>
-                    <td>1</td>
-                  </tr>
-                  <tr>
-                    <td>#CL-37</td>
-                    <td>#DC-14</td>
-                    <td>#DL-041</td>
-                    <td>#R-346</td>
-                    <td>Kidney</td>
-                    <td>2</td>
-                  </tr>
-                  <tr>
-                    <td>#CL-36</td>
-                    <td>#DC-14</td>
-                    <td>#DL-040</td>
-                    <td>#R-344</td>
-                    <td>Liver</td>
-                    <td>3</td>
+                    <td
+                      colspan="6"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -1443,11 +1167,11 @@
           </div>
         </div>
 
-        <!-- TRANSPLANTS -->
+        <!-- ── TRANSPLANTS ── -->
         <div id="apage-transplants" class="apage">
           <div class="phead">
             <h2>Transplant Records</h2>
-            <p>transplant_record table</p>
+            <p>transplant_record table — live from database</p>
           </div>
           <div class="tcard">
             <table>
@@ -1463,53 +1187,25 @@
                   <th>Outcome</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-transplants">
                 <tr>
-                  <td>#TR-091</td>
-                  <td>#D-128</td>
-                  <td>#R-346</td>
-                  <td>Kidney</td>
-                  <td>KEM Mumbai</td>
-                  <td>Dr. Mehta</td>
-                  <td>2026-03-13</td>
-                  <td><span class="badge b-green">Successful</span></td>
-                </tr>
-                <tr>
-                  <td>#TR-090</td>
-                  <td>#DD-085</td>
-                  <td>#R-345</td>
-                  <td>Liver</td>
-                  <td>AIIMS Delhi</td>
-                  <td>Dr. Singh</td>
-                  <td>2026-03-11</td>
-                  <td><span class="badge b-green">Successful</span></td>
-                </tr>
-                <tr>
-                  <td>#TR-089</td>
-                  <td>#DD-086</td>
-                  <td>#R-347</td>
-                  <td>Heart</td>
-                  <td>Apollo Chennai</td>
-                  <td>Dr. Rao</td>
-                  <td>2026-03-12</td>
-                  <td><span class="badge b-amber">Monitoring</span></td>
-                </tr>
-                <tr>
-                  <td>#TR-088</td>
-                  <td>#DL-039</td>
-                  <td>#R-343</td>
-                  <td>Cornea</td>
-                  <td>Fortis Pune</td>
-                  <td>Dr. Iyer</td>
-                  <td>2026-03-10</td>
-                  <td><span class="badge b-green">Successful</span></td>
+                  <td
+                    colspan="8"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- TRANSPLANT MEDICAL -->
+        <!-- ── TRANSPLANT MEDICAL ── -->
         <div id="apage-transplant-medical" class="apage">
           <div class="phead">
             <h2>Transplant Medical Details</h2>
@@ -1523,25 +1219,23 @@
                   <tr>
                     <th>ID</th>
                     <th>Record</th>
-                    <th>Drug</th>
-                    <th>Dosage</th>
-                    <th>Follow-up</th>
+                    <th>Surgeon</th>
+                    <th>Outcome</th>
+                    <th>Notes</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="tbody-transplant-medical">
                   <tr>
-                    <td>#TM-091</td>
-                    <td>#TR-091</td>
-                    <td>Tacrolimus</td>
-                    <td>0.1 mg/kg</td>
-                    <td>2026-03-20</td>
-                  </tr>
-                  <tr>
-                    <td>#TM-090</td>
-                    <td>#TR-090</td>
-                    <td>Cyclosporine</td>
-                    <td>5 mg/kg</td>
-                    <td>2026-03-18</td>
+                    <td
+                      colspan="5"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -1553,25 +1247,23 @@
                   <tr>
                     <th>ID</th>
                     <th>Record</th>
-                    <th>Duration</th>
-                    <th>Blood Loss</th>
+                    <th>Status</th>
+                    <th>Date</th>
                     <th>Notes</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="tbody-transplant-details">
                   <tr>
-                    <td>#TD-091</td>
-                    <td>#TR-091</td>
-                    <td>3h 20m</td>
-                    <td>220 mL</td>
-                    <td>None</td>
-                  </tr>
-                  <tr>
-                    <td>#TD-090</td>
-                    <td>#TR-090</td>
-                    <td>6h 45m</td>
-                    <td>580 mL</td>
-                    <td>Minor bleed</td>
+                    <td
+                      colspan="5"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -1579,11 +1271,11 @@
           </div>
         </div>
 
-        <!-- HOSPITALS -->
+        <!-- ── HOSPITALS ── -->
         <div id="apage-hospitals" class="apage">
           <div class="phead">
             <h2>Hospitals</h2>
-            <p>hospital table — 24 hospitals</p>
+            <p>hospital table — live from database</p>
           </div>
           <div class="tcard">
             <table>
@@ -1591,69 +1283,36 @@
                 <tr>
                   <th>ID</th>
                   <th>Name</th>
-                  <th>City</th>
-                  <th>State</th>
+                  <th>Location</th>
+                  <th>Region</th>
                   <th>Capacity</th>
-                  <th>Active Ops</th>
+                  <th>Specialization</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-hospitals">
                 <tr>
-                  <td>#H-01</td>
-                  <td>KEM Hospital</td>
-                  <td>Mumbai</td>
-                  <td>Maharashtra</td>
-                  <td>120</td>
-                  <td>8</td>
-                  <td><span class="badge b-green">Active</span></td>
-                </tr>
-                <tr>
-                  <td>#H-02</td>
-                  <td>AIIMS</td>
-                  <td>Delhi</td>
-                  <td>Delhi</td>
-                  <td>200</td>
-                  <td>14</td>
-                  <td><span class="badge b-green">Active</span></td>
-                </tr>
-                <tr>
-                  <td>#H-03</td>
-                  <td>Apollo Hospital</td>
-                  <td>Chennai</td>
-                  <td>Tamil Nadu</td>
-                  <td>150</td>
-                  <td>6</td>
-                  <td><span class="badge b-green">Active</span></td>
-                </tr>
-                <tr>
-                  <td>#H-04</td>
-                  <td>Manipal Hospital</td>
-                  <td>Bangalore</td>
-                  <td>Karnataka</td>
-                  <td>90</td>
-                  <td>4</td>
-                  <td><span class="badge b-green">Active</span></td>
-                </tr>
-                <tr>
-                  <td>#H-05</td>
-                  <td>Fortis Hospital</td>
-                  <td>Pune</td>
-                  <td>Maharashtra</td>
-                  <td>80</td>
-                  <td>3</td>
-                  <td><span class="badge b-amber">Maintenance</span></td>
+                  <td
+                    colspan="7"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- STAFF -->
+        <!-- ── STAFF ── -->
         <div id="apage-staff" class="apage">
           <div class="phead">
             <h2>Medical Staff</h2>
-            <p>medical_staff table — 312 staff</p>
+            <p>medical_staff table — live from database</p>
           </div>
           <div class="tcard">
             <table>
@@ -1664,46 +1323,22 @@
                   <th>Role</th>
                   <th>Specialisation</th>
                   <th>Hospital</th>
-                  <th>On-call</th>
+                  <th>Status</th>
                   <th>Transplants</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody-staff">
                 <tr>
-                  <td>#MS-048</td>
-                  <td>Dr. Rajesh Mehta</td>
-                  <td>Surgeon</td>
-                  <td>Renal</td>
-                  <td>KEM Mumbai</td>
-                  <td><span class="badge b-green">Yes</span></td>
-                  <td>47</td>
-                </tr>
-                <tr>
-                  <td>#MS-047</td>
-                  <td>Dr. Anita Singh</td>
-                  <td>Surgeon</td>
-                  <td>Hepatic</td>
-                  <td>AIIMS Delhi</td>
-                  <td><span class="badge b-green">Yes</span></td>
-                  <td>62</td>
-                </tr>
-                <tr>
-                  <td>#MS-046</td>
-                  <td>Dr. Suresh Rao</td>
-                  <td>Cardiologist</td>
-                  <td>Heart</td>
-                  <td>Apollo Chennai</td>
-                  <td><span class="badge b-gray">No</span></td>
-                  <td>29</td>
-                </tr>
-                <tr>
-                  <td>#MS-045</td>
-                  <td>Dr. Priya Iyer</td>
-                  <td>Ophthalmologist</td>
-                  <td>Corneal</td>
-                  <td>Fortis Pune</td>
-                  <td><span class="badge b-green">Yes</span></td>
-                  <td>84</td>
+                  <td
+                    colspan="7"
+                    style="
+                      text-align: center;
+                      padding: 20px;
+                      color: var(--muted);
+                    "
+                  >
+                    Loading...
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -1714,6 +1349,6 @@
     </div>
     <!-- /app -->
 
-    <script src="/frontend/app.js"></script>
+    <script src="/frontend/home.js"></script>
   </body>
 </html>
