@@ -1669,86 +1669,510 @@
           </div>
 
           <!-- ── REGIONS ── -->
+          <!-- ================================================================
+     dashboard.html DIFF — replace ONLY the page-regions div
+     Find: <div id="page-regions" class="page"> ... </div>
+     Replace with everything below
+     ================================================================ -->
+
           <div id="page-regions" class="page">
             <div class="phead">
               <h2>Recipients by Region</h2>
-              <p>recipient_north / south / east / west</p>
+              <p>
+                recipient_north / south / east / west — horizontal fragmentation
+              </p>
             </div>
+
+            <!-- SUMMARY STAT CARDS -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 14px;
+                margin-bottom: 22px;
+              "
+            >
+              <div
+                style="
+                  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+                  border-radius: 14px;
+                  padding: 18px;
+                  color: white;
+                  cursor: pointer;
+                "
+                onclick="
+                  document
+                    .getElementById('sec-north')
+                    .scrollIntoView({ behavior: 'smooth' })
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    opacity: 0.75;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    margin-bottom: 6px;
+                  "
+                >
+                  North
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 32px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  id="rstat-north"
+                >
+                  —
+                </div>
+                <div style="font-size: 11px; opacity: 0.7; margin-top: 4px">
+                  recipients ·
+                  <span
+                    id="rcrit-north"
+                    style="color: #fde68a; font-weight: 700"
+                    >—</span
+                  >
+                  critical
+                </div>
+              </div>
+              <div
+                style="
+                  background: linear-gradient(135deg, #1db87a, #34d399);
+                  border-radius: 14px;
+                  padding: 18px;
+                  color: white;
+                  cursor: pointer;
+                "
+                onclick="
+                  document
+                    .getElementById('sec-south')
+                    .scrollIntoView({ behavior: 'smooth' })
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    opacity: 0.75;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    margin-bottom: 6px;
+                  "
+                >
+                  South
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 32px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  id="rstat-south"
+                >
+                  —
+                </div>
+                <div style="font-size: 11px; opacity: 0.7; margin-top: 4px">
+                  recipients ·
+                  <span
+                    id="rcrit-south"
+                    style="color: #fde68a; font-weight: 700"
+                    >—</span
+                  >
+                  critical
+                </div>
+              </div>
+              <div
+                style="
+                  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+                  border-radius: 14px;
+                  padding: 18px;
+                  color: white;
+                  cursor: pointer;
+                "
+                onclick="
+                  document
+                    .getElementById('sec-east')
+                    .scrollIntoView({ behavior: 'smooth' })
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    opacity: 0.75;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    margin-bottom: 6px;
+                  "
+                >
+                  East
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 32px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  id="rstat-east"
+                >
+                  —
+                </div>
+                <div style="font-size: 11px; opacity: 0.7; margin-top: 4px">
+                  recipients ·
+                  <span id="rcrit-east" style="color: #1a1826; font-weight: 700"
+                    >—</span
+                  >
+                  critical
+                </div>
+              </div>
+              <div
+                style="
+                  background: linear-gradient(135deg, #e8344a, #f2647a);
+                  border-radius: 14px;
+                  padding: 18px;
+                  color: white;
+                  cursor: pointer;
+                "
+                onclick="
+                  document
+                    .getElementById('sec-west')
+                    .scrollIntoView({ behavior: 'smooth' })
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    opacity: 0.75;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    margin-bottom: 6px;
+                  "
+                >
+                  West
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 32px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  id="rstat-west"
+                >
+                  —
+                </div>
+                <div style="font-size: 11px; opacity: 0.7; margin-top: 4px">
+                  recipients ·
+                  <span id="rcrit-west" style="color: #fde68a; font-weight: 700"
+                    >—</span
+                  >
+                  critical
+                </div>
+              </div>
+            </div>
+
+            <!-- BAR CHARTS ROW -->
             <div
               style="
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 16px;
-                margin-bottom: 20px;
+                margin-bottom: 22px;
               "
             >
-              <div class="rcard" id="region-north">
-                <div class="rcard-title">North Region</div>
-                <div class="rcard-sub">recipient_north — Delhi, UP, Punjab</div>
-                <div class="rbar">
-                  <div
-                    class="rbar-fill"
-                    style="width: 0%; background: var(--blue)"
-                  ></div>
+              <div
+                style="
+                  background: white;
+                  border-radius: 16px;
+                  border: 1px solid var(--border);
+                  padding: 20px;
+                "
+              >
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-weight: 700;
+                    font-size: 15px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  Total Recipients by Region
                 </div>
-                <div style="display: flex; gap: 20px; font-size: 13px">
-                  <span style="color: var(--muted)"
-                    >Recipients: <b style="color: var(--text)">—</b></span
-                  ><span style="color: var(--muted)"
-                    >Critical: <b style="color: var(--red)">—</b></span
-                  >
+                <div
+                  style="
+                    font-size: 12px;
+                    color: var(--muted);
+                    margin-bottom: 14px;
+                  "
+                >
+                  Horizontal fragment row counts
                 </div>
+                <canvas id="chart-region-total" height="160"></canvas>
               </div>
-              <div class="rcard" id="region-south">
-                <div class="rcard-title">South Region</div>
-                <div class="rcard-sub">recipient_south — TN, Kerala, AP</div>
-                <div class="rbar">
-                  <div
-                    class="rbar-fill"
-                    style="width: 0%; background: var(--green)"
-                  ></div>
+              <div
+                style="
+                  background: white;
+                  border-radius: 16px;
+                  border: 1px solid var(--border);
+                  padding: 20px;
+                "
+              >
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-weight: 700;
+                    font-size: 15px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  Urgency Breakdown by Region
                 </div>
-                <div style="display: flex; gap: 20px; font-size: 13px">
-                  <span style="color: var(--muted)"
-                    >Recipients: <b style="color: var(--text)">—</b></span
-                  ><span style="color: var(--muted)"
-                    >Critical: <b style="color: var(--red)">—</b></span
-                  >
+                <div
+                  style="
+                    font-size: 12px;
+                    color: var(--muted);
+                    margin-bottom: 14px;
+                  "
+                >
+                  Critical / High / Medium / Low per region
                 </div>
+                <canvas id="chart-region-urgency" height="160"></canvas>
               </div>
-              <div class="rcard" id="region-east">
-                <div class="rcard-title">East Region</div>
-                <div class="rcard-sub">recipient_east — WB, Odisha, Bihar</div>
-                <div class="rbar">
-                  <div
-                    class="rbar-fill"
-                    style="width: 0%; background: var(--amber)"
-                  ></div>
-                </div>
-                <div style="display: flex; gap: 20px; font-size: 13px">
-                  <span style="color: var(--muted)"
-                    >Recipients: <b style="color: var(--text)">—</b></span
-                  ><span style="color: var(--muted)"
-                    >Critical: <b style="color: var(--red)">—</b></span
+            </div>
+
+            <!-- NORTH TABLE -->
+            <div id="sec-north" class="tcard" style="margin-bottom: 16px">
+              <div class="tcard-head" style="background: #eff6ff">
+                <h3 style="color: #1d4ed8">
+                  🔵 North Region
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-weight: 500;
+                      color: var(--muted);
+                      margin-left: 8px;
+                    "
+                    >recipient_north — Delhi, Haryana, Punjab, UP</span
                   >
-                </div>
+                </h3>
+                <span
+                  id="badge-north"
+                  style="
+                    background: #dbeafe;
+                    color: #1d4ed8;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                  "
+                  >— recipients</span
+                >
               </div>
-              <div class="rcard" id="region-west">
-                <div class="rcard-title">West Region</div>
-                <div class="rcard-sub">
-                  recipient_west — Maharashtra, Gujarat
-                </div>
-                <div class="rbar">
-                  <div class="rbar-fill" style="width: 0%"></div>
-                </div>
-                <div style="display: flex; gap: 20px; font-size: 13px">
-                  <span style="color: var(--muted)"
-                    >Recipients: <b style="color: var(--text)">—</b></span
-                  ><span style="color: var(--muted)"
-                    >Critical: <b style="color: var(--red)">—</b></span
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Age</th>
+                    <th>Urgency</th>
+                    <th>Hospital</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-region-north">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- SOUTH TABLE -->
+            <div id="sec-south" class="tcard" style="margin-bottom: 16px">
+              <div class="tcard-head" style="background: #f0fdf4">
+                <h3 style="color: #15803d">
+                  🟢 South Region
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-weight: 500;
+                      color: var(--muted);
+                      margin-left: 8px;
+                    "
+                    >recipient_south — TN, Karnataka, Kerala, AP</span
                   >
-                </div>
+                </h3>
+                <span
+                  id="badge-south"
+                  style="
+                    background: #dcfce7;
+                    color: #15803d;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                  "
+                  >— recipients</span
+                >
               </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Age</th>
+                    <th>Urgency</th>
+                    <th>Hospital</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-region-south">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- EAST TABLE -->
+            <div id="sec-east" class="tcard" style="margin-bottom: 16px">
+              <div class="tcard-head" style="background: #fffbeb">
+                <h3 style="color: #b45309">
+                  🟡 East Region
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-weight: 500;
+                      color: var(--muted);
+                      margin-left: 8px;
+                    "
+                    >recipient_east — West Bengal, Odisha, Bihar</span
+                  >
+                </h3>
+                <span
+                  id="badge-east"
+                  style="
+                    background: #fef3c7;
+                    color: #b45309;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                  "
+                  >— recipients</span
+                >
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Age</th>
+                    <th>Urgency</th>
+                    <th>Hospital</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-region-east">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- WEST TABLE -->
+            <div id="sec-west" class="tcard" style="margin-bottom: 16px">
+              <div class="tcard-head" style="background: #fdf2f8">
+                <h3 style="color: #be185d">
+                  🔴 West Region
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-weight: 500;
+                      color: var(--muted);
+                      margin-left: 8px;
+                    "
+                    >recipient_west — Maharashtra, Gujarat</span
+                  >
+                </h3>
+                <span
+                  id="badge-west"
+                  style="
+                    background: #fce7f3;
+                    color: #be185d;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                  "
+                  >— recipients</span
+                >
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Age</th>
+                    <th>Urgency</th>
+                    <th>Hospital</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-region-west">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 

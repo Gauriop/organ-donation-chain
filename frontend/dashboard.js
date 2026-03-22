@@ -903,32 +903,139 @@ async function loadNormalWaitlist() {
     : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No patients</td></tr>';
 }
 
+// ================================================================
+// dashboard.js DIFF — replace ONLY the loadRegions function
+// Find: async function loadRegions() { ... }
+// Replace with everything below
+// ================================================================
+
 async function loadRegions() {
-  const results = await Promise.all([
-    apiFetch(API + "/api/recipients/north"),
-    apiFetch(API + "/api/recipients/south"),
-    apiFetch(API + "/api/recipients/east"),
-    apiFetch(API + "/api/recipients/west"),
+  const [n, s, e, w] = await Promise.all([
+    apiFetch(`${API}/api/recipients/north`),
+    apiFetch(`${API}/api/recipients/south`),
+    apiFetch(`${API}/api/recipients/east`),
+    apiFetch(`${API}/api/recipients/west`),
   ]);
-  const ids = ["region-north", "region-south", "region-east", "region-west"];
-  const max =
-    Math.max.apply(
-      null,
-      results.map(function (x) {
-        return x.length;
-      }),
-    ) || 1;
-  results.forEach(function (data, i) {
-    const card = document.getElementById(ids[i]);
-    if (!card) return;
-    const critical = data.filter(function (r) {
-      return r.urgency_level === "Critical";
-    }).length;
-    const bar = card.querySelector(".rbar-fill");
-    const bolds = card.querySelectorAll("b");
-    if (bar) bar.style.width = Math.round((data.length / max) * 100) + "%";
-    if (bolds[0]) bolds[0].textContent = data.length;
-    if (bolds[1]) bolds[1].textContent = critical;
+
+  const regions = [
+    { data: n, key: "north" },
+    { data: s, key: "south" },
+    { data: e, key: "east" },
+    { data: w, key: "west" },
+  ];
+
+  // ── UPDATE STAT CARDS ──
+  regions.forEach(({ data, key }) => {
+    const crit = data.filter((r) => r.urgency_level === "Critical").length;
+    const s1 = document.getElementById("rstat-" + key);
+    const s2 = document.getElementById("rcrit-" + key);
+    const s3 = document.getElementById("badge-" + key);
+    if (s1) s1.textContent = data.length;
+    if (s2) s2.textContent = crit;
+    if (s3) s3.textContent = data.length + " recipients";
+  });
+
+  // ── TOTAL BAR CHART ──
+  setTimeout(() => {
+    drawBarChart(
+      "chart-region-total",
+      ["North", "South", "East", "West"],
+      [n.length, s.length, e.length, w.length],
+      ["#3b82f6", "#1db87a", "#f59e0b", "#e8344a"],
+    );
+  }, 200);
+
+  // ── URGENCY GROUPED BAR CHART ──
+  setTimeout(() => {
+    const canvas = document.getElementById("chart-region-urgency");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const labels = ["North", "South", "East", "West"];
+    const urgencies = [
+      { label: "Critical", color: "#e8344a" },
+      { label: "High", color: "#f59e0b" },
+      { label: "Medium", color: "#3b82f6" },
+      { label: "Low", color: "#1db87a" },
+    ];
+    const allData = [n, s, e, w];
+    const vals = urgencies.map((u) =>
+      allData.map((d) => d.filter((r) => r.urgency_level === u.label).length),
+    );
+    const cw = canvas.offsetWidth || 500,
+      ch = 160;
+    canvas.width = cw;
+    canvas.height = ch;
+    ctx.clearRect(0, 0, cw, ch);
+
+    const groupW = (cw - 40) / 4;
+    const bw = groupW / 4 - 2;
+    const maxV = Math.max(...vals.flat()) || 1;
+
+    // draw bars
+    vals.forEach((v, di) => {
+      v.forEach((val, gi) => {
+        const x = 20 + gi * groupW + di * (bw + 2);
+        const bh = (val / maxV) * (ch - 30);
+        const y = ch - bh - 20;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(x, y, bw, bh, 3);
+        else ctx.rect(x, y, bw, bh);
+        ctx.fillStyle = urgencies[di].color;
+        ctx.fill();
+        if (val > 0) {
+          ctx.fillStyle = "#1a1826";
+          ctx.font = "bold 9px DM Sans";
+          ctx.textAlign = "center";
+          ctx.fillText(val, x + bw / 2, y - 3);
+        }
+      });
+    });
+
+    // x-axis region labels
+    labels.forEach((l, i) => {
+      ctx.fillStyle = "#7c7a8e";
+      ctx.font = "10px DM Sans";
+      ctx.textAlign = "center";
+      ctx.fillText(l, 20 + i * groupW + groupW / 2, ch - 4);
+    });
+
+    // legend (top-right)
+    urgencies.forEach((u, i) => {
+      const lx = cw - 180 + (i % 2) * 88;
+      const ly = 4 + Math.floor(i / 2) * 14;
+      ctx.fillStyle = u.color;
+      ctx.fillRect(lx, ly, 8, 8);
+      ctx.fillStyle = "#7c7a8e";
+      ctx.font = "10px DM Sans";
+      ctx.textAlign = "left";
+      ctx.fillText(u.label, lx + 11, ly + 8);
+    });
+  }, 250);
+
+  // ── PER-REGION TABLES ──
+  [
+    { data: n, id: "tbody-region-north" },
+    { data: s, id: "tbody-region-south" },
+    { data: e, id: "tbody-region-east" },
+    { data: w, id: "tbody-region-west" },
+  ].forEach(({ data, id }) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = data.length
+      ? data
+          .map(
+            (r) => `<tr>
+          <td>#R-${r.recipient_id}</td>
+          <td>${r.name}</td>
+          <td>${badge(r.blood_type)}</td>
+          <td>${r.age} yrs</td>
+          <td>${badge(r.urgency_level)}</td>
+          <td>${r.hospital_name || "-"}</td>
+          <td>${badge(r.medical_status)}</td>
+        </tr>`,
+          )
+          .join("")
+      : `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">No recipients in this region</td></tr>`;
   });
 }
 
