@@ -220,7 +220,18 @@ app.get("/api/stats", async (req, res) => {
   }
 });
 
-// ── HOSPITALS ─────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// IMPORTANT: Specific sub-routes MUST come before generic routes
+// e.g. /api/donors/living BEFORE /api/donors
+// otherwise Express matches /api/donors first and ignores the rest
+// ══════════════════════════════════════════════════════════════
+
+// ── HOSPITALS (specific first, then generic) ──────────────────
+["north", "south", "east", "west"].forEach((r) => {
+  app.get(`/api/hospitals/${r}`, async (req, res) => {
+    await run(res, `SELECT * FROM hospital_${r} ORDER BY name`, [], req.db);
+  });
+});
 app.get("/api/hospitals", async (req, res) => {
   const { region, search } = req.query;
   let sql = "SELECT * FROM hospital WHERE 1=1";
@@ -252,7 +263,39 @@ app.post("/api/hospitals", async (req, res) => {
   );
 });
 
-// ── DONORS ────────────────────────────────────────────────────
+// ── DONORS (specific sub-routes FIRST, then generic) ─────────
+app.get("/api/donors/living", async (req, res) => {
+  await run(
+    res,
+    `SELECT d.*, h.name AS hospital_name FROM donor_living d JOIN hospital h ON d.hospital_id=h.hospital_id ORDER BY d.donor_id DESC`,
+    [],
+    req.db,
+  );
+});
+app.get("/api/donors/deceased", async (req, res) => {
+  await run(
+    res,
+    `SELECT d.*, h.name AS hospital_name FROM donor_deceased d JOIN hospital h ON d.hospital_id=h.hospital_id ORDER BY d.donor_id DESC`,
+    [],
+    req.db,
+  );
+});
+app.get("/api/donors/approved", async (req, res) => {
+  await run(
+    res,
+    `SELECT d.*, h.name AS hospital_name FROM donor_approved d JOIN hospital h ON d.hospital_id=h.hospital_id ORDER BY d.registration_date DESC`,
+    [],
+    req.db,
+  );
+});
+app.get("/api/donors/pending", async (req, res) => {
+  await run(
+    res,
+    `SELECT d.*, h.name AS hospital_name FROM donor_pending d JOIN hospital h ON d.hospital_id=h.hospital_id ORDER BY d.registration_date DESC`,
+    [],
+    req.db,
+  );
+});
 app.get("/api/donors", async (req, res) => {
   const { type, status, blood_type } = req.query;
   let sql = `SELECT d.*, h.name AS hospital_name, h.region FROM donor d JOIN hospital h ON d.hospital_id=h.hospital_id WHERE 1=1`;
@@ -270,22 +313,6 @@ app.get("/api/donors", async (req, res) => {
     sql += ` AND d.blood_type=$${p.length}`;
   }
   await run(res, sql + " ORDER BY d.registration_date DESC", p, req.db);
-});
-app.get("/api/donors/living", async (req, res) => {
-  await run(
-    res,
-    `SELECT d.*, h.name AS hospital_name FROM donor_living d JOIN hospital h ON d.hospital_id=h.hospital_id ORDER BY d.donor_id DESC`,
-    [],
-    req.db,
-  );
-});
-app.get("/api/donors/deceased", async (req, res) => {
-  await run(
-    res,
-    `SELECT d.*, h.name AS hospital_name FROM donor_deceased d JOIN hospital h ON d.hospital_id=h.hospital_id ORDER BY d.donor_id DESC`,
-    [],
-    req.db,
-  );
 });
 app.post("/api/donors", async (req, res) => {
   const {
@@ -313,7 +340,17 @@ app.post("/api/donors", async (req, res) => {
   );
 });
 
-// ── RECIPIENTS ────────────────────────────────────────────────
+// ── RECIPIENTS (specific sub-routes FIRST, then generic) ─────
+["north", "south", "east", "west"].forEach((r) => {
+  app.get(`/api/recipients/${r}`, async (req, res) => {
+    await run(
+      res,
+      `SELECT r.*, h.name AS hospital_name FROM recipient_${r} r JOIN hospital h ON r.hospital_id=h.hospital_id ORDER BY r.recipient_id`,
+      [],
+      req.db,
+    );
+  });
+});
 app.get("/api/recipients", async (req, res) => {
   const { urgency, status, region } = req.query;
   let sql = `SELECT r.*, h.name AS hospital_name, h.region FROM recipient r JOIN hospital h ON r.hospital_id=h.hospital_id WHERE 1=1`;
@@ -337,16 +374,6 @@ app.get("/api/recipients", async (req, res) => {
     p,
     req.db,
   );
-});
-["north", "south", "east", "west"].forEach((r) => {
-  app.get(`/api/recipients/${r}`, async (req, res) => {
-    await run(
-      res,
-      `SELECT r.*, h.name AS hospital_name FROM recipient_${r} r JOIN hospital h ON r.hospital_id=h.hospital_id ORDER BY r.recipient_id`,
-      [],
-      req.db,
-    );
-  });
 });
 app.post("/api/recipients", async (req, res) => {
   const {
@@ -374,7 +401,35 @@ app.post("/api/recipients", async (req, res) => {
   );
 });
 
-// ── WAITLIST ──────────────────────────────────────────────────
+// ── WAITLIST (specific sub-routes FIRST, then generic) ───────
+app.get("/api/waitlist/critical", async (req, res) => {
+  await run(
+    res,
+    `SELECT w.*, r.name AS recipient_name, r.blood_type, r.urgency_level,
+            h.name AS hospital_name,
+            (CURRENT_DATE - w.registration_date) AS days_waiting
+     FROM waitlist_critical w
+     JOIN recipient r ON w.recipient_id = r.recipient_id
+     JOIN hospital h ON r.hospital_id = h.hospital_id
+     ORDER BY w.priority_score DESC`,
+    [],
+    req.db,
+  );
+});
+app.get("/api/waitlist/normal", async (req, res) => {
+  await run(
+    res,
+    `SELECT w.*, r.name AS recipient_name, r.blood_type, r.urgency_level,
+            h.name AS hospital_name,
+            (CURRENT_DATE - w.registration_date) AS days_waiting
+     FROM waitlist_normal w
+     JOIN recipient r ON w.recipient_id = r.recipient_id
+     JOIN hospital h ON r.hospital_id = h.hospital_id
+     ORDER BY w.priority_score DESC`,
+    [],
+    req.db,
+  );
+});
 app.get("/api/waitlist", async (req, res) => {
   await run(
     res,
@@ -400,7 +455,44 @@ app.post("/api/waitlist", async (req, res) => {
   );
 });
 
-// ── ORGANS ────────────────────────────────────────────────────
+// ── ORGANS (specific sub-routes FIRST, then generic) ─────────
+app.get("/api/organs/available", async (req, res) => {
+  await run(
+    res,
+    `SELECT o.*, d.name AS donor_name, d.blood_type, h.name AS hospital_name,
+            ROUND(EXTRACT(EPOCH FROM (o.expiry_time - NOW()))/3600,1) AS hours_remaining
+     FROM organ_available o
+     JOIN donor d ON o.donor_id = d.donor_id
+     JOIN hospital h ON d.hospital_id = h.hospital_id
+     ORDER BY o.expiry_time ASC NULLS LAST`,
+    [],
+    req.db,
+  );
+});
+app.get("/api/organs/allocated", async (req, res) => {
+  await run(
+    res,
+    `SELECT o.*, d.name AS donor_name, d.blood_type, h.name AS hospital_name
+     FROM organ_allocated o
+     JOIN donor d ON o.donor_id = d.donor_id
+     JOIN hospital h ON d.hospital_id = h.hospital_id
+     ORDER BY o.expiry_time ASC NULLS LAST`,
+    [],
+    req.db,
+  );
+});
+app.get("/api/organs/completed", async (req, res) => {
+  await run(
+    res,
+    `SELECT o.*, d.name AS donor_name, d.blood_type, h.name AS hospital_name
+     FROM organ_completed o
+     JOIN donor d ON o.donor_id = d.donor_id
+     JOIN hospital h ON d.hospital_id = h.hospital_id
+     ORDER BY o.harvest_date DESC`,
+    [],
+    req.db,
+  );
+});
 app.get("/api/organs", async (req, res) => {
   const { status, organ_type } = req.query;
   let sql = `SELECT o.*, d.name AS donor_name, d.blood_type, d.donor_type, h.name AS hospital_name,
@@ -427,6 +519,32 @@ app.post("/api/organs", async (req, res) => {
   );
 });
 
+// ── COMPATIBILITY (specific FIRST, then generic) ─────────────
+app.get("/api/compatibility/summary", async (req, res) => {
+  await run(
+    res,
+    `SELECT cs.*, d.name AS donor_name, r.name AS recipient_name
+     FROM compat_summary cs
+     JOIN donor d ON cs.donor_id = d.donor_id
+     JOIN recipient r ON cs.recipient_id = r.recipient_id
+     ORDER BY cs.test_date DESC`,
+    [],
+    req.db,
+  );
+});
+app.get("/api/compatibility/detail", async (req, res) => {
+  await run(
+    res,
+    `SELECT cd.*, d.name AS donor_name, r.name AS recipient_name
+     FROM compat_detail cd
+     JOIN compatibility_test ct ON cd.test_id = ct.test_id
+     JOIN donor d ON ct.donor_id = d.donor_id
+     JOIN recipient r ON ct.recipient_id = r.recipient_id
+     ORDER BY cd.compatibility_score DESC`,
+    [],
+    req.db,
+  );
+});
 // ── COMPATIBILITY ─────────────────────────────────────────────
 app.get("/api/compatibility", async (req, res) => {
   const { result, min_score } = req.query;
@@ -534,7 +652,13 @@ app.post("/api/transplants", async (req, res) => {
   );
 });
 
-// ── STAFF ─────────────────────────────────────────────────────
+// ── STAFF (specific FIRST, then generic) ─────────────────────
+app.get("/api/staff/admin", async (req, res) => {
+  await run(res, `SELECT * FROM staff_admin ORDER BY staff_id`, [], req.db);
+});
+app.get("/api/staff/clinical", async (req, res) => {
+  await run(res, `SELECT * FROM staff_clinical ORDER BY staff_id`, [], req.db);
+});
 app.get("/api/staff", async (req, res) => {
   await run(
     res,

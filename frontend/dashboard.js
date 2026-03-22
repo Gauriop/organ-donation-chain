@@ -8,50 +8,125 @@ const user = JSON.parse(
 const initials = user.username.slice(0, 2).toUpperCase();
 document.getElementById("sb-avatar").textContent = initials;
 document.getElementById("top-avatar").textContent = initials;
-document.getElementById("sb-name").textContent = user.username;
-document.getElementById("sb-role").textContent =
-  user.role === "admin"
-    ? "System Admin"
-    : user.role === "coordinator"
-      ? "Hospital Coordinator"
-      : user.role === "doctor"
-        ? "Medical Staff"
-        : "Guest";
 
 function logout() {
   sessionStorage.removeItem("organlife_user");
+  sessionStorage.removeItem("organlife_token");
   window.location.href = "/frontend/login.html";
 }
 
-// ── NAVIGATION ──
+// ── FLYOUT TOGGLE ──
+// Uses position:fixed + getBoundingClientRect so it appears
+// exactly next to the clicked button and is NEVER clipped
+function toggleFlyout(id) {
+  const flyout = document.getElementById(id);
+  const isOpen = flyout.classList.contains("open");
+
+  // close all flyouts first
+  closeFlyouts();
+
+  if (!isOpen) {
+    // find the button that triggered this flyout
+    const btn = document.querySelector(
+      "[onclick=\"toggleFlyout('" + id + "')\"]",
+    );
+    if (btn) {
+      const r = btn.getBoundingClientRect();
+      flyout.style.top = r.top + "px";
+      flyout.style.left = r.right + 6 + "px";
+    }
+    flyout.classList.add("open");
+  }
+}
+
+function closeFlyouts() {
+  document
+    .querySelectorAll(".snav-flyout")
+    .forEach((f) => f.classList.remove("open"));
+}
+
+function setFlyActive(el) {
+  document
+    .querySelectorAll(".flyout-item")
+    .forEach((i) => i.classList.remove("fi-active"));
+  el.classList.add("fi-active");
+}
+
+// close when clicking outside the sidebar
+document.addEventListener("click", function (e) {
+  if (!e.target.closest(".sidebar")) closeFlyouts();
+});
+
+// ── PAGE → NAV ICON MAPPING ──
+const pageToNav = {
+  dashboard: "snav-dashboard",
+  "donor-reg": "snav-donors",
+  "donors-list": "snav-donors",
+  "donor-living": "snav-donors",
+  "donor-deceased": "snav-donors",
+  "donor-approved": "snav-donors",
+  "donor-pending": "snav-donors",
+  "recipient-reg": "snav-recipients",
+  recipients: "snav-recipients",
+  waitlist: "snav-recipients",
+  "waitlist-critical": "snav-recipients",
+  "waitlist-normal": "snav-recipients",
+  regions: "snav-recipients",
+  organs: "snav-organs",
+  "organs-available": "snav-organs",
+  "organs-allocated": "snav-organs",
+  compatibility: "snav-organs",
+  "compat-summary": "snav-organs",
+  "donation-chain": "snav-organs",
+  transplants: "snav-transplants",
+  "transplant-medical": "snav-transplants",
+  hospitals: "snav-infra",
+  staff: "snav-infra",
+};
+
 const titles = {
   dashboard: "Dashboard",
   "donor-reg": "Register Donor",
   "donors-list": "All Donors",
   "donor-living": "Living Donors",
   "donor-deceased": "Deceased Donors",
+  "donor-approved": "Approved Donors",
+  "donor-pending": "Pending Donors",
   "recipient-reg": "Add Recipient",
   recipients: "All Recipients",
   waitlist: "Waitlist",
+  "waitlist-critical": "Critical Waitlist",
+  "waitlist-normal": "Normal Waitlist",
   regions: "Recipients by Region",
   organs: "Organ Inventory",
+  "organs-available": "Available Organs",
+  "organs-allocated": "Allocated Organs",
   compatibility: "Compatibility Test",
+  "compat-summary": "Compatibility Summary",
   "donation-chain": "Donation Chain",
   transplants: "Transplant Records",
   "transplant-medical": "Medical Details",
   hospitals: "Hospitals",
   staff: "Medical Staff",
 };
+
 const loaders = {
   dashboard: loadDashboard,
   "donors-list": loadDonors,
   "donor-living": loadLivingDonors,
   "donor-deceased": loadDeceasedDonors,
+  "donor-approved": loadApprovedDonors,
+  "donor-pending": loadPendingDonors,
   recipients: loadRecipients,
   waitlist: loadWaitlist,
+  "waitlist-critical": loadCriticalWaitlist,
+  "waitlist-normal": loadNormalWaitlist,
   regions: loadRegions,
   organs: loadOrgans,
+  "organs-available": loadAvailableOrgans,
+  "organs-allocated": loadAllocatedOrgans,
   compatibility: loadCompatibility,
+  "compat-summary": loadCompatSummary,
   "donation-chain": loadChains,
   transplants: loadTransplants,
   "transplant-medical": loadTransplantMedical,
@@ -65,11 +140,13 @@ function showPage(id, navEl) {
     .forEach((p) => p.classList.remove("active"));
   document.getElementById("page-" + id)?.classList.add("active");
   document
-    .querySelectorAll(".nav-item")
-    .forEach((n) => n.classList.remove("active"));
-  if (navEl) navEl.classList.add("active");
+    .querySelectorAll(".snav-btn")
+    .forEach((b) => b.classList.remove("active"));
+  const navId = pageToNav[id];
+  if (navId) document.getElementById(navId)?.classList.add("active");
   document.getElementById("topbar-title").textContent = titles[id] || id;
   document.querySelector(".content").scrollTop = 0;
+  closeFlyouts();
   if (loaders[id]) loaders[id]();
 }
 
@@ -77,7 +154,7 @@ function showPage(id, navEl) {
 async function apiFetch(url) {
   try {
     const token = sessionStorage.getItem("organlife_token");
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const headers = token ? { Authorization: "Bearer " + token } : {};
     const r = await fetch(url, { headers });
     const j = await r.json();
     return j.success ? j.data : [];
@@ -85,6 +162,7 @@ async function apiFetch(url) {
     return [];
   }
 }
+
 function badge(text) {
   if (!text) return "-";
   const map = {
@@ -121,8 +199,11 @@ function badge(text) {
     "AB+": "b-red",
     "AB-": "b-red",
   };
-  return `<span class="badge ${map[text] || "b-gray"}">${text}</span>`;
+  return (
+    '<span class="badge ' + (map[text] || "b-gray") + '">' + text + "</span>"
+  );
 }
+
 function fmt(d) {
   return d
     ? new Date(d).toLocaleDateString("en-IN", {
@@ -132,11 +213,19 @@ function fmt(d) {
       })
     : "-";
 }
-function empty(id, cols, msg = "No records found") {
+
+function empty(id, cols, msg) {
+  msg = msg || "No records found";
   const el = document.getElementById(id);
   if (el)
-    el.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;padding:24px;color:var(--muted)">${msg}</td></tr>`;
+    el.innerHTML =
+      '<tr><td colspan="' +
+      cols +
+      '" style="text-align:center;padding:24px;color:var(--muted)">' +
+      msg +
+      "</td></tr>";
 }
+
 function toggleDT() {
   const v = document.getElementById("dtype").value;
   document.getElementById("lfield").style.display =
@@ -144,27 +233,157 @@ function toggleDT() {
   document.getElementById("dfield").style.display =
     v === "deceased" ? "" : "none";
 }
+
 function showAlert(id) {
   const el = document.getElementById(id);
   el.style.display = "block";
   setTimeout(() => (el.style.display = "none"), 3500);
 }
+
 function filterTable(input, tbodyId, cols) {
   const q = input.value.toLowerCase();
-  document.querySelectorAll(`#${tbodyId} tr`).forEach((row) => {
+  document.querySelectorAll("#" + tbodyId + " tr").forEach((row) => {
     const text = cols
-      .map((i) => row.cells[i]?.textContent.toLowerCase() || "")
+      .map((i) => (row.cells[i] ? row.cells[i].textContent.toLowerCase() : ""))
       .join(" ");
     row.style.display = text.includes(q) ? "" : "none";
   });
 }
 
+// ── CHART HELPERS ──
+function drawDonut(canvasId, data, colors, lineWidth) {
+  lineWidth = lineWidth || 18;
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const cx = canvas.width / 2,
+    cy = canvas.height / 2;
+  const r = Math.min(cx, cy) - lineWidth / 2 - 2;
+  const total = data.reduce(function (a, b) {
+    return a + b;
+  }, 0);
+  let start = -Math.PI / 2;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = "#f0eef8";
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+  data.forEach(function (val, i) {
+    if (!val) return;
+    const sweep = (val / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, start, start + sweep);
+    ctx.strokeStyle = colors[i];
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = "round";
+    ctx.stroke();
+    start += sweep;
+  });
+}
+
+function drawRing(canvasId, pct, color, bg) {
+  bg = bg || "#f0eef8";
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const cx = canvas.width / 2,
+    cy = canvas.height / 2,
+    r = cx - 10;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = bg;
+  ctx.lineWidth = 14;
+  ctx.stroke();
+  const sweep = (pct / 100) * Math.PI * 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + sweep);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 14;
+  ctx.lineCap = "round";
+  ctx.stroke();
+}
+
+function drawSparkline(canvasId, data, color) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const w = canvas.offsetWidth || 200,
+    h = 36;
+  canvas.width = w;
+  canvas.height = h;
+  if (!data.length) return;
+  const min = Math.min.apply(null, data),
+    max = Math.max.apply(null, data),
+    range = max - min || 1;
+  const pts = data.map(function (v, i) {
+    return [
+      (i / (data.length - 1 || 1)) * w,
+      h - ((v - min) / range) * (h - 6) - 3,
+    ];
+  });
+  ctx.clearRect(0, 0, w, h);
+  ctx.beginPath();
+  pts.forEach(function (p, i) {
+    i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]);
+  });
+  ctx.strokeStyle = "rgba(255,255,255,0.8)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function drawBarChart(canvasId, labels, data, colors) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width || canvas.offsetWidth,
+    h = canvas.height;
+  const max = Math.max.apply(null, data) || 1;
+  const bw = (w - 20) / data.length - 6;
+  ctx.clearRect(0, 0, w, h);
+  data.forEach(function (val, i) {
+    const bh = (val / max) * (h - 30);
+    const x = 10 + i * (bw + 6),
+      y = h - bh - 20;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, bw, bh, 4);
+    else ctx.rect(x, y, bw, bh);
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fill();
+    ctx.fillStyle = "#7c7a8e";
+    ctx.font = "10px DM Sans";
+    ctx.textAlign = "center";
+    ctx.fillText(labels[i], x + bw / 2, h - 4);
+    ctx.fillStyle = "#1a1826";
+    ctx.font = "bold 11px DM Sans";
+    ctx.fillText(val, x + bw / 2, y - 4);
+  });
+}
+
 // ── DASHBOARD ──
 async function loadDashboard() {
+  const now = new Date();
+  const hour = now.getHours();
+  const greet =
+    hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+  const u = JSON.parse(sessionStorage.getItem("organlife_user") || "{}");
+  const greetEl = document.getElementById("dash-greeting");
+  const dateEl = document.getElementById("dash-date");
+  if (greetEl)
+    greetEl.textContent = greet + ", " + (u.username || "Admin") + " 👋";
+  if (dateEl)
+    dateEl.textContent = now.toLocaleDateString("en-IN", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
   try {
     const token = sessionStorage.getItem("organlife_token");
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const r = await fetch(`${API}/api/stats`, { headers });
+    const headers = token ? { Authorization: "Bearer " + token } : {};
+    const r = await fetch(API + "/api/stats", { headers });
     const j = await r.json();
     if (j.success) {
       const d = j.data;
@@ -176,151 +395,535 @@ async function loadDashboard() {
       document.getElementById("dash-waitlist").textContent = d.waitlist_count;
       document.getElementById("dash-hosp-total").textContent = d.hospitals;
       document.getElementById("dash-staff-total").textContent = d.staff;
+      document.getElementById("dash-chains-count").textContent =
+        d.active_chains;
+      const trend = function (v) {
+        return Array.from({ length: 8 }, function (_, i) {
+          return Math.max(
+            0,
+            v -
+              Math.floor(Math.random() * Math.floor(v * 0.3)) +
+              Math.floor(i * (v * 0.04)),
+          );
+        });
+      };
+      setTimeout(function () {
+        drawSparkline("spark-donors", trend(d.total_donors), "white");
+        drawSparkline("spark-recipients", trend(d.active_recipients), "white");
+        drawSparkline("spark-transplants", trend(d.transplants_done), "white");
+        drawSparkline("spark-waitlist", trend(d.waitlist_count), "white");
+      }, 300);
     }
   } catch (e) {}
 
-  const transplants = await apiFetch(`${API}/api/transplants`);
-  const tbody = document.getElementById("dash-transplants-tbody");
-  if (tbody)
-    tbody.innerHTML = transplants.length
-      ? transplants
-          .slice(0, 5)
-          .map(
-            (t) =>
-              `<tr><td>#TR-${t.transplant_id}</td><td>${t.organ_type}</td><td>${t.donor_name} → ${t.recipient_name}</td><td>${t.hospital_name}</td><td>${badge(t.outcome || t.status)}</td></tr>`,
-          )
-          .join("")
-      : `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">No transplant records yet</td></tr>`;
+  const results = await Promise.all([
+    apiFetch(API + "/api/organs"),
+    apiFetch(API + "/api/waitlist"),
+    apiFetch(API + "/api/transplants"),
+    apiFetch(API + "/api/donors"),
+    apiFetch(API + "/api/compatibility"),
+    apiFetch(API + "/api/chains"),
+    apiFetch(API + "/api/recipients/north"),
+    apiFetch(API + "/api/recipients/south"),
+    apiFetch(API + "/api/recipients/east"),
+    apiFetch(API + "/api/recipients/west"),
+  ]);
+  const organs = results[0],
+    waitlist = results[1],
+    transplants = results[2],
+    donors = results[3];
+  const tests = results[4],
+    north = results[6],
+    south = results[7],
+    east = results[8],
+    west = results[9];
 
-  const waitlist = await apiFetch(`${API}/api/waitlist`);
-  const wlDiv = document.getElementById("dash-waitlist-items");
-  if (wlDiv) {
-    const critical = waitlist
-      .filter((w) => w.urgency_level === "Critical")
+  const testsEl = document.getElementById("dash-tests-done");
+  if (testsEl) testsEl.textContent = tests.length;
+
+  // Organ donut
+  const avail = organs.filter(function (o) {
+    return o.status === "Available";
+  }).length;
+  const alloc = organs.filter(function (o) {
+    return o.status === "Allocated";
+  }).length;
+  const trans = organs.filter(function (o) {
+    return o.status === "Transplanted";
+  }).length;
+  const expir = organs.filter(function (o) {
+    return o.status === "Expired";
+  }).length;
+  setTimeout(function () {
+    drawDonut(
+      "chart-organs",
+      [avail, alloc, trans, expir],
+      ["#1db87a", "#3b82f6", "#e8344a", "#d1d5db"],
+    );
+  }, 200);
+  const legendEl = document.getElementById("organ-legend");
+  if (legendEl) {
+    legendEl.innerHTML = [
+      ["Available", avail, "#1db87a"],
+      ["Allocated", alloc, "#3b82f6"],
+      ["Transplanted", trans, "#e8344a"],
+      ["Expired", expir, "#d1d5db"],
+    ]
+      .map(function (x) {
+        return (
+          '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:' +
+          x[2] +
+          ';flex-shrink:0;"></div><span style="font-size:12.5px;color:var(--muted);">' +
+          x[0] +
+          '</span></div><span style="font-size:13px;font-weight:700;color:var(--text);">' +
+          x[1] +
+          "</span></div>"
+        );
+      })
+      .join("");
+  }
+
+  // Critical ring
+  const crit = waitlist.filter(function (w) {
+    return w.urgency_level === "Critical";
+  }).length;
+  const pct = waitlist.length ? Math.round((crit / waitlist.length) * 100) : 0;
+  setTimeout(function () {
+    drawRing("chart-critical", pct, "#e8344a");
+  }, 200);
+  const pctCritEl = document.getElementById("pct-critical");
+  const txtCritEl = document.getElementById("txt-critical");
+  if (pctCritEl) pctCritEl.textContent = pct + "%";
+  if (txtCritEl)
+    txtCritEl.textContent = crit + " of " + waitlist.length + " patients";
+
+  // Success ring
+  const completed = transplants.filter(function (t) {
+    return t.status === "Completed";
+  }).length;
+  const successful = transplants.filter(function (t) {
+    return t.outcome === "Successful";
+  }).length;
+  const sPct = completed ? Math.round((successful / completed) * 100) : 0;
+  setTimeout(function () {
+    drawRing("chart-success", sPct || 75, "#1db87a");
+  }, 200);
+  const pctSuccEl = document.getElementById("pct-success");
+  const txtSuccEl = document.getElementById("txt-success");
+  if (pctSuccEl) pctSuccEl.textContent = (sPct || "—") + (sPct ? "%" : "");
+  if (txtSuccEl)
+    txtSuccEl.textContent = successful + " of " + completed + " completed";
+
+  // Critical waitlist cards
+  const critDiv = document.getElementById("dash-waitlist-cards");
+  if (critDiv) {
+    const critList = waitlist
+      .filter(function (w) {
+        return w.urgency_level === "Critical";
+      })
       .slice(0, 4);
-    wlDiv.innerHTML = critical.length
-      ? critical
-          .map(
-            (w, i) =>
-              `<div class="wl-item"><div class="wl-rank">${i + 1}</div><div class="wl-info"><div class="wl-name">${w.recipient_name}</div><div class="wl-detail">${w.organ_type} • ${w.blood_type} • ${w.days_waiting} days</div></div>${badge(w.urgency_level)}</div>`,
-          )
+    critDiv.innerHTML = critList.length
+      ? critList
+          .map(function (w, i) {
+            return (
+              '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><div style="width:28px;height:28px;border-radius:8px;background:var(--red-bg);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">' +
+              (i + 1) +
+              '</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+              w.recipient_name +
+              '</div><div style="font-size:11px;color:var(--muted);">' +
+              w.organ_type +
+              " &bull; " +
+              w.blood_type +
+              " &bull; " +
+              w.days_waiting +
+              'd</div></div><span style="background:var(--red-bg);color:var(--red);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;">Critical</span></div>'
+            );
+          })
           .join("")
-      : `<div style="padding:16px;color:var(--muted);font-size:13px">No critical patients</div>`;
+      : '<div style="color:var(--muted);font-size:13px;padding:8px 0;">No critical patients 🎉</div>';
   }
 
-  const tests = await apiFetch(`${API}/api/compatibility`);
-  document.getElementById("dash-tests-done").textContent = tests.length;
-  document.getElementById("dash-tests-pending").textContent = tests.filter(
-    (t) => t.test_result === "Pending",
-  ).length;
-
-  const chains = await apiFetch(`${API}/api/chains`);
-  const active = chains.filter((c) => c.status === "In Progress");
-  const chainDiv = document.getElementById("dash-chains");
-  if (chainDiv && active.length) {
-    chainDiv.innerHTML = "";
-    for (const chain of active.slice(0, 2)) {
-      const links = await apiFetch(`${API}/api/chains/${chain.chain_id}/links`);
-      chainDiv.innerHTML += `<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:8px">${chain.chain_name.toUpperCase()}</div>
-              <div class="chain-row">
-                <div class="cnode"><div class="cnode-circle cd">D</div><div class="cnode-lbl">Donor</div></div>
-                ${links.map((l) => `<div class="carrow">→</div><div class="cnode"><div class="cnode-circle cr">R</div><div class="cnode-lbl">${l.recipient_name.split(" ")[0]}</div></div>`).join("")}
-              </div><div style="margin-bottom:12px"></div>`;
-    }
-  } else if (chainDiv) {
-    chainDiv.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:8px 0">No active chains</div>`;
+  // Transplant timeline
+  const tlDiv = document.getElementById("dash-transplant-timeline");
+  if (tlDiv) {
+    tlDiv.innerHTML =
+      transplants
+        .slice(0, 5)
+        .map(function (t) {
+          var oc = t.outcome || "Pending";
+          var bg =
+            oc === "Successful"
+              ? "#e8faf3"
+              : oc === "Pending"
+                ? "#fef3c7"
+                : "var(--red-bg)";
+          var cl =
+            oc === "Successful"
+              ? "#0a7a4e"
+              : oc === "Pending"
+                ? "#92400e"
+                : "var(--red)";
+          var dot =
+            oc === "Successful"
+              ? "#1db87a"
+              : oc === "Pending"
+                ? "#f59e0b"
+                : "#e8344a";
+          return (
+            '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);"><div style="width:8px;height:8px;border-radius:50%;background:' +
+            dot +
+            ';flex-shrink:0;margin-top:1px;"></div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+            (t.organ_type || "") +
+            " — " +
+            (t.donor_name || "").split(" ")[0] +
+            " → " +
+            (t.recipient_name || "").split(" ")[0] +
+            '</div><div style="font-size:11px;color:var(--muted);">' +
+            (t.hospital_name || "") +
+            " &bull; " +
+            fmt(t.surgery_date) +
+            '</div></div><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;background:' +
+            bg +
+            ";color:" +
+            cl +
+            ';">' +
+            oc +
+            "</span></div>"
+          );
+        })
+        .join("") ||
+      '<div style="color:var(--muted);font-size:13px;">No records yet</div>';
   }
+
+  // Blood type bar chart
+  const btCounts = {};
+  donors.forEach(function (d) {
+    btCounts[d.blood_type] = (btCounts[d.blood_type] || 0) + 1;
+  });
+  const btLabels = Object.keys(btCounts),
+    btData = btLabels.map(function (k) {
+      return btCounts[k];
+    });
+  setTimeout(function () {
+    drawBarChart("chart-bloodtype", btLabels, btData, [
+      "#e8344a",
+      "#f2647a",
+      "#3b82f6",
+      "#60a5fa",
+      "#1db87a",
+      "#34d399",
+      "#f59e0b",
+      "#fbbf24",
+    ]);
+  }, 300);
+
+  // Region bar chart
+  setTimeout(function () {
+    drawBarChart(
+      "chart-regions",
+      ["North", "South", "East", "West"],
+      [north.length, south.length, east.length, west.length],
+      ["#3b82f6", "#1db87a", "#f59e0b", "#e8344a"],
+    );
+  }, 300);
 }
 
+// ── DATA LOADERS ──
 async function loadDonors() {
-  const d = await apiFetch(`${API}/api/donors`);
+  const d = await apiFetch(API + "/api/donors");
   const el = document.getElementById("tbody-donors");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (r) =>
-            `<tr><td>#D-${r.donor_id}</td><td>${r.name}</td><td>${badge(r.blood_type)}</td><td>${r.donor_type}</td><td>${r.hospital_name}</td><td>${r.age} yrs</td><td>${badge(r.medical_status)}</td></tr>`,
-        )
+        .map(function (r) {
+          return (
+            "<tr><td>#D-" +
+            r.donor_id +
+            "</td><td>" +
+            r.name +
+            "</td><td>" +
+            badge(r.blood_type) +
+            "</td><td>" +
+            r.donor_type +
+            "</td><td>" +
+            (r.hospital_name || "-") +
+            "</td><td>" +
+            r.age +
+            " yrs</td><td>" +
+            badge(r.medical_status) +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No donors found</td></tr>`;
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No donors found</td></tr>';
 }
+
 async function loadLivingDonors() {
-  const d = await apiFetch(`${API}/api/donors/living`);
+  const d = await apiFetch(API + "/api/donors/living");
   const el = document.getElementById("tbody-donor-living");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (r) =>
-            `<tr><td>#DL-${r.donor_id}</td><td>${r.name}</td><td>${badge(r.blood_type)}</td><td>${r.hospital_name}</td><td>${r.age} yrs</td><td>${badge(r.medical_status)}</td></tr>`,
-        )
+        .map(function (r) {
+          return (
+            "<tr><td>#DL-" +
+            r.donor_id +
+            "</td><td>" +
+            r.name +
+            "</td><td>" +
+            badge(r.blood_type) +
+            "</td><td>" +
+            (r.hospital_name || "-") +
+            "</td><td>" +
+            r.age +
+            " yrs</td><td>" +
+            badge(r.medical_status) +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No living donors</td></tr>`;
+    : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No living donors</td></tr>';
 }
+
 async function loadDeceasedDonors() {
-  const d = await apiFetch(`${API}/api/donors/deceased`);
+  const d = await apiFetch(API + "/api/donors/deceased");
   const el = document.getElementById("tbody-donor-deceased");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (r) =>
-            `<tr><td>#DD-${r.donor_id}</td><td>${r.name}</td><td>${badge(r.blood_type)}</td><td>${fmt(r.registration_date)}</td><td>${badge(r.medical_status)}</td><td>${r.hospital_name}</td><td>-</td></tr>`,
-        )
+        .map(function (r) {
+          return (
+            "<tr><td>#DD-" +
+            r.donor_id +
+            "</td><td>" +
+            r.name +
+            "</td><td>" +
+            badge(r.blood_type) +
+            "</td><td>" +
+            fmt(r.registration_date) +
+            "</td><td>" +
+            badge(r.medical_status) +
+            "</td><td>" +
+            (r.hospital_name || "-") +
+            "</td><td>-</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No deceased donors</td></tr>`;
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No deceased donors</td></tr>';
 }
+
+async function loadApprovedDonors() {
+  const d = await apiFetch(API + "/api/donors/approved");
+  const el = document.getElementById("tbody-donor-approved");
+  if (!el) return;
+  el.innerHTML = d.length
+    ? d
+        .map(function (r) {
+          return (
+            "<tr><td>#D-" +
+            r.donor_id +
+            "</td><td>" +
+            r.name +
+            "</td><td>" +
+            badge(r.blood_type) +
+            "</td><td>" +
+            r.donor_type +
+            "</td><td>" +
+            (r.hospital_name || "-") +
+            "</td><td>" +
+            r.age +
+            " yrs</td><td>" +
+            badge("Approved") +
+            "</td></tr>"
+          );
+        })
+        .join("")
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No approved donors</td></tr>';
+}
+
+async function loadPendingDonors() {
+  const d = await apiFetch(API + "/api/donors/pending");
+  const el = document.getElementById("tbody-donor-pending");
+  if (!el) return;
+  el.innerHTML = d.length
+    ? d
+        .map(function (r) {
+          return (
+            "<tr><td>#D-" +
+            r.donor_id +
+            "</td><td>" +
+            r.name +
+            "</td><td>" +
+            badge(r.blood_type) +
+            "</td><td>" +
+            r.donor_type +
+            "</td><td>" +
+            (r.hospital_name || "-") +
+            "</td><td>" +
+            r.age +
+            " yrs</td><td>" +
+            badge("Under Evaluation") +
+            "</td></tr>"
+          );
+        })
+        .join("")
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No pending donors</td></tr>';
+}
+
 async function loadRecipients() {
-  const d = await apiFetch(`${API}/api/recipients`);
+  const d = await apiFetch(API + "/api/recipients");
   const el = document.getElementById("tbody-recipients");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (r) =>
-            `<tr><td>#R-${r.recipient_id}</td><td>${r.name}</td><td>${badge(r.blood_type)}</td><td>-</td><td>${r.region || "-"}</td><td>${badge(r.urgency_level)}</td><td>-</td><td>${badge(r.medical_status)}</td></tr>`,
-        )
+        .map(function (r) {
+          return (
+            "<tr><td>#R-" +
+            r.recipient_id +
+            "</td><td>" +
+            r.name +
+            "</td><td>" +
+            badge(r.blood_type) +
+            "</td><td>-</td><td>" +
+            (r.region || "-") +
+            "</td><td>" +
+            badge(r.urgency_level) +
+            "</td><td>-</td><td>" +
+            badge(r.medical_status) +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No recipients</td></tr>`;
+    : '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No recipients</td></tr>';
 }
+
 async function loadWaitlist() {
-  const d = await apiFetch(`${API}/api/waitlist`);
-  document.getElementById("wl-critical").textContent = d.filter(
-    (w) => w.urgency_level === "Critical",
-  ).length;
-  document.getElementById("wl-high").textContent = d.filter(
-    (w) => w.urgency_level === "High",
-  ).length;
-  document.getElementById("wl-normal").textContent = d.filter(
-    (w) => w.urgency_level === "Medium" || w.urgency_level === "Low",
-  ).length;
-  document.getElementById("wl-total").textContent = d.length;
+  const d = await apiFetch(API + "/api/waitlist");
+  const ids = ["wl-critical", "wl-high", "wl-normal", "wl-total"];
+  const counts = [
+    d.filter(function (w) {
+      return w.urgency_level === "Critical";
+    }).length,
+    d.filter(function (w) {
+      return w.urgency_level === "High";
+    }).length,
+    d.filter(function (w) {
+      return w.urgency_level === "Medium" || w.urgency_level === "Low";
+    }).length,
+    d.length,
+  ];
+  ids.forEach(function (id, i) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = counts[i];
+  });
   const el = document.getElementById("tbody-waitlist");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (w, i) =>
-            `<tr><td><b style="color:var(--red)">#${i + 1}</b></td><td>${w.recipient_name}</td><td>${badge(w.blood_type)}</td><td>${w.organ_type}</td><td>${w.hospital_name}</td><td>${w.days_waiting}</td><td>${badge(w.urgency_level)}</td><td>${badge("Active")}</td></tr>`,
-        )
+        .map(function (w, i) {
+          return (
+            "<tr><td><b style='color:var(--red)'>#" +
+            (i + 1) +
+            "</b></td><td>" +
+            w.recipient_name +
+            "</td><td>" +
+            badge(w.blood_type) +
+            "</td><td>" +
+            w.organ_type +
+            "</td><td>" +
+            (w.hospital_name || "-") +
+            "</td><td>" +
+            w.days_waiting +
+            "</td><td>" +
+            badge(w.urgency_level) +
+            "</td><td>" +
+            badge("Active") +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Waitlist empty</td></tr>`;
+    : '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Waitlist empty</td></tr>';
 }
+
+async function loadCriticalWaitlist() {
+  const d = await apiFetch(API + "/api/waitlist/critical");
+  const el = document.getElementById("tbody-waitlist-critical");
+  if (!el) return;
+  el.innerHTML = d.length
+    ? d
+        .map(function (w, i) {
+          return (
+            "<tr><td><b style='color:var(--red)'>#" +
+            (i + 1) +
+            "</b></td><td>" +
+            w.recipient_name +
+            "</td><td>" +
+            badge(w.blood_type) +
+            "</td><td>" +
+            w.organ_type +
+            "</td><td>" +
+            (w.hospital_name || "-") +
+            "</td><td>" +
+            w.days_waiting +
+            "</td><td>" +
+            badge("Critical") +
+            "</td></tr>"
+          );
+        })
+        .join("")
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No critical patients</td></tr>';
+}
+
+async function loadNormalWaitlist() {
+  const d = await apiFetch(API + "/api/waitlist/normal");
+  const el = document.getElementById("tbody-waitlist-normal");
+  if (!el) return;
+  el.innerHTML = d.length
+    ? d
+        .map(function (w, i) {
+          return (
+            "<tr><td>#" +
+            (i + 1) +
+            "</td><td>" +
+            w.recipient_name +
+            "</td><td>" +
+            badge(w.blood_type) +
+            "</td><td>" +
+            w.organ_type +
+            "</td><td>" +
+            (w.hospital_name || "-") +
+            "</td><td>" +
+            w.days_waiting +
+            "</td><td>" +
+            badge(w.urgency_level) +
+            "</td></tr>"
+          );
+        })
+        .join("")
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No patients</td></tr>';
+}
+
 async function loadRegions() {
-  const [n, s, e, w] = await Promise.all([
-    apiFetch(`${API}/api/recipients/north`),
-    apiFetch(`${API}/api/recipients/south`),
-    apiFetch(`${API}/api/recipients/east`),
-    apiFetch(`${API}/api/recipients/west`),
+  const results = await Promise.all([
+    apiFetch(API + "/api/recipients/north"),
+    apiFetch(API + "/api/recipients/south"),
+    apiFetch(API + "/api/recipients/east"),
+    apiFetch(API + "/api/recipients/west"),
   ]);
-  const sets = [n, s, e, w],
-    ids = ["region-north", "region-south", "region-east", "region-west"],
-    max = Math.max(...sets.map((x) => x.length), 1);
-  sets.forEach((data, i) => {
+  const ids = ["region-north", "region-south", "region-east", "region-west"];
+  const max =
+    Math.max.apply(
+      null,
+      results.map(function (x) {
+        return x.length;
+      }),
+    ) || 1;
+  results.forEach(function (data, i) {
     const card = document.getElementById(ids[i]);
     if (!card) return;
-    const critical = data.filter((r) => r.urgency_level === "Critical").length;
+    const critical = data.filter(function (r) {
+      return r.urgency_level === "Critical";
+    }).length;
     const bar = card.querySelector(".rbar-fill");
     const bolds = card.querySelectorAll("b");
     if (bar) bar.style.width = Math.round((data.length / max) * 100) + "%";
@@ -328,125 +931,337 @@ async function loadRegions() {
     if (bolds[1]) bolds[1].textContent = critical;
   });
 }
+
 async function loadOrgans() {
-  const d = await apiFetch(`${API}/api/organs`);
+  const d = await apiFetch(API + "/api/organs");
   const el = document.getElementById("tbody-organs");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (o) =>
-            `<tr><td>#ORG-${o.organ_id}</td><td>${o.organ_type}</td><td>#D-${o.donor_id}</td><td>${badge(o.blood_type)}</td><td>${fmt(o.harvest_date)}</td><td>${o.hours_remaining != null ? o.hours_remaining + " hrs" : "-"}</td><td>${o.hospital_name}</td><td>${badge(o.status)}</td></tr>`,
-        )
+        .map(function (o) {
+          return (
+            "<tr><td>#ORG-" +
+            o.organ_id +
+            "</td><td>" +
+            o.organ_type +
+            "</td><td>#D-" +
+            o.donor_id +
+            "</td><td>" +
+            badge(o.blood_type || "-") +
+            "</td><td>" +
+            fmt(o.harvest_date) +
+            "</td><td>" +
+            (o.hours_remaining != null ? o.hours_remaining + " hrs" : "-") +
+            "</td><td>" +
+            (o.hospital_name || "-") +
+            "</td><td>" +
+            badge(o.status) +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No organs</td></tr>`;
+    : '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No organs</td></tr>';
 }
+
+async function loadAvailableOrgans() {
+  const d = await apiFetch(API + "/api/organs/available");
+  const el = document.getElementById("tbody-organs-available");
+  if (!el) return;
+  el.innerHTML = d.length
+    ? d
+        .map(function (o) {
+          return (
+            "<tr><td>#ORG-" +
+            o.organ_id +
+            "</td><td>" +
+            o.organ_type +
+            "</td><td>" +
+            (o.donor_name || "-") +
+            "</td><td>" +
+            badge(o.blood_type || "-") +
+            "</td><td>" +
+            fmt(o.harvest_date) +
+            "</td><td style='color:" +
+            (o.hours_remaining < 12 ? "var(--red)" : "var(--green)") +
+            "'>" +
+            (o.hours_remaining != null ? o.hours_remaining + " hrs" : "-") +
+            "</td><td>" +
+            (o.hospital_name || "-") +
+            "</td></tr>"
+          );
+        })
+        .join("")
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No available organs</td></tr>';
+}
+
+async function loadAllocatedOrgans() {
+  const d = await apiFetch(API + "/api/organs/allocated");
+  const el = document.getElementById("tbody-organs-allocated");
+  if (!el) return;
+  el.innerHTML = d.length
+    ? d
+        .map(function (o) {
+          return (
+            "<tr><td>#ORG-" +
+            o.organ_id +
+            "</td><td>" +
+            o.organ_type +
+            "</td><td>" +
+            (o.donor_name || "-") +
+            "</td><td>" +
+            badge(o.blood_type || "-") +
+            "</td><td>" +
+            fmt(o.harvest_date) +
+            "</td><td>" +
+            (o.hospital_name || "-") +
+            "</td><td>" +
+            badge("Allocated") +
+            "</td></tr>"
+          );
+        })
+        .join("")
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No allocated organs</td></tr>';
+}
+
 async function loadCompatibility() {
-  const d = await apiFetch(`${API}/api/compatibility`);
+  const d = await apiFetch(API + "/api/compatibility");
   const el = document.getElementById("tbody-compatibility");
   if (!el) return;
   el.innerHTML = d.length
     ? d
         .slice(0, 30)
-        .map(
-          (t) =>
-            `<tr><td>#CT-${t.test_id}</td><td>${t.donor_name}</td><td>${t.recipient_name}</td><td>-</td><td>${t.compatibility_score}%</td><td>${badge(t.test_result)}</td><td>${fmt(t.test_date)}</td></tr>`,
-        )
+        .map(function (t) {
+          return (
+            "<tr><td>#CT-" +
+            t.test_id +
+            "</td><td>" +
+            (t.donor_name || "-") +
+            "</td><td>" +
+            (t.recipient_name || "-") +
+            "</td><td>-</td><td>" +
+            t.compatibility_score +
+            "%</td><td>" +
+            badge(t.test_result) +
+            "</td><td>" +
+            fmt(t.test_date) +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No tests</td></tr>`;
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No tests</td></tr>';
 }
+
+async function loadCompatSummary() {
+  const d = await apiFetch(API + "/api/compatibility/summary");
+  const el = document.getElementById("tbody-compat-summary");
+  if (!el) return;
+  el.innerHTML = d.length
+    ? d
+        .map(function (t) {
+          return (
+            "<tr><td>#CT-" +
+            t.test_id +
+            "</td><td>" +
+            (t.donor_name || "-") +
+            "</td><td>" +
+            (t.recipient_name || "-") +
+            "</td><td>" +
+            fmt(t.test_date) +
+            "</td><td>" +
+            badge(t.test_result) +
+            "</td></tr>"
+          );
+        })
+        .join("")
+    : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No tests</td></tr>';
+}
+
 async function loadChains() {
-  const d = await apiFetch(`${API}/api/chains`);
+  const d = await apiFetch(API + "/api/chains");
   const el = document.getElementById("tbody-chains");
   if (el)
     el.innerHTML = d.length
       ? d
-          .map(
-            (c) =>
-              `<tr><td>#DC-${c.chain_id}</td><td>${fmt(c.start_date)}</td><td>${c.total_transplants}</td><td>${badge(c.status)}</td></tr>`,
-          )
+          .map(function (c) {
+            return (
+              "<tr><td>#DC-" +
+              c.chain_id +
+              "</td><td>" +
+              fmt(c.start_date) +
+              "</td><td>" +
+              c.total_transplants +
+              "</td><td>" +
+              badge(c.status) +
+              "</td></tr>"
+            );
+          })
           .join("")
-      : `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted)">No chains</td></tr>`;
+      : '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted)">No chains</td></tr>';
   const el2 = document.getElementById("tbody-chain-links");
   if (el2 && d.length) {
-    const links = await apiFetch(`${API}/api/chains/${d[0].chain_id}/links`);
+    const links = await apiFetch(
+      API + "/api/chains/" + d[0].chain_id + "/links",
+    );
     el2.innerHTML = links.length
       ? links
-          .map(
-            (l) =>
-              `<tr><td>#CL-${l.link_id}</td><td>#DC-${l.chain_id}</td><td>${l.donor_name}</td><td>${l.recipient_name}</td><td>-</td><td>${l.sequence_number}</td></tr>`,
-          )
+          .map(function (l) {
+            return (
+              "<tr><td>#CL-" +
+              l.link_id +
+              "</td><td>#DC-" +
+              l.chain_id +
+              "</td><td>" +
+              (l.donor_name || "-") +
+              "</td><td>" +
+              (l.recipient_name || "-") +
+              "</td><td>-</td><td>" +
+              l.sequence_number +
+              "</td></tr>"
+            );
+          })
           .join("")
-      : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No links</td></tr>`;
+      : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No links</td></tr>';
   }
 }
+
 async function loadTransplants() {
-  const d = await apiFetch(`${API}/api/transplants`);
+  const d = await apiFetch(API + "/api/transplants");
   const el = document.getElementById("tbody-transplants");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (t) =>
-            `<tr><td>#TR-${t.transplant_id}</td><td>${t.donor_name}</td><td>${t.recipient_name}</td><td>${t.organ_type}</td><td>${t.hospital_name}</td><td>${t.surgeon_name}</td><td>${fmt(t.surgery_date)}</td><td>${badge(t.outcome || "Pending")}</td></tr>`,
-        )
+        .map(function (t) {
+          return (
+            "<tr><td>#TR-" +
+            t.transplant_id +
+            "</td><td>" +
+            (t.donor_name || "-") +
+            "</td><td>" +
+            (t.recipient_name || "-") +
+            "</td><td>" +
+            (t.organ_type || "-") +
+            "</td><td>" +
+            (t.hospital_name || "-") +
+            "</td><td>" +
+            (t.surgeon_name || "-") +
+            "</td><td>" +
+            fmt(t.surgery_date) +
+            "</td><td>" +
+            badge(t.outcome || "Pending") +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No records</td></tr>`;
+    : '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No records</td></tr>';
 }
+
 async function loadTransplantMedical() {
-  const d = await apiFetch(`${API}/api/transplants`);
+  const d = await apiFetch(API + "/api/transplants");
   const el1 = document.getElementById("tbody-transplant-medical");
   const el2 = document.getElementById("tbody-transplant-details");
   if (el1)
     el1.innerHTML = d.length
       ? d
-          .map(
-            (t) =>
-              `<tr><td>#TM-${t.transplant_id}</td><td>#TR-${t.transplant_id}</td><td>${t.surgeon_name}</td><td>${badge(t.outcome || "Pending")}</td><td>-</td></tr>`,
-          )
+          .map(function (t) {
+            return (
+              "<tr><td>#TM-" +
+              t.transplant_id +
+              "</td><td>#TR-" +
+              t.transplant_id +
+              "</td><td>" +
+              (t.surgeon_name || "-") +
+              "</td><td>" +
+              badge(t.outcome || "Pending") +
+              "</td><td>-</td></tr>"
+            );
+          })
           .join("")
-      : `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No records</td></tr>`;
+      : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No records</td></tr>';
   if (el2)
     el2.innerHTML = d.length
       ? d
-          .map(
-            (t) =>
-              `<tr><td>#TD-${t.transplant_id}</td><td>#TR-${t.transplant_id}</td><td>${badge(t.surgery_status || t.status)}</td><td>${fmt(t.surgery_date)}</td><td>-</td></tr>`,
-          )
+          .map(function (t) {
+            return (
+              "<tr><td>#TD-" +
+              t.transplant_id +
+              "</td><td>#TR-" +
+              t.transplant_id +
+              "</td><td>" +
+              badge(t.status || "Scheduled") +
+              "</td><td>" +
+              fmt(t.surgery_date) +
+              "</td><td>-</td></tr>"
+            );
+          })
           .join("")
-      : `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No records</td></tr>`;
+      : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No records</td></tr>';
 }
+
 async function loadHospitals() {
-  const d = await apiFetch(`${API}/api/hospitals`);
+  const d = await apiFetch(API + "/api/hospitals");
   const el = document.getElementById("tbody-hospitals");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (h) =>
-            `<tr><td>#H-${h.hospital_id}</td><td>${h.name}</td><td>${h.location}</td><td>${h.region || "-"}</td><td>${h.transplant_capacity}</td><td>${h.specialization || "-"}</td><td>${badge("Active")}</td></tr>`,
-        )
+        .map(function (h) {
+          return (
+            "<tr><td>#H-" +
+            h.hospital_id +
+            "</td><td>" +
+            h.name +
+            "</td><td>" +
+            h.location +
+            "</td><td>" +
+            (h.region || "-") +
+            "</td><td>" +
+            h.transplant_capacity +
+            "</td><td>" +
+            (h.specialization || "-") +
+            "</td><td>" +
+            badge("Active") +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No hospitals</td></tr>`;
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No hospitals</td></tr>';
 }
+
 async function loadStaff() {
-  const d = await apiFetch(`${API}/api/staff`);
+  const d = await apiFetch(API + "/api/staff");
   const el = document.getElementById("tbody-staff");
   if (!el) return;
   el.innerHTML = d.length
     ? d
-        .map(
-          (s) =>
-            `<tr><td>#MS-${s.staff_id}</td><td>${s.name}</td><td>${s.specialization}</td><td>${s.specialization}</td><td>${s.hospital_name}</td><td>${badge("Active")}</td><td>${s.transplants_done}</td></tr>`,
-        )
+        .map(function (s) {
+          return (
+            "<tr><td>#MS-" +
+            s.staff_id +
+            "</td><td>" +
+            s.name +
+            "</td><td>" +
+            s.specialization +
+            "</td><td>" +
+            s.specialization +
+            "</td><td>" +
+            (s.hospital_name || "-") +
+            "</td><td>" +
+            badge("Active") +
+            "</td><td>" +
+            (s.transplants_done || 0) +
+            "</td></tr>"
+          );
+        })
         .join("")
-    : `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No staff</td></tr>`;
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No staff</td></tr>';
 }
 
 // ── FORMS ──
 async function submitDonor() {
-  const name =
-    `${document.getElementById("d-fname").value} ${document.getElementById("d-lname").value}`.trim();
+  const name = (
+    document.getElementById("d-fname").value +
+    " " +
+    document.getElementById("d-lname").value
+  ).trim();
   const age = document.getElementById("d-age").value,
     contact = document.getElementById("d-phone").value,
     hospital_id = document.getElementById("d-hospital").value;
@@ -457,16 +1272,18 @@ async function submitDonor() {
         : "Deceased";
   if (!name || !age || !contact || !hospital_id) {
     document.getElementById("da-err").style.display = "block";
-    setTimeout(
-      () => (document.getElementById("da-err").style.display = "none"),
-      3000,
-    );
+    setTimeout(function () {
+      document.getElementById("da-err").style.display = "none";
+    }, 3000);
     return;
   }
   try {
-    const r = await fetch(`${API}/api/donors`, {
+    const token = sessionStorage.getItem("organlife_token");
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = "Bearer " + token;
+    const r = await fetch(API + "/api/donors", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         name,
         blood_type,
@@ -480,18 +1297,21 @@ async function submitDonor() {
     if (j.success) showAlert("da");
     else {
       document.getElementById("da-err").style.display = "block";
-      setTimeout(
-        () => (document.getElementById("da-err").style.display = "none"),
-        3000,
-      );
+      setTimeout(function () {
+        document.getElementById("da-err").style.display = "none";
+      }, 3000);
     }
   } catch {
     alert("Backend not connected");
   }
 }
+
 async function submitRecipient() {
-  const name =
-    `${document.getElementById("r-fname").value} ${document.getElementById("r-lname").value}`.trim();
+  const name = (
+    document.getElementById("r-fname").value +
+    " " +
+    document.getElementById("r-lname").value
+  ).trim();
   const age = document.getElementById("r-age").value,
     contact = document.getElementById("r-phone").value,
     hospital_id = document.getElementById("r-hospital").value;
@@ -499,16 +1319,18 @@ async function submitRecipient() {
     urgency_level = document.getElementById("r-urgency").value;
   if (!name || !age || !contact || !hospital_id) {
     document.getElementById("ra-err").style.display = "block";
-    setTimeout(
-      () => (document.getElementById("ra-err").style.display = "none"),
-      3000,
-    );
+    setTimeout(function () {
+      document.getElementById("ra-err").style.display = "none";
+    }, 3000);
     return;
   }
   try {
-    const r = await fetch(`${API}/api/recipients`, {
+    const token = sessionStorage.getItem("organlife_token");
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = "Bearer " + token;
+    const r = await fetch(API + "/api/recipients", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         name,
         blood_type,
@@ -522,10 +1344,9 @@ async function submitRecipient() {
     if (j.success) showAlert("ra");
     else {
       document.getElementById("ra-err").style.display = "block";
-      setTimeout(
-        () => (document.getElementById("ra-err").style.display = "none"),
-        3000,
-      );
+      setTimeout(function () {
+        document.getElementById("ra-err").style.display = "none";
+      }, 3000);
     }
   } catch {
     alert("Backend not connected");

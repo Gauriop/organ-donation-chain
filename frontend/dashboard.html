@@ -12,84 +12,334 @@
   </head>
   <body>
     <div class="app">
-      <!-- ── SIDEBAR ── -->
+      <!-- ── ICON SIDEBAR ── -->
       <aside class="sidebar">
         <div class="sidebar-logo">
           <div class="sidebar-logo-icon">O+</div>
-          OrganLife
         </div>
 
         <nav class="sidebar-nav">
-          <div class="nav-section-label">Overview</div>
-          <div class="nav-item active" onclick="showPage('dashboard', this)">
-            <span class="ni">📊</span> Dashboard
+          <!-- Dashboard -->
+          <div class="snav-group">
+            <button
+              class="snav-btn active"
+              id="snav-dashboard"
+              onclick="showPage('dashboard', this)"
+            >
+              <span class="sni">📊</span>
+              <span class="snlbl">Home</span>
+            </button>
           </div>
 
-          <div class="nav-section-label">Donors</div>
-          <div class="nav-item" onclick="showPage('donor-reg', this)">
-            <span class="ni">📋</span> Register Donor
-          </div>
-          <div class="nav-item" onclick="showPage('donors-list', this)">
-            <span class="ni">👥</span> All Donors
-          </div>
-          <div class="nav-item" onclick="showPage('donor-living', this)">
-            <span class="ni">🫀</span> Living Donors
-          </div>
-          <div class="nav-item" onclick="showPage('donor-deceased', this)">
-            <span class="ni">🏥</span> Deceased Donors
+          <div class="snav-sep"></div>
+
+          <!-- Donors -->
+          <div class="snav-group">
+            <button
+              class="snav-btn"
+              id="snav-donors"
+              onclick="toggleFlyout('fly-donors')"
+            >
+              <span class="sni">🫀</span>
+              <span class="snlbl">Donors</span>
+            </button>
+            <div class="snav-flyout" id="fly-donors">
+              <div class="flyout-title">Donors</div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('donor-reg', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">📋</span> Register Donor
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('donors-list', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">👥</span> All Donors
+              </div>
+              <div class="flyout-sep"></div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('donor-living', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">💓</span> Living Donors
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('donor-deceased', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🕊️</span> Deceased Donors
+              </div>
+              <div class="flyout-sep"></div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('donor-approved', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">✅</span> Approved
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('donor-pending', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">⏸️</span> Pending
+              </div>
+            </div>
           </div>
 
-          <div class="nav-section-label">Recipients</div>
-          <div class="nav-item" onclick="showPage('recipient-reg', this)">
-            <span class="ni">📝</span> Add Recipient
-          </div>
-          <div class="nav-item" onclick="showPage('recipients', this)">
-            <span class="ni">🧑‍🤝‍🧑</span> All Recipients
-          </div>
-          <div class="nav-item" onclick="showPage('waitlist', this)">
-            <span class="ni">⏳</span> Waitlist
-          </div>
-          <div class="nav-item" onclick="showPage('regions', this)">
-            <span class="ni">🗺️</span> By Region
+          <!-- Recipients -->
+          <div class="snav-group">
+            <button
+              class="snav-btn"
+              id="snav-recipients"
+              onclick="toggleFlyout('fly-recipients')"
+            >
+              <span class="sni">🧑‍🤝‍🧑</span>
+              <span class="snlbl">Recip.</span>
+            </button>
+            <div class="snav-flyout" id="fly-recipients">
+              <div class="flyout-title">Recipients</div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('recipient-reg', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">📝</span> Add Recipient
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('recipients', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">👥</span> All Recipients
+              </div>
+              <div class="flyout-sep"></div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('waitlist', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">⏳</span> Waitlist
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('waitlist-critical', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🚨</span> Critical
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('waitlist-normal', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">📊</span> Normal
+              </div>
+              <div class="flyout-sep"></div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('regions', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🗺️</span> By Region
+              </div>
+            </div>
           </div>
 
-          <div class="nav-section-label">Organs & Matching</div>
-          <div class="nav-item" onclick="showPage('organs', this)">
-            <span class="ni">🫁</span> Organ Inventory
-          </div>
-          <div class="nav-item" onclick="showPage('compatibility', this)">
-            <span class="ni">🧬</span> Compatibility Test
-          </div>
-          <div class="nav-item" onclick="showPage('donation-chain', this)">
-            <span class="ni">🔗</span> Donation Chain
+          <!-- Organs & Matching -->
+          <div class="snav-group">
+            <button
+              class="snav-btn"
+              id="snav-organs"
+              onclick="toggleFlyout('fly-organs')"
+            >
+              <span class="sni">🫁</span>
+              <span class="snlbl">Organs</span>
+            </button>
+            <div class="snav-flyout" id="fly-organs">
+              <div class="flyout-title">Organs & Matching</div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('organs', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🫁</span> All Organs
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('organs-available', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🟢</span> Available
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('organs-allocated', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">📦</span> Allocated
+              </div>
+              <div class="flyout-sep"></div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('compatibility', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🧬</span> Compatibility Test
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('compat-summary', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">📋</span> Compat Summary
+              </div>
+              <div class="flyout-sep"></div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('donation-chain', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🔗</span> Donation Chain
+              </div>
+            </div>
           </div>
 
-          <div class="nav-section-label">Transplants</div>
-          <div class="nav-item" onclick="showPage('transplants', this)">
-            <span class="ni">💉</span> Transplant Records
-          </div>
-          <div class="nav-item" onclick="showPage('transplant-medical', this)">
-            <span class="ni">🩺</span> Medical Details
+          <!-- Transplants -->
+          <div class="snav-group">
+            <button
+              class="snav-btn"
+              id="snav-transplants"
+              onclick="toggleFlyout('fly-transplants')"
+            >
+              <span class="sni">💉</span>
+              <span class="snlbl">Trans.</span>
+            </button>
+            <div class="snav-flyout" id="fly-transplants">
+              <div class="flyout-title">Transplants</div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('transplants', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">💉</span> Transplant Records
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('transplant-medical', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🩺</span> Medical Details
+              </div>
+            </div>
           </div>
 
-          <div class="nav-section-label">Infrastructure</div>
-          <div class="nav-item" onclick="showPage('hospitals', this)">
-            <span class="ni">🏨</span> Hospitals
-          </div>
-          <div class="nav-item" onclick="showPage('staff', this)">
-            <span class="ni">👨‍⚕️</span> Medical Staff
+          <!-- Infrastructure -->
+          <div class="snav-group">
+            <button
+              class="snav-btn"
+              id="snav-infra"
+              onclick="toggleFlyout('fly-infra')"
+            >
+              <span class="sni">🏨</span>
+              <span class="snlbl">Infra</span>
+            </button>
+            <div class="snav-flyout" id="fly-infra">
+              <div class="flyout-title">Infrastructure</div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('hospitals', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🏨</span> Hospitals
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('staff', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">👨‍⚕️</span> Medical Staff
+              </div>
+            </div>
           </div>
         </nav>
 
         <div class="sidebar-footer">
-          <div class="user-pill">
-            <div class="user-avatar" id="sb-avatar">AD</div>
-            <div>
-              <div class="user-name" id="sb-name">Admin</div>
-              <div class="user-role" id="sb-role">System Admin</div>
-            </div>
-          </div>
-          <button class="logout-btn" onclick="logout()">← Sign Out</button>
+          <div class="user-avatar" id="sb-avatar" title="Profile">AD</div>
+          <button class="logout-icon-btn" onclick="logout()" title="Sign Out">
+            ⬅
+          </button>
         </div>
       </aside>
 
@@ -135,129 +385,882 @@
         <div class="content">
           <!-- ── DASHBOARD ── -->
           <div id="page-dashboard" class="page active">
-            <div class="phead">
-              <h2>Dashboard</h2>
-              <p>Overview of your organ donation network</p>
-            </div>
-            <div class="stat-row">
-              <div class="stat-card">
-                <div class="s-label">Total Donors</div>
-                <div class="s-num s-red" id="dash-donors">—</div>
-                <div class="s-sub">Registered donors</div>
-              </div>
-              <div class="stat-card">
-                <div class="s-label">Recipients</div>
-                <div class="s-num s-blue" id="dash-recipients">—</div>
-                <div class="s-sub">Active patients</div>
-              </div>
-              <div class="stat-card">
-                <div class="s-label">Transplants</div>
-                <div class="s-num s-green" id="dash-transplants">—</div>
-                <div class="s-sub">Completed</div>
-              </div>
-              <div class="stat-card">
-                <div class="s-label">Waitlist</div>
-                <div class="s-num s-amber" id="dash-waitlist">—</div>
-                <div class="s-sub">Awaiting organ</div>
-              </div>
-            </div>
-            <div class="two-col">
+            <!-- GREETING -->
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 24px;
+              "
+            >
               <div>
-                <div class="tcard">
-                  <div class="tcard-head">
-                    <h3>Recent Transplant Records</h3>
-                    <button
-                      class="btn-sub-sm"
-                      onclick="showPage('transplants', null)"
-                    >
-                      View All
-                    </button>
-                  </div>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Organ</th>
-                        <th>Donor→Recipient</th>
-                        <th>Hospital</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody id="dash-transplants-tbody">
-                      <tr>
-                        <td
-                          colspan="5"
-                          style="
-                            text-align: center;
-                            padding: 20px;
-                            color: var(--muted);
-                          "
-                        >
-                          Loading...
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div
+                  style="
+                    font-size: 13px;
+                    color: var(--muted);
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  GOOD MORNING
                 </div>
-                <div class="tcard">
-                  <div class="tcard-head">
-                    <h3>Critical Waitlist</h3>
-                    <button
-                      class="btn-sub-sm"
-                      onclick="showPage('waitlist', null)"
-                    >
-                      Full List
-                    </button>
-                  </div>
-                  <div style="padding: 8px 16px" id="dash-waitlist-items">
+                <h2
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 26px;
+                    font-weight: 900;
+                    color: var(--dark);
+                  "
+                  id="dash-greeting"
+                >
+                  OrganLife Dashboard
+                </h2>
+                <div
+                  style="font-size: 13px; color: var(--muted); margin-top: 3px"
+                  id="dash-date"
+                ></div>
+              </div>
+              <div style="display: flex; gap: 10px">
+                <button
+                  onclick="showPage('donor-reg', null)"
+                  style="
+                    background: var(--red);
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 22px;
+                    font-weight: 700;
+                    font-size: 13px;
+                    cursor: pointer;
+                    font-family: &quot;DM Sans&quot;, sans-serif;
+                    box-shadow: 0 4px 16px rgba(232, 52, 74, 0.3);
+                  "
+                >
+                  + Register Donor
+                </button>
+                <button
+                  onclick="loadDashboard()"
+                  style="
+                    background: white;
+                    color: var(--muted);
+                    border: 1.5px solid var(--border);
+                    padding: 10px 16px;
+                    border-radius: 22px;
+                    font-weight: 600;
+                    font-size: 13px;
+                    cursor: pointer;
+                    font-family: &quot;DM Sans&quot;, sans-serif;
+                  "
+                >
+                  ↻ Refresh
+                </button>
+              </div>
+            </div>
+
+            <!-- TOP STAT CARDS — with mini sparkline charts -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+                margin-bottom: 24px;
+              "
+            >
+              <div
+                class="d-stat-card"
+                style="
+                  background: linear-gradient(135deg, #e8344a, #f2647a);
+                  color: white;
+                "
+                onclick="showPage('donors-list', null)"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                  "
+                >
+                  <div>
                     <div
                       style="
-                        padding: 16px;
-                        color: var(--muted);
-                        font-size: 13px;
+                        font-size: 11px;
+                        font-weight: 700;
+                        opacity: 0.75;
+                        letter-spacing: 0.8px;
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
                       "
                     >
-                      Loading...
+                      Total Donors
                     </div>
+                    <div
+                      style="
+                        font-family: &quot;Nunito&quot;, sans-serif;
+                        font-size: 38px;
+                        font-weight: 900;
+                        line-height: 1;
+                      "
+                      id="dash-donors"
+                    >
+                      —
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.7; margin-top: 5px">
+                      Registered donors
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      width: 48px;
+                      height: 48px;
+                      background: rgba(255, 255, 255, 0.15);
+                      border-radius: 14px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 22px;
+                    "
+                  >
+                    🫀
+                  </div>
+                </div>
+                <canvas
+                  id="spark-donors"
+                  height="36"
+                  style="margin-top: 12px; width: 100%; opacity: 0.6"
+                ></canvas>
+              </div>
+
+              <div
+                class="d-stat-card"
+                style="
+                  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+                  color: white;
+                "
+                onclick="showPage('recipients', null)"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                  "
+                >
+                  <div>
+                    <div
+                      style="
+                        font-size: 11px;
+                        font-weight: 700;
+                        opacity: 0.75;
+                        letter-spacing: 0.8px;
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      Recipients
+                    </div>
+                    <div
+                      style="
+                        font-family: &quot;Nunito&quot;, sans-serif;
+                        font-size: 38px;
+                        font-weight: 900;
+                        line-height: 1;
+                      "
+                      id="dash-recipients"
+                    >
+                      —
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.7; margin-top: 5px">
+                      Active patients
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      width: 48px;
+                      height: 48px;
+                      background: rgba(255, 255, 255, 0.15);
+                      border-radius: 14px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 22px;
+                    "
+                  >
+                    🧑‍🤝‍🧑
+                  </div>
+                </div>
+                <canvas
+                  id="spark-recipients"
+                  height="36"
+                  style="margin-top: 12px; width: 100%; opacity: 0.6"
+                ></canvas>
+              </div>
+
+              <div
+                class="d-stat-card"
+                style="
+                  background: linear-gradient(135deg, #1db87a, #34d399);
+                  color: white;
+                "
+                onclick="showPage('transplants', null)"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                  "
+                >
+                  <div>
+                    <div
+                      style="
+                        font-size: 11px;
+                        font-weight: 700;
+                        opacity: 0.75;
+                        letter-spacing: 0.8px;
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      Transplants
+                    </div>
+                    <div
+                      style="
+                        font-family: &quot;Nunito&quot;, sans-serif;
+                        font-size: 38px;
+                        font-weight: 900;
+                        line-height: 1;
+                      "
+                      id="dash-transplants"
+                    >
+                      —
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.7; margin-top: 5px">
+                      Completed
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      width: 48px;
+                      height: 48px;
+                      background: rgba(255, 255, 255, 0.15);
+                      border-radius: 14px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 22px;
+                    "
+                  >
+                    💉
+                  </div>
+                </div>
+                <canvas
+                  id="spark-transplants"
+                  height="36"
+                  style="margin-top: 12px; width: 100%; opacity: 0.6"
+                ></canvas>
+              </div>
+
+              <div
+                class="d-stat-card"
+                style="
+                  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+                  color: white;
+                "
+                onclick="showPage('waitlist', null)"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                  "
+                >
+                  <div>
+                    <div
+                      style="
+                        font-size: 11px;
+                        font-weight: 700;
+                        opacity: 0.75;
+                        letter-spacing: 0.8px;
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      Waitlist
+                    </div>
+                    <div
+                      style="
+                        font-family: &quot;Nunito&quot;, sans-serif;
+                        font-size: 38px;
+                        font-weight: 900;
+                        line-height: 1;
+                      "
+                      id="dash-waitlist"
+                    >
+                      —
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.7; margin-top: 5px">
+                      Awaiting organ
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      width: 48px;
+                      height: 48px;
+                      background: rgba(255, 255, 255, 0.15);
+                      border-radius: 14px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 22px;
+                    "
+                  >
+                    ⏳
+                  </div>
+                </div>
+                <canvas
+                  id="spark-waitlist"
+                  height="36"
+                  style="margin-top: 12px; width: 100%; opacity: 0.6"
+                ></canvas>
+              </div>
+            </div>
+
+            <!-- MIDDLE ROW -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1.6fr 1fr 1fr;
+                gap: 16px;
+                margin-bottom: 20px;
+              "
+            >
+              <!-- ORGAN STATUS DONUT CHART -->
+              <div
+                style="
+                  background: white;
+                  border-radius: 18px;
+                  border: 1px solid var(--border);
+                  padding: 22px;
+                "
+              >
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 18px;
+                  "
+                >
+                  <div>
+                    <div
+                      style="
+                        font-family: &quot;Nunito&quot;, sans-serif;
+                        font-weight: 700;
+                        font-size: 15px;
+                      "
+                    >
+                      Organ Status
+                    </div>
+                    <div style="font-size: 12px; color: var(--muted)">
+                      organ table breakdown
+                    </div>
+                  </div>
+                  <button
+                    onclick="showPage('organs', null)"
+                    style="
+                      font-size: 11px;
+                      color: var(--red);
+                      background: var(--red-bg);
+                      border: none;
+                      padding: 5px 12px;
+                      border-radius: 20px;
+                      cursor: pointer;
+                      font-weight: 600;
+                    "
+                  >
+                    View All
+                  </button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 24px">
+                  <canvas
+                    id="chart-organs"
+                    width="140"
+                    height="140"
+                    style="flex-shrink: 0"
+                  ></canvas>
+                  <div id="organ-legend" style="flex: 1"></div>
+                </div>
+              </div>
+
+              <!-- RING: WAITLIST URGENCY -->
+              <div
+                style="
+                  background: white;
+                  border-radius: 18px;
+                  border: 1px solid var(--border);
+                  padding: 22px;
+                  text-align: center;
+                "
+              >
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-weight: 700;
+                    font-size: 15px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  Critical Cases
+                </div>
+                <div
+                  style="
+                    font-size: 12px;
+                    color: var(--muted);
+                    margin-bottom: 16px;
+                  "
+                >
+                  % of waitlist critical
+                </div>
+                <div style="position: relative; display: inline-block">
+                  <canvas id="chart-critical" width="120" height="120"></canvas>
+                  <div
+                    style="
+                      position: absolute;
+                      inset: 0;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <div
+                      style="
+                        font-family: &quot;Nunito&quot;, sans-serif;
+                        font-size: 24px;
+                        font-weight: 900;
+                        color: var(--red);
+                      "
+                      id="pct-critical"
+                    >
+                      —
+                    </div>
+                    <div
+                      style="
+                        font-size: 10px;
+                        color: var(--muted);
+                        font-weight: 600;
+                      "
+                    >
+                      CRITICAL
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style="margin-top: 12px; font-size: 12px; color: var(--muted)"
+                  id="txt-critical"
+                >
+                  Loading...
+                </div>
+              </div>
+
+              <!-- RING: TRANSPLANT SUCCESS -->
+              <div
+                style="
+                  background: white;
+                  border-radius: 18px;
+                  border: 1px solid var(--border);
+                  padding: 22px;
+                  text-align: center;
+                "
+              >
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-weight: 700;
+                    font-size: 15px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  Success Rate
+                </div>
+                <div
+                  style="
+                    font-size: 12px;
+                    color: var(--muted);
+                    margin-bottom: 16px;
+                  "
+                >
+                  completed transplants
+                </div>
+                <div style="position: relative; display: inline-block">
+                  <canvas id="chart-success" width="120" height="120"></canvas>
+                  <div
+                    style="
+                      position: absolute;
+                      inset: 0;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <div
+                      style="
+                        font-family: &quot;Nunito&quot;, sans-serif;
+                        font-size: 24px;
+                        font-weight: 900;
+                        color: var(--green);
+                      "
+                      id="pct-success"
+                    >
+                      —
+                    </div>
+                    <div
+                      style="
+                        font-size: 10px;
+                        color: var(--muted);
+                        font-weight: 600;
+                      "
+                    >
+                      SUCCESS
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style="margin-top: 12px; font-size: 12px; color: var(--muted)"
+                  id="txt-success"
+                >
+                  Loading...
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTTOM ROW -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 16px;
+              "
+            >
+              <!-- CRITICAL WAITLIST CARDS -->
+              <div
+                style="
+                  background: white;
+                  border-radius: 18px;
+                  border: 1px solid var(--border);
+                  padding: 20px;
+                "
+              >
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 16px;
+                  "
+                >
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-weight: 700;
+                      font-size: 15px;
+                    "
+                  >
+                    🚨 Critical Patients
+                  </div>
+                  <button
+                    onclick="showPage('waitlist-critical', null)"
+                    style="
+                      font-size: 11px;
+                      color: var(--red);
+                      background: var(--red-bg);
+                      border: none;
+                      padding: 5px 12px;
+                      border-radius: 20px;
+                      cursor: pointer;
+                      font-weight: 600;
+                    "
+                  >
+                    See All
+                  </button>
+                </div>
+                <div id="dash-waitlist-cards">
+                  <div
+                    style="color: var(--muted); font-size: 13px; padding: 8px 0"
+                  >
+                    Loading...
                   </div>
                 </div>
               </div>
-              <div>
-                <div class="tcard" style="padding: 20px">
-                  <div class="tcard-head" style="padding: 0 0 14px">
-                    <h3>Active Donation Chains</h3>
+
+              <!-- RECENT TRANSPLANTS TIMELINE -->
+              <div
+                style="
+                  background: white;
+                  border-radius: 18px;
+                  border: 1px solid var(--border);
+                  padding: 20px;
+                "
+              >
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 16px;
+                  "
+                >
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-weight: 700;
+                      font-size: 15px;
+                    "
+                  >
+                    💉 Recent Transplants
                   </div>
-                  <div id="dash-chains">
-                    <div style="color: var(--muted); font-size: 13px">
-                      Loading...
-                    </div>
+                  <button
+                    onclick="showPage('transplants', null)"
+                    style="
+                      font-size: 11px;
+                      color: var(--red);
+                      background: var(--red-bg);
+                      border: none;
+                      padding: 5px 12px;
+                      border-radius: 20px;
+                      cursor: pointer;
+                      font-weight: 600;
+                    "
+                  >
+                    View All
+                  </button>
+                </div>
+                <div id="dash-transplant-timeline">
+                  <div
+                    style="color: var(--muted); font-size: 13px; padding: 8px 0"
+                  >
+                    Loading...
                   </div>
                 </div>
-                <div class="three-col">
-                  <div class="minfo">
-                    <h4>Hospitals</h4>
-                    <div class="irow">
-                      <span class="ik">Total</span
-                      ><span class="iv" id="dash-hosp-total">—</span>
-                    </div>
+              </div>
+
+              <!-- BLOOD TYPE BAR CHART -->
+              <div
+                style="
+                  background: white;
+                  border-radius: 18px;
+                  border: 1px solid var(--border);
+                  padding: 20px;
+                "
+              >
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-weight: 700;
+                    font-size: 15px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  🩸 Donor Blood Types
+                </div>
+                <div
+                  style="
+                    font-size: 12px;
+                    color: var(--muted);
+                    margin-bottom: 16px;
+                  "
+                >
+                  Distribution across donors
+                </div>
+                <canvas id="chart-bloodtype" height="160"></canvas>
+              </div>
+            </div>
+
+            <!-- BOTTOM ROW 2 -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                margin-top: 16px;
+              "
+            >
+              <!-- REGION BAR CHART -->
+              <div
+                style="
+                  background: white;
+                  border-radius: 18px;
+                  border: 1px solid var(--border);
+                  padding: 20px;
+                "
+              >
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-weight: 700;
+                    font-size: 15px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  🗺️ Recipients by Region
+                </div>
+                <div
+                  style="
+                    font-size: 12px;
+                    color: var(--muted);
+                    margin-bottom: 16px;
+                  "
+                >
+                  regional fragment breakdown
+                </div>
+                <canvas id="chart-regions" height="120"></canvas>
+              </div>
+
+              <!-- MINI INFO CARDS -->
+              <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px"
+              >
+                <div
+                  style="
+                    background: var(--light);
+                    border-radius: 14px;
+                    padding: 18px;
+                    cursor: pointer;
+                    transition: transform 0.15s;
+                  "
+                  onclick="showPage('hospitals', null)"
+                  onmouseover="this.style.transform = 'translateY(-3px)'"
+                  onmouseout="this.style.transform = ''"
+                >
+                  <div style="font-size: 24px; margin-bottom: 8px">🏨</div>
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-size: 26px;
+                      font-weight: 900;
+                      color: var(--dark);
+                    "
+                    id="dash-hosp-total"
+                  >
+                    —
                   </div>
-                  <div class="minfo">
-                    <h4>Staff</h4>
-                    <div class="irow">
-                      <span class="ik">Total</span
-                      ><span class="iv" id="dash-staff-total">—</span>
-                    </div>
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--muted);
+                      margin-top: 3px;
+                    "
+                  >
+                    Partner Hospitals
                   </div>
-                  <div class="minfo">
-                    <h4>Tests</h4>
-                    <div class="irow">
-                      <span class="ik">Done</span
-                      ><span class="iv" id="dash-tests-done">—</span>
-                    </div>
-                    <div class="irow">
-                      <span class="ik">Pending</span
-                      ><span class="iv s-amber" id="dash-tests-pending">—</span>
-                    </div>
+                </div>
+                <div
+                  style="
+                    background: var(--light);
+                    border-radius: 14px;
+                    padding: 18px;
+                    cursor: pointer;
+                    transition: transform 0.15s;
+                  "
+                  onclick="showPage('staff', null)"
+                  onmouseover="this.style.transform = 'translateY(-3px)'"
+                  onmouseout="this.style.transform = ''"
+                >
+                  <div style="font-size: 24px; margin-bottom: 8px">👨‍⚕️</div>
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-size: 26px;
+                      font-weight: 900;
+                      color: var(--dark);
+                    "
+                    id="dash-staff-total"
+                  >
+                    —
+                  </div>
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--muted);
+                      margin-top: 3px;
+                    "
+                  >
+                    Medical Staff
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: var(--light);
+                    border-radius: 14px;
+                    padding: 18px;
+                    cursor: pointer;
+                    transition: transform 0.15s;
+                  "
+                  onclick="showPage('compatibility', null)"
+                  onmouseover="this.style.transform = 'translateY(-3px)'"
+                  onmouseout="this.style.transform = ''"
+                >
+                  <div style="font-size: 24px; margin-bottom: 8px">🧬</div>
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-size: 26px;
+                      font-weight: 900;
+                      color: var(--dark);
+                    "
+                    id="dash-tests-done"
+                  >
+                    —
+                  </div>
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--muted);
+                      margin-top: 3px;
+                    "
+                  >
+                    Tests Done
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: linear-gradient(135deg, var(--red-bg), #fff5f7);
+                    border-radius: 14px;
+                    padding: 18px;
+                    cursor: pointer;
+                    transition: transform 0.15s;
+                    border: 1.5px solid var(--red-border);
+                  "
+                  onclick="showPage('donation-chain', null)"
+                  onmouseover="this.style.transform = 'translateY(-3px)'"
+                  onmouseout="this.style.transform = ''"
+                >
+                  <div style="font-size: 24px; margin-bottom: 8px">🔗</div>
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-size: 26px;
+                      font-weight: 900;
+                      color: var(--red);
+                    "
+                    id="dash-chains-count"
+                  >
+                    —
+                  </div>
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--red);
+                      margin-top: 3px;
+                      font-weight: 600;
+                    "
+                  >
+                    Active Chains
                   </div>
                 </div>
               </div>
@@ -1121,6 +2124,263 @@
                   <tr>
                     <td
                       colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── FRAGMENT: AVAILABLE ORGANS ── -->
+          <div id="page-organs-available" class="page">
+            <div class="phead">
+              <h2>Available Organs</h2>
+              <p>organ_available fragment — only organs ready for transplant</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Organ ID</th>
+                    <th>Type</th>
+                    <th>Donor</th>
+                    <th>Blood</th>
+                    <th>Harvest Date</th>
+                    <th>Expires In</th>
+                    <th>Hospital</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-organs-available">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── FRAGMENT: ALLOCATED ORGANS ── -->
+          <div id="page-organs-allocated" class="page">
+            <div class="phead">
+              <h2>Allocated Organs</h2>
+              <p>organ_allocated fragment — organs assigned to recipients</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Organ ID</th>
+                    <th>Type</th>
+                    <th>Donor</th>
+                    <th>Blood</th>
+                    <th>Harvest Date</th>
+                    <th>Hospital</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-organs-allocated">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── FRAGMENT: CRITICAL WAITLIST ── -->
+          <div id="page-waitlist-critical" class="page">
+            <div class="phead">
+              <h2>Critical Waitlist</h2>
+              <p>waitlist_critical fragment — urgency = Critical only</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Recipient</th>
+                    <th>Blood</th>
+                    <th>Organ</th>
+                    <th>Hospital</th>
+                    <th>Days</th>
+                    <th>Priority</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-waitlist-critical">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── FRAGMENT: NORMAL WAITLIST ── -->
+          <div id="page-waitlist-normal" class="page">
+            <div class="phead">
+              <h2>Normal Waitlist</h2>
+              <p>waitlist_normal fragment — High / Medium / Low urgency</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Recipient</th>
+                    <th>Blood</th>
+                    <th>Organ</th>
+                    <th>Hospital</th>
+                    <th>Days</th>
+                    <th>Priority</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-waitlist-normal">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── FRAGMENT: APPROVED DONORS ── -->
+          <div id="page-donor-approved" class="page">
+            <div class="phead">
+              <h2>Approved Donors</h2>
+              <p>donor_approved fragment — eligible for organ matching</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Type</th>
+                    <th>Hospital</th>
+                    <th>Age</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-donor-approved">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── FRAGMENT: PENDING DONORS ── -->
+          <div id="page-donor-pending" class="page">
+            <div class="phead">
+              <h2>Pending Donors</h2>
+              <p>donor_pending fragment — Under Evaluation</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Type</th>
+                    <th>Hospital</th>
+                    <th>Age</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-donor-pending">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── FRAGMENT: COMPAT SUMMARY ── -->
+          <div id="page-compat-summary" class="page">
+            <div class="phead">
+              <h2>Compatibility Summary</h2>
+              <p>compat_summary fragment — result only, no scores</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Test ID</th>
+                    <th>Donor</th>
+                    <th>Recipient</th>
+                    <th>Test Date</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-compat-summary">
+                  <tr>
+                    <td
+                      colspan="5"
                       style="
                         text-align: center;
                         padding: 20px;
