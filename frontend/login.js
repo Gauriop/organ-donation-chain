@@ -7,14 +7,34 @@ function selectRole(el, role) {
   el.classList.add("active");
   selectedRole = role;
 
-  // update placeholder hints
+  // placeholder hints per role
   const hints = {
     admin: "admin_test",
     coordinator: "coordinator_apollo",
     doctor: "doctor_test",
+    donor: "9123456780",
+    recipient: "9234567890",
   };
   document.getElementById("username").placeholder =
     hints[role] || "Enter username";
+
+  // show hint box only for donor / recipient
+  const hintBox = document.getElementById("contact-hint");
+  if (hintBox) {
+    hintBox.style.display =
+      role === "donor" || role === "recipient" ? "block" : "none";
+  }
+
+  // update password placeholder
+  const passPH = {
+    admin: "admin123",
+    coordinator: "coord123",
+    doctor: "doctor123",
+    donor: "donor123",
+    recipient: "recipient123",
+  };
+  document.getElementById("password").placeholder =
+    "Password: " + (passPH[role] || "");
 }
 
 async function doLogin() {
@@ -46,12 +66,22 @@ async function doLogin() {
 
     if (json.success) {
       okEl.style.display = "block";
-      // store session
+
+      // ── SAVE TOKEN — this is what makes RLS work ──
+      // Every API call in dashboard/app.js sends this token
+      // Backend decodes it → connects to DB as this user
+      // PostgreSQL RLS then filters rows automatically
+      sessionStorage.setItem("organlife_token", json.token);
       sessionStorage.setItem(
         "organlife_user",
         JSON.stringify({ username, role: selectedRole }),
       );
-      setTimeout(() => (window.location.href = "/index.html"), 1200);
+
+      // redirect to dashboard (not index)
+      setTimeout(
+        () => (window.location.href = "/frontend/dashboard.html"),
+        1200,
+      );
     } else {
       errEl.textContent = "⚠ " + (json.error || "Invalid credentials.");
       errEl.style.display = "block";
@@ -59,8 +89,8 @@ async function doLogin() {
       btn.classList.remove("loading");
     }
   } catch (e) {
-    // backend not connected — allow guest bypass for demo
-    errEl.textContent = "⚠ Cannot reach server. Use Guest login for demo.";
+    errEl.textContent =
+      "⚠ Cannot reach server. Make sure npm start is running.";
     errEl.style.display = "block";
     btn.textContent = "Sign In →";
     btn.classList.remove("loading");
@@ -68,11 +98,13 @@ async function doLogin() {
 }
 
 function guestLogin() {
+  // guest gets no token → backend uses admin pool → sees everything
+  sessionStorage.removeItem("organlife_token");
   sessionStorage.setItem(
     "organlife_user",
     JSON.stringify({ username: "guest", role: "guest" }),
   );
-  window.location.href = "/index.html";
+  window.location.href = "/frontend/dashboard.html";
 }
 
 // allow Enter key

@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Dashboard — OrganLife</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- ── SIDEBAR ── -->
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">O+</div>
+          OrganLife
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section-label">Overview</div>
+          <div class="nav-item active" onclick="showPage('dashboard', this)">
+            <span class="ni">📊</span> Dashboard
+          </div>
+
+          <div class="nav-section-label">Donors</div>
+          <div class="nav-item" onclick="showPage('donor-reg', this)">
+            <span class="ni">📋</span> Register Donor
+          </div>
+          <div class="nav-item" onclick="showPage('donors-list', this)">
+            <span class="ni">👥</span> All Donors
+          </div>
+          <div class="nav-item" onclick="showPage('donor-living', this)">
+            <span class="ni">🫀</span> Living Donors
+          </div>
+          <div class="nav-item" onclick="showPage('donor-deceased', this)">
+            <span class="ni">🏥</span> Deceased Donors
+          </div>
+
+          <div class="nav-section-label">Recipients</div>
+          <div class="nav-item" onclick="showPage('recipient-reg', this)">
+            <span class="ni">📝</span> Add Recipient
+          </div>
+          <div class="nav-item" onclick="showPage('recipients', this)">
+            <span class="ni">🧑‍🤝‍🧑</span> All Recipients
+          </div>
+          <div class="nav-item" onclick="showPage('waitlist', this)">
+            <span class="ni">⏳</span> Waitlist
+          </div>
+          <div class="nav-item" onclick="showPage('regions', this)">
+            <span class="ni">🗺️</span> By Region
+          </div>
+
+          <div class="nav-section-label">Organs & Matching</div>
+          <div class="nav-item" onclick="showPage('organs', this)">
+            <span class="ni">🫁</span> Organ Inventory
+          </div>
+          <div class="nav-item" onclick="showPage('compatibility', this)">
+            <span class="ni">🧬</span> Compatibility Test
+          </div>
+          <div class="nav-item" onclick="showPage('donation-chain', this)">
+            <span class="ni">🔗</span> Donation Chain
+          </div>
+
+          <div class="nav-section-label">Transplants</div>
+          <div class="nav-item" onclick="showPage('transplants', this)">
+            <span class="ni">💉</span> Transplant Records
+          </div>
+          <div class="nav-item" onclick="showPage('transplant-medical', this)">
+            <span class="ni">🩺</span> Medical Details
+          </div>
+
+          <div class="nav-section-label">Infrastructure</div>
+          <div class="nav-item" onclick="showPage('hospitals', this)">
+            <span class="ni">🏨</span> Hospitals
+          </div>
+          <div class="nav-item" onclick="showPage('staff', this)">
+            <span class="ni">👨‍⚕️</span> Medical Staff
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-pill">
+            <div class="user-avatar" id="sb-avatar">AD</div>
+            <div>
+              <div class="user-name" id="sb-name">Admin</div>
+              <div class="user-role" id="sb-role">System Admin</div>
+            </div>
+          </div>
+          <button class="logout-btn" onclick="logout()">← Sign Out</button>
+        </div>
+      </aside>
+
+      <!-- ── MAIN ── -->
+      <div class="main">
+        <!-- TOP BAR -->
+        <div class="topbar">
+          <div class="topbar-title" id="topbar-title">Dashboard</div>
+          <div class="topbar-actions">
+            <a href="/index.html" style="text-decoration: none">
+              <button
+                style="
+                  background: var(--light);
+                  border: 1.5px solid var(--border);
+                  color: var(--muted);
+                  padding: 7px 16px;
+                  border-radius: 20px;
+                  font-size: 12.5px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  font-family: &quot;DM Sans&quot;, sans-serif;
+                "
+              >
+                ← Home
+              </button>
+            </a>
+            <button
+              class="btn-add"
+              onclick="
+                showPage(
+                  'donor-reg',
+                  document.querySelector('.nav-item:nth-child(3)'),
+                )
+              "
+            >
+              + Add Donor
+            </button>
+            <div class="topbar-avatar" id="top-avatar">AD</div>
+          </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+          <!-- ── DASHBOARD ── -->
+          <div id="page-dashboard" class="page active">
+            <div class="phead">
+              <h2>Dashboard</h2>
+              <p>Overview of your organ donation network</p>
+            </div>
+            <div class="stat-row">
+              <div class="stat-card">
+                <div class="s-label">Total Donors</div>
+                <div class="s-num s-red" id="dash-donors">—</div>
+                <div class="s-sub">Registered donors</div>
+              </div>
+              <div class="stat-card">
+                <div class="s-label">Recipients</div>
+                <div class="s-num s-blue" id="dash-recipients">—</div>
+                <div class="s-sub">Active patients</div>
+              </div>
+              <div class="stat-card">
+                <div class="s-label">Transplants</div>
+                <div class="s-num s-green" id="dash-transplants">—</div>
+                <div class="s-sub">Completed</div>
+              </div>
+              <div class="stat-card">
+                <div class="s-label">Waitlist</div>
+                <div class="s-num s-amber" id="dash-waitlist">—</div>
+                <div class="s-sub">Awaiting organ</div>
+              </div>
+            </div>
+            <div class="two-col">
+              <div>
+                <div class="tcard">
+                  <div class="tcard-head">
+                    <h3>Recent Transplant Records</h3>
+                    <button
+                      class="btn-sub-sm"
+                      onclick="showPage('transplants', null)"
+                    >
+                      View All
+                    </button>
+                  </div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Organ</th>
+                        <th>Donor→Recipient</th>
+                        <th>Hospital</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-transplants-tbody">
+                      <tr>
+                        <td
+                          colspan="5"
+                          style="
+                            text-align: center;
+                            padding: 20px;
+                            color: var(--muted);
+                          "
+                        >
+                          Loading...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="tcard">
+                  <div class="tcard-head">
+                    <h3>Critical Waitlist</h3>
+                    <button
+                      class="btn-sub-sm"
+                      onclick="showPage('waitlist', null)"
+                    >
+                      Full List
+                    </button>
+                  </div>
+                  <div style="padding: 8px 16px" id="dash-waitlist-items">
+                    <div
+                      style="
+                        padding: 16px;
+                        color: var(--muted);
+                        font-size: 13px;
+                      "
+                    >
+                      Loading...
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="tcard" style="padding: 20px">
+                  <div class="tcard-head" style="padding: 0 0 14px">
+                    <h3>Active Donation Chains</h3>
+                  </div>
+                  <div id="dash-chains">
+                    <div style="color: var(--muted); font-size: 13px">
+                      Loading...
+                    </div>
+                  </div>
+                </div>
+                <div class="three-col">
+                  <div class="minfo">
+                    <h4>Hospitals</h4>
+                    <div class="irow">
+                      <span class="ik">Total</span
+                      ><span class="iv" id="dash-hosp-total">—</span>
+                    </div>
+                  </div>
+                  <div class="minfo">
+                    <h4>Staff</h4>
+                    <div class="irow">
+                      <span class="ik">Total</span
+                      ><span class="iv" id="dash-staff-total">—</span>
+                    </div>
+                  </div>
+                  <div class="minfo">
+                    <h4>Tests</h4>
+                    <div class="irow">
+                      <span class="ik">Done</span
+                      ><span class="iv" id="dash-tests-done">—</span>
+                    </div>
+                    <div class="irow">
+                      <span class="ik">Pending</span
+                      ><span class="iv s-amber" id="dash-tests-pending">—</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── REGISTER DONOR ── -->
+          <div id="page-donor-reg" class="page">
+            <div class="phead">
+              <h2>Register Donor</h2>
+              <p>donor / donor_living / donor_deceased tables</p>
+            </div>
+            <div class="fcard">
+              <h3>New Donor <span class="ftag">donor table</span></h3>
+              <div class="fgrid">
+                <div class="fg">
+                  <label>First Name</label
+                  ><input id="d-fname" placeholder="Rahul" />
+                </div>
+                <div class="fg">
+                  <label>Last Name</label
+                  ><input id="d-lname" placeholder="Sharma" />
+                </div>
+                <div class="fg">
+                  <label>Age</label
+                  ><input id="d-age" type="number" placeholder="30" />
+                </div>
+                <div class="fg">
+                  <label>Blood Group</label
+                  ><select id="d-blood">
+                    <option>A+</option>
+                    <option>A-</option>
+                    <option>B+</option>
+                    <option>B-</option>
+                    <option>O+</option>
+                    <option>O-</option>
+                    <option>AB+</option>
+                    <option>AB-</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>Phone</label
+                  ><input id="d-phone" placeholder="+91 98765 43210" />
+                </div>
+                <div class="fg">
+                  <label>Hospital ID</label
+                  ><input id="d-hospital" type="number" placeholder="1" />
+                </div>
+                <div class="fg">
+                  <label>Donor Type</label
+                  ><select id="dtype" onchange="toggleDT()">
+                    <option value="living">Living</option>
+                    <option value="deceased">Deceased</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>HLA Type</label><input placeholder="HLA-A, B, DR" />
+                </div>
+                <div class="fg full" id="lfield">
+                  <label>Relationship to Recipient</label
+                  ><input placeholder="Sibling / Spouse / Unrelated" />
+                </div>
+                <div class="fg full" id="dfield" style="display: none">
+                  <label>Date of Brain Death Declaration</label
+                  ><input type="datetime-local" />
+                </div>
+                <div class="fg full">
+                  <label>Organs Pledged</label>
+                  <div class="organ-grid">
+                    <label class="organ-pill"
+                      ><input type="checkbox" /> Heart</label
+                    >
+                    <label class="organ-pill"
+                      ><input type="checkbox" /> Kidney (L)</label
+                    >
+                    <label class="organ-pill"
+                      ><input type="checkbox" /> Kidney (R)</label
+                    >
+                    <label class="organ-pill"
+                      ><input type="checkbox" /> Liver</label
+                    >
+                    <label class="organ-pill"
+                      ><input type="checkbox" /> Lungs</label
+                    >
+                    <label class="organ-pill"
+                      ><input type="checkbox" /> Cornea</label
+                    >
+                    <label class="organ-pill"
+                      ><input type="checkbox" /> Pancreas</label
+                    >
+                    <label class="organ-pill"
+                      ><input type="checkbox" /> Skin</label
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="factions">
+                <button class="btn-sub" onclick="submitDonor()">
+                  Save Donor</button
+                ><button class="btn-cancel">Cancel</button>
+              </div>
+              <div class="alert as" id="da">
+                ✓ Donor registered successfully!
+              </div>
+              <div class="alert ae" id="da-err">
+                ⚠ Please fill all required fields.
+              </div>
+            </div>
+          </div>
+
+          <!-- ── ALL DONORS ── -->
+          <div id="page-donors-list" class="page">
+            <div class="phead">
+              <h2>All Donors</h2>
+              <p>donor table — live from database</p>
+            </div>
+            <div class="sbar">
+              <span>🔍</span
+              ><input
+                placeholder="Search…"
+                oninput="filterTable(this, 'tbody-donors', [1, 2, 3, 4])"
+              />
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Type</th>
+                    <th>Hospital</th>
+                    <th>Age</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-donors">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── LIVING DONORS ── -->
+          <div id="page-donor-living" class="page">
+            <div class="phead">
+              <h2>Living Donors</h2>
+              <p>donor_living table</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Hospital</th>
+                    <th>Age</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-donor-living">
+                  <tr>
+                    <td
+                      colspan="6"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── DECEASED DONORS ── -->
+          <div id="page-donor-deceased" class="page">
+            <div class="phead">
+              <h2>Deceased Donors</h2>
+              <p>donor_deceased table</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Registered</th>
+                    <th>Status</th>
+                    <th>Hospital</th>
+                    <th>Organs</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-donor-deceased">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── ADD RECIPIENT ── -->
+          <div id="page-recipient-reg" class="page">
+            <div class="phead">
+              <h2>Add Recipient</h2>
+              <p>recipient table</p>
+            </div>
+            <div class="fcard">
+              <h3>New Recipient <span class="ftag">recipient table</span></h3>
+              <div class="fgrid">
+                <div class="fg">
+                  <label>First Name</label
+                  ><input id="r-fname" placeholder="Priya" />
+                </div>
+                <div class="fg">
+                  <label>Last Name</label
+                  ><input id="r-lname" placeholder="Desai" />
+                </div>
+                <div class="fg">
+                  <label>Age</label
+                  ><input id="r-age" type="number" placeholder="35" />
+                </div>
+                <div class="fg">
+                  <label>Blood Group</label
+                  ><select id="r-blood">
+                    <option>A+</option>
+                    <option>A-</option>
+                    <option>B+</option>
+                    <option>B-</option>
+                    <option>O+</option>
+                    <option>O-</option>
+                    <option>AB+</option>
+                    <option>AB-</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>Phone</label
+                  ><input id="r-phone" placeholder="+91 98765 43210" />
+                </div>
+                <div class="fg">
+                  <label>Hospital ID</label
+                  ><input id="r-hospital" type="number" placeholder="1" />
+                </div>
+                <div class="fg">
+                  <label>Organ Needed</label
+                  ><select id="r-organ">
+                    <option>Heart</option>
+                    <option>Kidney</option>
+                    <option>Liver</option>
+                    <option>Lung</option>
+                    <option>Pancreas</option>
+                    <option>Intestine</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>Urgency</label
+                  ><select id="r-urgency">
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                    <option>Critical</option>
+                  </select>
+                </div>
+                <div class="fg full">
+                  <label>Clinical Notes</label
+                  ><textarea placeholder="Additional notes..."></textarea>
+                </div>
+              </div>
+              <div class="factions">
+                <button class="btn-sub" onclick="submitRecipient()">
+                  Save Recipient</button
+                ><button class="btn-cancel">Cancel</button>
+              </div>
+              <div class="alert as" id="ra">✓ Recipient added!</div>
+              <div class="alert ae" id="ra-err">
+                ⚠ Please fill all required fields.
+              </div>
+            </div>
+          </div>
+
+          <!-- ── ALL RECIPIENTS ── -->
+          <div id="page-recipients" class="page">
+            <div class="phead">
+              <h2>All Recipients</h2>
+              <p>recipient table — live from database</p>
+            </div>
+            <div class="sbar">
+              <span>🔍</span
+              ><input
+                placeholder="Search…"
+                oninput="filterTable(this, 'tbody-recipients', [1, 2, 3, 4, 5])"
+              />
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Blood</th>
+                    <th>Organ</th>
+                    <th>Region</th>
+                    <th>Urgency</th>
+                    <th>Wait</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-recipients">
+                  <tr>
+                    <td
+                      colspan="8"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── WAITLIST ── -->
+          <div id="page-waitlist" class="page">
+            <div class="phead">
+              <h2>Waitlist</h2>
+              <p>waitlist table — live from database</p>
+            </div>
+            <div class="stat-row">
+              <div class="stat-card">
+                <div class="s-label">Critical</div>
+                <div class="s-num s-red" id="wl-critical">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="s-label">High</div>
+                <div class="s-num s-amber" id="wl-high">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="s-label">Normal</div>
+                <div class="s-num s-blue" id="wl-normal">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="s-label">Total</div>
+                <div class="s-num" id="wl-total">—</div>
+              </div>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Recipient</th>
+                    <th>Blood</th>
+                    <th>Organ</th>
+                    <th>Hospital</th>
+                    <th>Days</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-waitlist">
+                  <tr>
+                    <td
+                      colspan="8"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── REGIONS ── -->
+          <div id="page-regions" class="page">
+            <div class="phead">
+              <h2>Recipients by Region</h2>
+              <p>recipient_north / south / east / west</p>
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                margin-bottom: 20px;
+              "
+            >
+              <div class="rcard" id="region-north">
+                <div class="rcard-title">North Region</div>
+                <div class="rcard-sub">recipient_north — Delhi, UP, Punjab</div>
+                <div class="rbar">
+                  <div
+                    class="rbar-fill"
+                    style="width: 0%; background: var(--blue)"
+                  ></div>
+                </div>
+                <div style="display: flex; gap: 20px; font-size: 13px">
+                  <span style="color: var(--muted)"
+                    >Recipients: <b style="color: var(--text)">—</b></span
+                  ><span style="color: var(--muted)"
+                    >Critical: <b style="color: var(--red)">—</b></span
+                  >
+                </div>
+              </div>
+              <div class="rcard" id="region-south">
+                <div class="rcard-title">South Region</div>
+                <div class="rcard-sub">recipient_south — TN, Kerala, AP</div>
+                <div class="rbar">
+                  <div
+                    class="rbar-fill"
+                    style="width: 0%; background: var(--green)"
+                  ></div>
+                </div>
+                <div style="display: flex; gap: 20px; font-size: 13px">
+                  <span style="color: var(--muted)"
+                    >Recipients: <b style="color: var(--text)">—</b></span
+                  ><span style="color: var(--muted)"
+                    >Critical: <b style="color: var(--red)">—</b></span
+                  >
+                </div>
+              </div>
+              <div class="rcard" id="region-east">
+                <div class="rcard-title">East Region</div>
+                <div class="rcard-sub">recipient_east — WB, Odisha, Bihar</div>
+                <div class="rbar">
+                  <div
+                    class="rbar-fill"
+                    style="width: 0%; background: var(--amber)"
+                  ></div>
+                </div>
+                <div style="display: flex; gap: 20px; font-size: 13px">
+                  <span style="color: var(--muted)"
+                    >Recipients: <b style="color: var(--text)">—</b></span
+                  ><span style="color: var(--muted)"
+                    >Critical: <b style="color: var(--red)">—</b></span
+                  >
+                </div>
+              </div>
+              <div class="rcard" id="region-west">
+                <div class="rcard-title">West Region</div>
+                <div class="rcard-sub">
+                  recipient_west — Maharashtra, Gujarat
+                </div>
+                <div class="rbar">
+                  <div class="rbar-fill" style="width: 0%"></div>
+                </div>
+                <div style="display: flex; gap: 20px; font-size: 13px">
+                  <span style="color: var(--muted)"
+                    >Recipients: <b style="color: var(--text)">—</b></span
+                  ><span style="color: var(--muted)"
+                    >Critical: <b style="color: var(--red)">—</b></span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── ORGANS ── -->
+          <div id="page-organs" class="page">
+            <div class="phead">
+              <h2>Organ Inventory</h2>
+              <p>organ table — live from database</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Organ ID</th>
+                    <th>Type</th>
+                    <th>Donor</th>
+                    <th>Blood</th>
+                    <th>Harvest Date</th>
+                    <th>Viability</th>
+                    <th>Hospital</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-organs">
+                  <tr>
+                    <td
+                      colspan="8"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── COMPATIBILITY ── -->
+          <div id="page-compatibility" class="page">
+            <div class="phead">
+              <h2>Compatibility Test</h2>
+              <p>compatibility_test table</p>
+            </div>
+            <div class="two-col">
+              <div class="fcard">
+                <h3>
+                  Run New Test <span class="ftag">compatibility_test</span>
+                </h3>
+                <div class="fgrid">
+                  <div class="fg">
+                    <label>Donor ID</label
+                    ><input id="ct-donor" placeholder="#D-1" />
+                  </div>
+                  <div class="fg">
+                    <label>Recipient ID</label
+                    ><input id="ct-recipient" placeholder="#R-1" />
+                  </div>
+                  <div class="fg">
+                    <label>Organ</label
+                    ><select>
+                      <option>Kidney</option>
+                      <option>Heart</option>
+                      <option>Liver</option>
+                      <option>Lung</option>
+                    </select>
+                  </div>
+                  <div class="fg">
+                    <label>Test Type</label
+                    ><select>
+                      <option>Cross-match</option>
+                      <option>HLA Typing</option>
+                      <option>Full Panel</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="factions">
+                  <button class="btn-sub" onclick="showAlert('ca')">
+                    Run Test
+                  </button>
+                </div>
+                <div class="alert as" id="ca">
+                  ✓ Test queued — results in 24–48 hrs.
+                </div>
+              </div>
+              <div>
+                <div class="compat-grid">
+                  <div class="compat-cell ch">
+                    <div class="cb">A+→A+</div>
+                    <div class="cp">95%</div>
+                  </div>
+                  <div class="compat-cell ch">
+                    <div class="cb">O-→Any</div>
+                    <div class="cp">Universal</div>
+                  </div>
+                  <div class="compat-cell cm">
+                    <div class="cb">B+→B+</div>
+                    <div class="cp">72%</div>
+                  </div>
+                  <div class="compat-cell cm">
+                    <div class="cb">AB+→AB+</div>
+                    <div class="cp">68%</div>
+                  </div>
+                  <div class="compat-cell cl">
+                    <div class="cb">A-→B+</div>
+                    <div class="cp">12%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tcard">
+              <div class="tcard-head"><h3>Test Log</h3></div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Test ID</th>
+                    <th>Donor</th>
+                    <th>Recipient</th>
+                    <th>Organ</th>
+                    <th>Score</th>
+                    <th>Result</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-compatibility">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── DONATION CHAIN ── -->
+          <div id="page-donation-chain" class="page">
+            <div class="phead">
+              <h2>Donation Chain</h2>
+              <p>donation_chain + chain_link tables</p>
+            </div>
+            <div class="two-col">
+              <div class="tcard">
+                <div class="tcard-head"><h3>donation_chain</h3></div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Chain ID</th>
+                      <th>Started</th>
+                      <th>Links</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-chains">
+                    <tr>
+                      <td
+                        colspan="4"
+                        style="
+                          text-align: center;
+                          padding: 20px;
+                          color: var(--muted);
+                        "
+                      >
+                        Loading...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tcard">
+                <div class="tcard-head"><h3>chain_link</h3></div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Link ID</th>
+                      <th>Chain</th>
+                      <th>Donor</th>
+                      <th>Recipient</th>
+                      <th>Organ</th>
+                      <th>Order</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-chain-links">
+                    <tr>
+                      <td
+                        colspan="6"
+                        style="
+                          text-align: center;
+                          padding: 20px;
+                          color: var(--muted);
+                        "
+                      >
+                        Loading...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TRANSPLANTS ── -->
+          <div id="page-transplants" class="page">
+            <div class="phead">
+              <h2>Transplant Records</h2>
+              <p>transplant_record table — live from database</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Donor</th>
+                    <th>Recipient</th>
+                    <th>Organ</th>
+                    <th>Hospital</th>
+                    <th>Surgeon</th>
+                    <th>Date</th>
+                    <th>Outcome</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-transplants">
+                  <tr>
+                    <td
+                      colspan="8"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── TRANSPLANT MEDICAL ── -->
+          <div id="page-transplant-medical" class="page">
+            <div class="phead">
+              <h2>Transplant Medical Details</h2>
+              <p>transplant_medical + transplant_details tables</p>
+            </div>
+            <div class="two-col">
+              <div class="tcard">
+                <div class="tcard-head"><h3>transplant_medical</h3></div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Record</th>
+                      <th>Surgeon</th>
+                      <th>Outcome</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-transplant-medical">
+                    <tr>
+                      <td
+                        colspan="5"
+                        style="
+                          text-align: center;
+                          padding: 20px;
+                          color: var(--muted);
+                        "
+                      >
+                        Loading...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tcard">
+                <div class="tcard-head"><h3>transplant_details</h3></div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Record</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-transplant-details">
+                    <tr>
+                      <td
+                        colspan="5"
+                        style="
+                          text-align: center;
+                          padding: 20px;
+                          color: var(--muted);
+                        "
+                      >
+                        Loading...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── HOSPITALS ── -->
+          <div id="page-hospitals" class="page">
+            <div class="phead">
+              <h2>Hospitals</h2>
+              <p>hospital table — live from database</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Region</th>
+                    <th>Capacity</th>
+                    <th>Specialization</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-hospitals">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── STAFF ── -->
+          <div id="page-staff" class="page">
+            <div class="phead">
+              <h2>Medical Staff</h2>
+              <p>medical_staff table — live from database</p>
+            </div>
+            <div class="tcard">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Specialisation</th>
+                    <th>Hospital</th>
+                    <th>Status</th>
+                    <th>Transplants</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-staff">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- /content -->
+      </div>
+      <!-- /main -->
+    </div>
+    <!-- /app -->
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

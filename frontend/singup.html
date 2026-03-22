@@ -12,22 +12,26 @@
   </head>
   <body>
     <div class="page">
-      <!-- LEFT -->
+      <!-- ══ LEFT ══ -->
       <div class="left">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+        <div class="blob blob3"></div>
+
         <a href="../index.html" class="left-logo">
           <div class="logo-icon">O+</div>
           <span class="logo-text">OrganLife</span>
         </a>
 
-        <div class="left-steps">
-          <h2>Join the <span>Network</span><br />that Saves Lives</h2>
+        <div class="left-content">
+          <h2>Join the <em>Network</em><br />that Saves Lives</h2>
           <div class="step">
             <div class="step-num">1</div>
             <div class="step-info">
               <h4>Create your account</h4>
               <p>
-                Choose your role — Admin, Hospital Coordinator, or Medical
-                Staff.
+                Choose your role — Admin, Coordinator, Medical Staff, Donor, or
+                Recipient.
               </p>
             </div>
           </div>
@@ -53,33 +57,51 @@
         </div>
 
         <div class="left-note">
-          <strong>🔒 Secure Access</strong><br />
+          <strong> Secure Access</strong><br />
           All accounts are role-based with PostgreSQL row-level security. Your
           data is protected by the same access controls used in clinical
           environments.
         </div>
       </div>
 
-      <!-- RIGHT -->
+      <!-- ══ RIGHT ══ -->
       <div class="right">
         <div class="form-box">
-          <div class="greeting">GET STARTED</div>
+          <div class="greeting">Get Started</div>
           <h2>Create your account</h2>
 
-          <!-- ROLE -->
+          <!-- 5 ROLE TABS -->
           <div class="role-tabs">
             <div class="role-tab active" onclick="selectRole(this, 'admin')">
-              <div class="r-icon">🛡️</div>
+              <div class="r-icon"></div>
               <div class="r-lbl">Admin</div>
             </div>
             <div class="role-tab" onclick="selectRole(this, 'coordinator')">
-              <div class="r-icon">🏥</div>
+              <div class="r-icon"></div>
               <div class="r-lbl">Coordinator</div>
             </div>
             <div class="role-tab" onclick="selectRole(this, 'doctor')">
-              <div class="r-icon">👨‍⚕️</div>
-              <div class="r-lbl">Medical Staff</div>
+              <div class="r-icon"></div>
+              <div class="r-lbl">Medical</div>
             </div>
+            <div class="role-tab" onclick="selectRole(this, 'donor')">
+              <div class="r-icon"></div>
+              <div class="r-lbl">Donor</div>
+            </div>
+            <div class="role-tab" onclick="selectRole(this, 'recipient')">
+              <div class="r-icon"></div>
+              <div class="r-lbl">Recipient</div>
+            </div>
+          </div>
+
+          <!-- DONOR/RECIPIENT SPECIAL HINT -->
+          <div id="role-hint">
+            <b id="hint-title">📋 Registering as a Donor</b><br />
+            <span id="hint-body"
+              >Your <b>username must be your phone number</b> (e.g. 9123456780)
+              — this is how the system links your account to your donor record
+              in the database.</span
+            >
           </div>
 
           <div class="alert-err" id="signup-err">
@@ -89,7 +111,7 @@
             ✓ Account created! Redirecting to login...
           </div>
 
-          <!-- PERSONAL INFO -->
+          <!-- PERSONAL INFO — shown for all roles -->
           <div class="section-label">Personal Information</div>
           <div class="form-grid">
             <div class="field">
@@ -114,26 +136,122 @@
             </div>
           </div>
 
-          <!-- PROFESSIONAL INFO -->
-          <div class="section-label" id="prof-section">
-            Professional Details
-          </div>
-          <div class="form-grid" id="prof-fields">
-            <div class="field full">
-              <label>Hospital / Institution</label>
-              <input id="s-hospital" placeholder="KEM Hospital Mumbai" />
-            </div>
-            <div class="field full" id="license-field">
-              <label>License Number</label>
-              <input id="s-license" placeholder="MED-2024-001" />
+          <!-- PROFESSIONAL INFO — admin / coordinator / doctor only -->
+          <div id="prof-section" class="dyn-section show">
+            <div class="section-label">Professional Details</div>
+            <div class="form-grid">
+              <div class="field full">
+                <label>Hospital / Institution</label>
+                <input id="s-hospital" placeholder="KEM Hospital Mumbai" />
+              </div>
+              <div class="field full" id="license-field">
+                <label>License Number</label>
+                <input id="s-license" placeholder="MED-2024-001" />
+              </div>
             </div>
           </div>
 
-          <!-- ACCOUNT CREDENTIALS -->
+          <!-- DONOR FIELDS — shown only for donor role -->
+          <div id="donor-section" class="dyn-section">
+            <div class="section-label">Donor Details</div>
+            <div class="form-grid">
+              <div class="field">
+                <label>Age *</label>
+                <input id="s-age" type="number" placeholder="28" />
+              </div>
+              <div class="field">
+                <label>Blood Group *</label>
+                <select id="s-blood">
+                  <option value="">Select</option>
+                  <option>A+</option>
+                  <option>A-</option>
+                  <option>B+</option>
+                  <option>B-</option>
+                  <option>O+</option>
+                  <option>O-</option>
+                  <option>AB+</option>
+                  <option>AB-</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Donor Type</label>
+                <select id="s-dtype">
+                  <option value="Living">Living</option>
+                  <option value="Deceased">Deceased</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Hospital ID</label>
+                <input id="s-donor-hospital" type="number" placeholder="1" />
+              </div>
+              <div class="field full">
+                <label>Organs Pledged</label>
+                <input id="s-organs" placeholder="Heart, Kidney, Liver..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- RECIPIENT FIELDS — shown only for recipient role -->
+          <div id="recipient-section" class="dyn-section">
+            <div class="section-label">Recipient Details</div>
+            <div class="form-grid">
+              <div class="field">
+                <label>Age *</label>
+                <input id="s-r-age" type="number" placeholder="35" />
+              </div>
+              <div class="field">
+                <label>Blood Group *</label>
+                <select id="s-r-blood">
+                  <option value="">Select</option>
+                  <option>A+</option>
+                  <option>A-</option>
+                  <option>B+</option>
+                  <option>B-</option>
+                  <option>O+</option>
+                  <option>O-</option>
+                  <option>AB+</option>
+                  <option>AB-</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Organ Needed</label>
+                <select id="s-r-organ">
+                  <option>Kidney</option>
+                  <option>Heart</option>
+                  <option>Liver</option>
+                  <option>Lung</option>
+                  <option>Pancreas</option>
+                  <option>Intestine</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Urgency Level</label>
+                <select id="s-r-urgency">
+                  <option>Low</option>
+                  <option>Medium</option>
+                  <option>High</option>
+                  <option>Critical</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Hospital ID</label>
+                <input id="s-r-hospital" type="number" placeholder="1" />
+              </div>
+              <div class="field">
+                <label>Medical Status</label>
+                <select id="s-r-status">
+                  <option>Active</option>
+                  <option>Monitoring</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- CREDENTIALS -->
           <div class="section-label">Account Credentials</div>
           <div class="form-grid">
             <div class="field full">
-              <label>Username *</label>
+              <label id="username-label">Username *</label>
               <input id="s-username" placeholder="rahul_kem" />
             </div>
             <div class="field full">
@@ -177,8 +295,7 @@
         </div>
       </div>
     </div>
-    <script src="signup.js">
-      s
-    </script>
+
+    <script src="signup.js"></script>
   </body>
 </html>

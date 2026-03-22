@@ -14,7 +14,7 @@
     <div class="page">
       <!-- LEFT -->
       <div class="left">
-        <a href="../index.html" class="left-logo">
+        <a href="/index.html" class="left-logo">
           <div class="logo-icon">O+</div>
           <span class="logo-text">OrganLife</span>
         </a>
@@ -58,17 +58,58 @@
           <!-- ROLE SELECTOR -->
           <div class="role-tabs">
             <div class="role-tab active" onclick="selectRole(this, 'admin')">
-              <div class="r-icon">🛡️</div>
+              <div class="r-icon"></div>
               <div class="r-lbl">Admin</div>
             </div>
             <div class="role-tab" onclick="selectRole(this, 'coordinator')">
-              <div class="r-icon">🏥</div>
+              <div class="r-icon"></div>
               <div class="r-lbl">Coordinator</div>
             </div>
             <div class="role-tab" onclick="selectRole(this, 'doctor')">
-              <div class="r-icon">👨‍⚕️</div>
+              <div class="r-icon"></div>
               <div class="r-lbl">Medical Staff</div>
             </div>
+            <div class="role-tab" onclick="selectRole(this, 'donor')">
+              <div class="r-icon"></div>
+              <div class="r-lbl">Donor</div>
+            </div>
+            <div class="role-tab" onclick="selectRole(this, 'recipient')">
+              <div class="r-icon"></div>
+              <div class="r-lbl">Recipient</div>
+            </div>
+          </div>
+
+          <!-- DONOR/RECIPIENT HINT BOX — shown only for those roles -->
+          <div
+            id="contact-hint"
+            style="
+              display: none;
+              background: var(--light);
+              border: 1.5px solid var(--border);
+              border-radius: 10px;
+              padding: 12px 14px;
+              margin-bottom: 16px;
+              font-size: 12.5px;
+              color: var(--muted);
+              line-height: 1.7;
+            "
+          >
+            <b style="color: var(--text)"
+              >📋 Your username is your phone number</b
+            ><br />
+            Use the mobile number registered at the hospital.<br />
+            <span style="font-size: 11px"
+              >e.g.
+              <code
+                style="
+                  background: white;
+                  padding: 1px 6px;
+                  border-radius: 4px;
+                  border: 1px solid var(--border);
+                "
+                >9123456780</code
+              ></span
+            >
           </div>
 
           <div class="alert-err" id="login-err">
@@ -122,6 +163,7 @@
         </div>
       </div>
     </div>
+
     <script src="login.js"></script>
   </body>
 </html>

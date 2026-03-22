@@ -8,7 +8,7 @@ function enterDashboard() {
   const app = document.getElementById("app");
   app.style.display = "flex";
   app.style.flexDirection = "column";
-  loadDashboard(); // ← fetch real data on open
+  loadDashboard();
 }
 
 function goHome() {
@@ -50,7 +50,6 @@ function showPage(id) {
     document.getElementById("nav-dash")?.classList.add("active");
   closeAll();
 
-  // load data for the page being opened
   const loaders = {
     dashboard: loadDashboard,
     "donors-list": loadDonors,
@@ -93,10 +92,14 @@ function ok(id) {
   setTimeout(() => (el.style.display = "none"), 3500);
 }
 
-// ── HELPER: fetch wrapper ────────────────────────────────────
+// ── KEY FIX: apiFetch sends JWT token with every request ─────
+// This makes PostgreSQL RLS work — backend connects as the
+// actual logged-in user, so RLS filters rows automatically
 async function apiFetch(url) {
   try {
-    const res = await fetch(url);
+    const token = sessionStorage.getItem("organlife_token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const res = await fetch(url, { headers });
     const json = await res.json();
     return json.success ? json.data : [];
   } catch (e) {
@@ -105,8 +108,9 @@ async function apiFetch(url) {
   }
 }
 
-// badge helper
-function badge(text, type) {
+// ── BADGE HELPER ─────────────────────────────────────────────
+function badge(text) {
+  if (!text) return "-";
   const map = {
     Critical: "b-red",
     High: "b-amber",
@@ -140,16 +144,21 @@ function badge(text, type) {
   return `<span class="badge ${map[text] || "b-gray"}">${text}</span>`;
 }
 
+function fmt(d) {
+  return d ? new Date(d).toLocaleDateString("en-IN") : "-";
+}
+
 // ════════════════════════════════════════════════════════════
 // DASHBOARD
 // ════════════════════════════════════════════════════════════
 async function loadDashboard() {
   try {
-    const res = await fetch(`${API}/api/stats`);
+    const token = sessionStorage.getItem("organlife_token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const res = await fetch(`${API}/api/stats`, { headers });
     const json = await res.json();
     if (!json.success) return;
     const d = json.data;
-    // stat cards
     document.querySelector("#apage-dashboard .s-red").textContent =
       d.total_donors;
     document.querySelector("#apage-dashboard .s-blue").textContent =
@@ -162,45 +171,80 @@ async function loadDashboard() {
     console.error(e);
   }
 
-  // recent transplants
   const transplants = await apiFetch(`${API}/api/transplants`);
   const tbody = document.querySelector("#apage-dashboard table tbody");
-  if (tbody && transplants.length) {
-    tbody.innerHTML = transplants
-      .slice(0, 5)
-      .map(
-        (t) => `
-      <tr>
-        <td>#TR-${String(t.transplant_id).padStart(3, "0")}</td>
-        <td>${t.organ_type}</td>
-        <td>D-${t.donor_id} → R-${t.recipient_id}</td>
-        <td>${t.hospital_name}</td>
-        <td>${badge(t.outcome || t.status)}</td>
-      </tr>`,
-      )
-      .join("");
+  if (tbody) {
+    tbody.innerHTML = transplants.length
+      ? transplants
+          .slice(0, 5)
+          .map(
+            (t) => `
+          <tr>
+            <td>#TR-${String(t.transplant_id).padStart(3, "0")}</td>
+            <td>${t.organ_type}</td>
+            <td>${t.donor_name} → ${t.recipient_name}</td>
+            <td>${t.hospital_name}</td>
+            <td>${badge(t.outcome || t.status)}</td>
+          </tr>`,
+          )
+          .join("")
+      : `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">No transplant records yet</td></tr>`;
   }
 
-  // waitlist preview
   const wl = await apiFetch(`${API}/api/waitlist`);
-  const wlDiv = document.querySelector(
-    "#apage-dashboard .tcard:nth-child(2) div[style]",
-  );
-  if (wlDiv && wl.length) {
-    wlDiv.innerHTML = wl
-      .slice(0, 4)
-      .map(
-        (w, i) => `
-      <div class="wl-item">
-        <div class="wl-rank">${i + 1}</div>
-        <div class="wl-info">
-          <div class="wl-name">${w.recipient_name}</div>
-          <div class="wl-detail">${w.organ_type} • ${w.blood_type} • ${w.days_waiting} days</div>
+  const wlDiv = document.getElementById("dash-waitlist-items");
+  if (wlDiv) {
+    const critical = wl
+      .filter((w) => w.urgency_level === "Critical")
+      .slice(0, 4);
+    wlDiv.innerHTML = critical.length
+      ? critical
+          .map(
+            (w, i) => `
+          <div class="wl-item">
+            <div class="wl-rank">${i + 1}</div>
+            <div class="wl-info">
+              <div class="wl-name">${w.recipient_name}</div>
+              <div class="wl-detail">${w.organ_type} • ${w.blood_type} • ${w.days_waiting} days</div>
+            </div>
+            ${badge(w.urgency_level)}
+          </div>`,
+          )
+          .join("")
+      : `<div style="padding:16px;color:var(--muted);font-size:13px">No critical patients</div>`;
+  }
+
+  const hospitals = await apiFetch(`${API}/api/hospitals`);
+  const staff = await apiFetch(`${API}/api/staff`);
+  const tests = await apiFetch(`${API}/api/compatibility`);
+  if (document.getElementById("dash-hosp-total"))
+    document.getElementById("dash-hosp-total").textContent = hospitals.length;
+  if (document.getElementById("dash-staff-total"))
+    document.getElementById("dash-staff-total").textContent = staff.length;
+  if (document.getElementById("dash-tests-done"))
+    document.getElementById("dash-tests-done").textContent = tests.length;
+  if (document.getElementById("dash-tests-pending"))
+    document.getElementById("dash-tests-pending").textContent = tests.filter(
+      (t) => t.test_result === "Pending",
+    ).length;
+
+  const chains = await apiFetch(`${API}/api/chains`);
+  const active = chains.filter((c) => c.status === "In Progress");
+  const chainDiv = document.getElementById("dash-chains");
+  if (chainDiv && active.length) {
+    chainDiv.innerHTML = "";
+    for (const chain of active.slice(0, 2)) {
+      const links = await apiFetch(`${API}/api/chains/${chain.chain_id}/links`);
+      chainDiv.innerHTML += `
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px">${chain.chain_name?.toUpperCase() || "CHAIN #" + chain.chain_id}</div>
+        <div class="chain-row">
+          <div class="cnode"><div class="cnode-circle cd">D</div><div class="cnode-lbl">Donor</div></div>
+          ${links.map((l) => `<div class="carrow">→</div><div class="cnode"><div class="cnode-circle cr">R</div><div class="cnode-lbl">${l.recipient_name?.split(" ")[0]}</div></div>`).join("")}
         </div>
-        ${badge(w.urgency_level)}
-      </div>`,
-      )
-      .join("");
+        <div style="margin-bottom:14px"></div>`;
+    }
+  } else if (chainDiv) {
+    chainDiv.innerHTML = `<div style="color:var(--muted);font-size:13px">No active chains</div>`;
   }
 }
 
@@ -271,40 +315,54 @@ async function loadDeceasedDonors() {
     : `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">No deceased donors</td></tr>`;
 }
 
-// Save donor form
-async function saveDonor() {
-  const hospitals = await apiFetch(`${API}/api/hospitals`);
-  const body = {
-    name: document.querySelector("#apage-donor-reg input[placeholder='Rahul']")
-      .value,
-    blood_type: document.querySelector("#apage-donor-reg select").value,
-    age:
-      parseInt(
-        document
-          .querySelector("#apage-donor-reg input[type='date']")
-          .parentElement.nextElementSibling?.querySelector("input")?.value,
-      ) || 30,
-    contact: document.querySelector(
-      "#apage-donor-reg input[placeholder='+91 98765 43210']",
-    ).value,
-    donor_type:
-      document.getElementById("dtype").value === "living"
-        ? "Living"
-        : "Deceased",
-    medical_status: "Under Evaluation",
-    hospital_id: hospitals[0]?.hospital_id || 1,
-  };
+async function submitDonor() {
+  const name = (
+    document.getElementById("d-fname").value +
+    " " +
+    document.getElementById("d-lname").value
+  ).trim();
+  const age = document.getElementById("d-age").value;
+  const blood_type = document.getElementById("d-blood").value;
+  const contact = document.getElementById("d-phone").value;
+  const hospital_id = document.getElementById("d-hospital").value;
+  const donor_type =
+    document.getElementById("dtype").value === "living" ? "Living" : "Deceased";
+  if (!name || !age || !contact || !hospital_id) {
+    document.getElementById("da-err").style.display = "block";
+    setTimeout(
+      () => (document.getElementById("da-err").style.display = "none"),
+      3000,
+    );
+    return;
+  }
   try {
+    const token = sessionStorage.getItem("organlife_token");
     const r = await fetch(`${API}/api/donors`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        name,
+        blood_type,
+        age: +age,
+        contact,
+        donor_type,
+        hospital_id: +hospital_id,
+      }),
     });
     const j = await r.json();
     if (j.success) ok("da");
-    else alert("Error: " + j.error);
+    else {
+      document.getElementById("da-err").style.display = "block";
+      setTimeout(
+        () => (document.getElementById("da-err").style.display = "none"),
+        3000,
+      );
+    }
   } catch (e) {
-    alert("Server not connected");
+    alert("Backend not connected");
   }
 }
 
@@ -333,6 +391,56 @@ async function loadRecipients() {
     : `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">No recipients</td></tr>`;
 }
 
+async function submitRecipient() {
+  const name = (
+    document.getElementById("r-fname").value +
+    " " +
+    document.getElementById("r-lname").value
+  ).trim();
+  const age = document.getElementById("r-age").value;
+  const blood_type = document.getElementById("r-blood").value;
+  const contact = document.getElementById("r-phone").value;
+  const hospital_id = document.getElementById("r-hospital").value;
+  const urgency_level = document.getElementById("r-urgency").value;
+  if (!name || !age || !contact || !hospital_id) {
+    document.getElementById("ra-err").style.display = "block";
+    setTimeout(
+      () => (document.getElementById("ra-err").style.display = "none"),
+      3000,
+    );
+    return;
+  }
+  try {
+    const token = sessionStorage.getItem("organlife_token");
+    const r = await fetch(`${API}/api/recipients`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        name,
+        blood_type,
+        age: +age,
+        contact,
+        urgency_level,
+        hospital_id: +hospital_id,
+      }),
+    });
+    const j = await r.json();
+    if (j.success) ok("ra");
+    else {
+      document.getElementById("ra-err").style.display = "block";
+      setTimeout(
+        () => (document.getElementById("ra-err").style.display = "none"),
+        3000,
+      );
+    }
+  } catch (e) {
+    alert("Backend not connected");
+  }
+}
+
 // ════════════════════════════════════════════════════════════
 // WAITLIST
 // ════════════════════════════════════════════════════════════
@@ -340,19 +448,18 @@ async function loadWaitlist() {
   const wl = await apiFetch(`${API}/api/waitlist`);
   const tbody = document.querySelector("#apage-waitlist table tbody");
   if (!tbody) return;
-
-  // update stat cards
-  const critical = wl.filter((w) => w.urgency_level === "Critical").length;
-  const high = wl.filter((w) => w.urgency_level === "High").length;
-  const normal = wl.filter(
-    (w) => w.urgency_level === "Medium" || w.urgency_level === "Low",
-  ).length;
   const nums = document.querySelectorAll("#apage-waitlist .s-num");
-  if (nums[0]) nums[0].textContent = critical;
-  if (nums[1]) nums[1].textContent = high;
-  if (nums[2]) nums[2].textContent = normal;
+  if (nums[0])
+    nums[0].textContent = wl.filter(
+      (w) => w.urgency_level === "Critical",
+    ).length;
+  if (nums[1])
+    nums[1].textContent = wl.filter((w) => w.urgency_level === "High").length;
+  if (nums[2])
+    nums[2].textContent = wl.filter(
+      (w) => w.urgency_level === "Medium" || w.urgency_level === "Low",
+    ).length;
   if (nums[3]) nums[3].textContent = wl.length;
-
   tbody.innerHTML = wl.length
     ? wl
         .map(
@@ -383,18 +490,17 @@ async function loadRegions() {
     apiFetch(`${API}/api/recipients/west`),
   ]);
   const rcards = document.querySelectorAll("#apage-regions .rcard");
-  const sets = [north, south, east, west];
-  rcards.forEach((card, i) => {
-    const data = sets[i];
+  [north, south, east, west].forEach((data, i) => {
+    const card = rcards[i];
+    if (!card) return;
     const critical = data.filter((r) => r.urgency_level === "Critical").length;
     const bar = card.querySelector(".rbar-fill");
     const info = card.querySelectorAll("b");
-    if (bar && info[0]) {
-      const pct = Math.min(100, Math.round((data.length / 60) * 100));
-      bar.style.width = pct + "%";
-      info[0].textContent = data.length;
-      if (info[1]) info[1].textContent = critical;
-    }
+    if (bar)
+      bar.style.width =
+        Math.min(100, Math.round((data.length / 60) * 100)) + "%";
+    if (info[0]) info[0].textContent = data.length;
+    if (info[1]) info[1].textContent = critical;
   });
 }
 
@@ -414,7 +520,7 @@ async function loadOrgans() {
           <td>${o.organ_type}</td>
           <td>#D-${o.donor_id}</td>
           <td>${badge(o.blood_type)}</td>
-          <td>${o.harvest_date ? new Date(o.harvest_date).toLocaleDateString("en-IN") : "-"}</td>
+          <td>${fmt(o.harvest_date)}</td>
           <td>${o.hours_remaining != null ? o.hours_remaining + " hrs" : "-"}</td>
           <td>${o.hospital_name}</td>
           <td>${badge(o.status)}</td>
@@ -445,7 +551,7 @@ async function loadCompatibility() {
           <td>${t.organ_type || "-"}</td>
           <td>${t.compatibility_score}%</td>
           <td>${badge(t.test_result)}</td>
-          <td>${new Date(t.test_date).toLocaleDateString("en-IN")}</td>
+          <td>${fmt(t.test_date)}</td>
         </tr>`,
         )
         .join("")
@@ -453,7 +559,7 @@ async function loadCompatibility() {
 }
 
 // ════════════════════════════════════════════════════════════
-// DONATION CHAINS
+// CHAINS
 // ════════════════════════════════════════════════════════════
 async function loadChains() {
   const chains = await apiFetch(`${API}/api/chains`);
@@ -467,7 +573,7 @@ async function loadChains() {
           (c) => `
         <tr>
           <td>#DC-${c.chain_id}</td>
-          <td>${new Date(c.start_date).toLocaleDateString("en-IN")}</td>
+          <td>${fmt(c.start_date)}</td>
           <td>${c.total_transplants}</td>
           <td>${badge(c.status)}</td>
         </tr>`,
@@ -475,7 +581,6 @@ async function loadChains() {
         .join("")
     : `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">No chains</td></tr>`;
 
-  // chain links (use first chain)
   if (chains.length) {
     const links = await apiFetch(
       `${API}/api/chains/${chains[0].chain_id}/links`,
@@ -520,7 +625,7 @@ async function loadTransplants() {
           <td>${t.organ_type}</td>
           <td>${t.hospital_name}</td>
           <td>${t.surgeon_name}</td>
-          <td>${new Date(t.surgery_date).toLocaleDateString("en-IN")}</td>
+          <td>${fmt(t.surgery_date)}</td>
           <td>${badge(t.outcome || "Pending")}</td>
         </tr>`,
         )
@@ -530,7 +635,6 @@ async function loadTransplants() {
 
 async function loadTransplantMedical() {
   const list = await apiFetch(`${API}/api/transplants`);
-  // medical table
   const tbody1 = document.querySelectorAll(
     "#apage-transplant-medical table tbody",
   )[0];
@@ -550,7 +654,6 @@ async function loadTransplantMedical() {
         .join("") ||
       `<tr><td colspan="4" style="text-align:center;color:var(--muted)">No records</td></tr>`;
   }
-  // details table
   const tbody2 = document.querySelectorAll(
     "#apage-transplant-medical table tbody",
   )[1];
@@ -564,7 +667,7 @@ async function loadTransplantMedical() {
         <td>#TD-${t.transplant_id}</td>
         <td>#TR-${t.transplant_id}</td>
         <td>${badge(t.surgery_status || t.status)}</td>
-        <td>${new Date(t.surgery_date).toLocaleDateString("en-IN")}</td>
+        <td>${fmt(t.surgery_date)}</td>
       </tr>`,
         )
         .join("") ||
