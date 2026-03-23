@@ -157,7 +157,7 @@ body {
 
 /* FLYOUT PANEL */
 .snav-flyout {
-  position: absolute;
+  position: fixed;
   left: 94px;
   top: 0;
   background: #1e1c2a;
@@ -167,7 +167,7 @@ body {
   padding: 8px;
   box-shadow: 12px 8px 40px rgba(0, 0, 0, 0.5);
   display: none;
-  z-index: 300;
+  z-index: 9999;
   animation: flyIn 0.18s ease;
 }
 .snav-flyout.open {
@@ -873,14 +873,4 @@ tr:hover td {
   font-weight: 600;
   cursor: pointer;
   font-family: "DM Sans", sans-serif;
-}
-.snav-flyout {
-  position: absolute;
-  z-index: 300;
-}
-
-/* AFTER: */
-.snav-flyout {
-  position: fixed;
-  z-index: 9999;
 }

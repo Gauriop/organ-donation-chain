@@ -42,7 +42,6 @@ function setFlyActive(el) {
     .forEach((i) => i.classList.remove("fi-active"));
   el.classList.add("fi-active");
 }
-// close when clicking outside sidebar
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".sidebar")) closeFlyouts();
 });
@@ -356,12 +355,7 @@ async function loadDashboard() {
     `${greet}, ${user.username || "Admin"} 👋`;
   document.getElementById("dash-date").textContent = now.toLocaleDateString(
     "en-IN",
-    {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    },
+    { weekday: "long", year: "numeric", month: "long", day: "numeric" },
   );
 
   // stats
@@ -780,27 +774,107 @@ async function loadCompatibility() {
 }
 async function loadChains() {
   const d = await apiFetch(`${API}/api/chains`);
-  const el = document.getElementById("tbody-chains");
-  if (el)
+
+  // stat cards
+  const total = d.length;
+  const completed = d.filter((c) => c.status === "Completed").length;
+  const inProgress = d.filter((c) => c.status === "In Progress").length;
+  const totalTrans = d.reduce((s, c) => s + (+c.total_transplants || 0), 0);
+  const s1 = document.getElementById("chain-total");
+  if (s1) s1.textContent = total;
+  const s2 = document.getElementById("chain-completed");
+  if (s2) s2.textContent = completed;
+  const s3 = document.getElementById("chain-progress");
+  if (s3) s3.textContent = inProgress;
+  const s4 = document.getElementById("chain-transplants");
+  if (s4) s4.textContent = totalTrans;
+
+  // full chains table — clicking a row loads its links
+  const el = document.getElementById("tbody-chains-full");
+  if (el) {
     el.innerHTML = d.length
       ? d
-          .map(
-            (c) =>
-              `<tr><td>#DC-${c.chain_id}</td><td>${fmt(c.start_date)}</td><td>${c.total_transplants}</td><td>${badge(c.status)}</td></tr>`,
-          )
+          .map((c) => {
+            const statusColor =
+              c.status === "Completed"
+                ? "#1db87a"
+                : c.status === "In Progress"
+                  ? "#f59e0b"
+                  : c.status === "Planned"
+                    ? "#3b82f6"
+                    : "#e8344a";
+            return `<tr style="cursor:pointer;" onclick="loadChainLinks(${c.chain_id},'${c.chain_name}')"
+                    onmouseover="this.style.background='#f8f7ff'" onmouseout="this.style.background=''">
+                  <td><b>#DC-${c.chain_id}</b></td>
+                  <td>${c.chain_name}</td>
+                  <td>${fmt(c.start_date)}</td>
+                  <td>${c.end_date ? fmt(c.end_date) : '<span style="color:var(--muted)">Ongoing</span>'}</td>
+                  <td><b>${c.total_transplants}</b></td>
+                  <td>${badge(c.status)}</td>
+                  <td><span style="color:#3b82f6;font-size:12px;text-decoration:underline;">View Links →</span></td>
+                </tr>`;
+          })
           .join("")
-      : `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted)">No chains</td></tr>`;
-  const el2 = document.getElementById("tbody-chain-links");
-  if (el2 && d.length) {
-    const links = await apiFetch(`${API}/api/chains/${d[0].chain_id}/links`);
+      : `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No chains found</td></tr>`;
+  }
+
+  // auto-load first chain's links
+  if (d.length) loadChainLinks(d[0].chain_id, d[0].chain_name);
+}
+
+async function loadChainLinks(chainId, chainName) {
+  const titleEl = document.getElementById("chain-links-title");
+  if (titleEl) titleEl.textContent = `— ${chainName} (#DC-${chainId})`;
+
+  const links = await apiFetch(`${API}/api/chains/${chainId}/links`);
+
+  // auto-scroll to links section
+  const flowEl = document.getElementById("chain-flow");
+  if (flowEl) flowEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (flowEl) {
+    if (links.length) {
+      flowEl.innerHTML = links
+        .map(
+          (l, i) => `
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="background:#e8f0fe;border:2px solid #3b82f6;border-radius:10px;padding:8px 12px;text-align:center;min-width:100px;">
+                  <div style="font-size:10px;color:#3b82f6;font-weight:700;margin-bottom:2px;">DONOR ${l.sequence_number}</div>
+                  <div style="font-size:12px;font-weight:600;color:#1a1826;">${(l.donor_name || "").split(" ")[0]}</div>
+                  <div style="font-size:10px;color:var(--muted);">${l.donor_blood || ""}</div>
+                </div>
+                <div style="font-size:18px;color:#e8344a;">🫀</div>
+                <div style="background:#fef3f2;border:2px solid #e8344a;border-radius:10px;padding:8px 12px;text-align:center;min-width:100px;">
+                  <div style="font-size:10px;color:#e8344a;font-weight:700;margin-bottom:2px;">RECIPIENT ${l.sequence_number}</div>
+                  <div style="font-size:12px;font-weight:600;color:#1a1826;">${(l.recipient_name || "").split(" ")[0]}</div>
+                  <div style="font-size:10px;color:var(--muted);">${badge(l.urgency_level)}</div>
+                </div>
+                ${i < links.length - 1 ? '<div style="font-size:20px;color:var(--muted);margin:0 4px;">→</div>' : ""}
+              </div>`,
+        )
+        .join("");
+    } else {
+      flowEl.innerHTML = `<span style="color:var(--muted);font-size:13px;">No links found for this chain</span>`;
+    }
+  }
+
+  // links table
+  const el2 = document.getElementById("tbody-chain-links-detail");
+  if (el2) {
     el2.innerHTML = links.length
       ? links
           .map(
-            (l) =>
-              `<tr><td>#CL-${l.link_id}</td><td>#DC-${l.chain_id}</td><td>${l.donor_name}</td><td>${l.recipient_name}</td><td>-</td><td>${l.sequence_number}</td></tr>`,
+            (l) => `<tr>
+                <td>#CL-${l.link_id}</td>
+                <td>#DC-${l.chain_id}</td>
+                <td><b style="color:#3b82f6;">${l.sequence_number}</b></td>
+                <td>${l.donor_name}</td>
+                <td>${badge(l.donor_blood)}</td>
+                <td>${l.recipient_name}</td>
+                <td>${badge(l.urgency_level)}</td>
+              </tr>`,
           )
           .join("")
-      : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No links</td></tr>`;
+      : `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No links in this chain</td></tr>`;
   }
 }
 async function loadTransplants() {

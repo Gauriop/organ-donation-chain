@@ -2354,66 +2354,269 @@
           <!-- ── DONATION CHAIN ── -->
           <div id="page-donation-chain" class="page">
             <div class="phead">
-              <h2>Donation Chain</h2>
-              <p>donation_chain + chain_link tables</p>
+              <h2>Donation Chains</h2>
+              <p>
+                donation_chain + chain_link tables — multi-donor transplant
+                sequences
+              </p>
             </div>
-            <div class="two-col">
-              <div class="tcard">
-                <div class="tcard-head"><h3>donation_chain</h3></div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Chain ID</th>
-                      <th>Started</th>
-                      <th>Links</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-chains">
-                    <tr>
-                      <td
-                        colspan="4"
-                        style="
-                          text-align: center;
-                          padding: 20px;
-                          color: var(--muted);
-                        "
-                      >
-                        Loading...
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+
+            <!-- STAT CARDS -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 14px;
+                margin-bottom: 22px;
+              "
+            >
+              <div
+                style="
+                  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+                  border-radius: 14px;
+                  padding: 18px;
+                  color: white;
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    opacity: 0.75;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Total Chains
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 32px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  id="chain-total"
+                >
+                  —
+                </div>
+                <div style="font-size: 11px; opacity: 0.7; margin-top: 4px">
+                  donation chains
+                </div>
               </div>
-              <div class="tcard">
-                <div class="tcard-head"><h3>chain_link</h3></div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Link ID</th>
-                      <th>Chain</th>
-                      <th>Donor</th>
-                      <th>Recipient</th>
-                      <th>Organ</th>
-                      <th>Order</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody-chain-links">
-                    <tr>
-                      <td
-                        colspan="6"
-                        style="
-                          text-align: center;
-                          padding: 20px;
-                          color: var(--muted);
-                        "
-                      >
-                        Loading...
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div
+                style="
+                  background: linear-gradient(135deg, #1db87a, #34d399);
+                  border-radius: 14px;
+                  padding: 18px;
+                  color: white;
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    opacity: 0.75;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Completed
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 32px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  id="chain-completed"
+                >
+                  —
+                </div>
+                <div style="font-size: 11px; opacity: 0.7; margin-top: 4px">
+                  successfully done
+                </div>
               </div>
+              <div
+                style="
+                  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+                  border-radius: 14px;
+                  padding: 18px;
+                  color: white;
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    opacity: 0.75;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    margin-bottom: 6px;
+                  "
+                >
+                  In Progress
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 32px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  id="chain-progress"
+                >
+                  —
+                </div>
+                <div style="font-size: 11px; opacity: 0.7; margin-top: 4px">
+                  currently active
+                </div>
+              </div>
+              <div
+                style="
+                  background: linear-gradient(135deg, #e8344a, #f2647a);
+                  border-radius: 14px;
+                  padding: 18px;
+                  color: white;
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    opacity: 0.75;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Total Transplants
+                </div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-size: 32px;
+                    font-weight: 900;
+                    line-height: 1;
+                  "
+                  id="chain-transplants"
+                >
+                  —
+                </div>
+                <div style="font-size: 11px; opacity: 0.7; margin-top: 4px">
+                  via chains
+                </div>
+              </div>
+            </div>
+
+            <!-- ALL CHAINS TABLE -->
+            <div class="tcard" style="margin-bottom: 20px">
+              <div class="tcard-head">
+                <h3>
+                  All Donation Chains
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-weight: 400;
+                      color: var(--muted);
+                    "
+                    >— donation_chain table</span
+                  >
+                </h3>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Chain ID</th>
+                    <th>Chain Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Total Transplants</th>
+                    <th>Status</th>
+                    <th>Links</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-chains-full">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- CHAIN LINKS DETAIL — click a chain to see its links -->
+            <div class="tcard" style="margin-bottom: 20px">
+              <div class="tcard-head" style="background: #f8f7ff">
+                <h3>
+                  🔗 Chain Links
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-weight: 400;
+                      color: var(--muted);
+                    "
+                    id="chain-links-title"
+                    >— click a chain above to see its sequence</span
+                  >
+                </h3>
+              </div>
+              <!-- VISUAL CHAIN FLOW -->
+              <div
+                id="chain-flow"
+                style="
+                  padding: 20px;
+                  display: flex;
+                  align-items: center;
+                  flex-wrap: wrap;
+                  gap: 8px;
+                  min-height: 60px;
+                  background: #fafafa;
+                  border-bottom: 1px solid var(--border);
+                "
+              >
+                <span style="color: var(--muted); font-size: 13px"
+                  >Select a chain to see the donor → recipient flow</span
+                >
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Link ID</th>
+                    <th>Chain</th>
+                    <th>Seq #</th>
+                    <th>Donor</th>
+                    <th>Donor Blood</th>
+                    <th>Recipient</th>
+                    <th>Urgency</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-chain-links-detail">
+                  <tr>
+                    <td
+                      colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Select a chain above
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
