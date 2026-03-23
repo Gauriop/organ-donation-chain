@@ -319,7 +319,47 @@
                   closeFlyouts();
                 "
               >
-                <span class="fi-icon">🏨</span> Hospitals
+                <span class="fi-icon">🏨</span> All Hospitals
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('hosp-north', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🔵</span> North Hospitals
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('hosp-south', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🟢</span> South Hospitals
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('hosp-east', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🟡</span> East Hospitals
+              </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('hosp-west', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">🔴</span> West Hospitals
               </div>
               <div
                 class="flyout-item"
@@ -1669,12 +1709,6 @@
           </div>
 
           <!-- ── REGIONS ── -->
-          <!-- ================================================================
-     dashboard.html DIFF — replace ONLY the page-regions div
-     Find: <div id="page-regions" class="page"> ... </div>
-     Replace with everything below
-     ================================================================ -->
-
           <div id="page-regions" class="page">
             <div class="phead">
               <h2>Recipients by Region</h2>
@@ -1887,6 +1921,7 @@
                 margin-bottom: 22px;
               "
             >
+              <!-- Total recipients bar chart -->
               <div
                 style="
                   background: white;
@@ -1916,6 +1951,7 @@
                 </div>
                 <canvas id="chart-region-total" height="160"></canvas>
               </div>
+              <!-- Urgency breakdown grouped bar chart -->
               <div
                 style="
                   background: white;
@@ -1947,7 +1983,7 @@
               </div>
             </div>
 
-            <!-- NORTH TABLE -->
+            <!-- PER-REGION TABLES -->
             <div id="sec-north" class="tcard" style="margin-bottom: 16px">
               <div class="tcard-head" style="background: #eff6ff">
                 <h3 style="color: #1d4ed8">
@@ -2004,7 +2040,6 @@
               </table>
             </div>
 
-            <!-- SOUTH TABLE -->
             <div id="sec-south" class="tcard" style="margin-bottom: 16px">
               <div class="tcard-head" style="background: #f0fdf4">
                 <h3 style="color: #15803d">
@@ -2061,7 +2096,6 @@
               </table>
             </div>
 
-            <!-- EAST TABLE -->
             <div id="sec-east" class="tcard" style="margin-bottom: 16px">
               <div class="tcard-head" style="background: #fffbeb">
                 <h3 style="color: #b45309">
@@ -2118,7 +2152,6 @@
               </table>
             </div>
 
-            <!-- WEST TABLE -->
             <div id="sec-west" class="tcard" style="margin-bottom: 16px">
               <div class="tcard-head" style="background: #fdf2f8">
                 <h3 style="color: #be185d">
@@ -2511,6 +2544,216 @@
                   <tr>
                     <td
                       colspan="7"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── HOSPITAL NORTH ── -->
+          <div id="page-hosp-north" class="page">
+            <div class="phead">
+              <h2>🔵 North Hospitals</h2>
+              <p>
+                hospital_north — Delhi, Haryana, Punjab, UP, Uttarakhand,
+                Rajasthan
+              </p>
+            </div>
+            <div class="tcard">
+              <div class="tcard-head" style="background: #eff6ff">
+                <h3 style="color: #1d4ed8">hospital_north fragment</h3>
+                <span
+                  id="badge-hosp-north"
+                  style="
+                    background: #dbeafe;
+                    color: #1d4ed8;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                  "
+                  >— hospitals</span
+                >
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Capacity</th>
+                    <th>Specialization</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-hosp-north">
+                  <tr>
+                    <td
+                      colspan="6"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── HOSPITAL SOUTH ── -->
+          <div id="page-hosp-south" class="page">
+            <div class="phead">
+              <h2>🟢 South Hospitals</h2>
+              <p>
+                hospital_south — Karnataka, Tamil Nadu, Kerala, Andhra Pradesh,
+                Telangana
+              </p>
+            </div>
+            <div class="tcard">
+              <div class="tcard-head" style="background: #f0fdf4">
+                <h3 style="color: #15803d">hospital_south fragment</h3>
+                <span
+                  id="badge-hosp-south"
+                  style="
+                    background: #dcfce7;
+                    color: #15803d;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                  "
+                  >— hospitals</span
+                >
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Capacity</th>
+                    <th>Specialization</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-hosp-south">
+                  <tr>
+                    <td
+                      colspan="6"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── HOSPITAL EAST ── -->
+          <div id="page-hosp-east" class="page">
+            <div class="phead">
+              <h2>🟡 East Hospitals</h2>
+              <p>hospital_east — West Bengal, Odisha, Bihar, Assam</p>
+            </div>
+            <div class="tcard">
+              <div class="tcard-head" style="background: #fffbeb">
+                <h3 style="color: #b45309">hospital_east fragment</h3>
+                <span
+                  id="badge-hosp-east"
+                  style="
+                    background: #fef3c7;
+                    color: #b45309;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                  "
+                  >— hospitals</span
+                >
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Capacity</th>
+                    <th>Specialization</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-hosp-east">
+                  <tr>
+                    <td
+                      colspan="6"
+                      style="
+                        text-align: center;
+                        padding: 20px;
+                        color: var(--muted);
+                      "
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── HOSPITAL WEST ── -->
+          <div id="page-hosp-west" class="page">
+            <div class="phead">
+              <h2>🔴 West Hospitals</h2>
+              <p>hospital_west — Maharashtra, Gujarat</p>
+            </div>
+            <div class="tcard">
+              <div class="tcard-head" style="background: #fdf2f8">
+                <h3 style="color: #be185d">hospital_west fragment</h3>
+                <span
+                  id="badge-hosp-west"
+                  style="
+                    background: #fce7f3;
+                    color: #be185d;
+                    font-size: 11px;
+                    font-weight: 700;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                  "
+                  >— hospitals</span
+                >
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Capacity</th>
+                    <th>Specialization</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-hosp-west">
+                  <tr>
+                    <td
+                      colspan="6"
                       style="
                         text-align: center;
                         padding: 20px;

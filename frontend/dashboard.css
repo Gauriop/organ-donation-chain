@@ -29,6 +29,8 @@ body {
   color: var(--text);
   overflow: hidden;
 }
+
+/* ── DASHBOARD STAT CARDS ── */
 .d-stat-card {
   border-radius: 18px;
   padding: 20px 22px;
@@ -42,11 +44,16 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
+
+/* ── LAYOUT ── */
 .app {
   display: flex;
   height: 100vh;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
 }
+
+/* ══ NEW ICON SIDEBAR ══ */
 .sidebar {
   width: 90px;
   flex-shrink: 0;
@@ -54,8 +61,9 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: visible;
   position: relative;
-  z-index: 500;
+  z-index: 200;
 }
 .sidebar-logo {
   height: 70px;
@@ -64,6 +72,7 @@ body {
   justify-content: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   flex-shrink: 0;
+  padding: 0 16px;
 }
 .sidebar-logo-icon {
   width: 42px;
@@ -76,8 +85,11 @@ body {
   font-weight: 900;
   color: white;
   font-size: 15px;
+  flex-shrink: 0;
   box-shadow: 0 4px 14px rgba(232, 52, 74, 0.4);
 }
+
+/* NAV */
 .sidebar-nav {
   flex: 1;
   padding: 10px 0;
@@ -87,6 +99,8 @@ body {
 .sidebar-nav::-webkit-scrollbar {
   width: 0;
 }
+
+/* MAIN NAV BUTTON */
 .snav-group {
   position: relative;
 }
@@ -140,20 +154,21 @@ body {
   background: var(--red);
   border-radius: 0 3px 3px 0;
 }
-/* FLYOUT uses position:fixed — viewport-relative, never clipped by parent overflow */
+
+/* FLYOUT PANEL */
 .snav-flyout {
-  position: fixed;
-  top: 0;
+  position: absolute;
   left: 94px;
+  top: 0;
   background: #1e1c2a;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
-  min-width: 215px;
+  min-width: 210px;
   padding: 8px;
-  box-shadow: 16px 4px 48px rgba(0, 0, 0, 0.7);
+  box-shadow: 12px 8px 40px rgba(0, 0, 0, 0.5);
   display: none;
-  z-index: 9999;
-  animation: flyIn 0.15s ease;
+  z-index: 300;
+  animation: flyIn 0.18s ease;
 }
 .snav-flyout.open {
   display: block;
@@ -161,20 +176,21 @@ body {
 @keyframes flyIn {
   from {
     opacity: 0;
-    transform: translateX(-8px);
+    transform: translateX(-6px);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
+
 .flyout-title {
   font-size: 9px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.3);
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  padding: 6px 12px 8px;
+  padding: 6px 12px 4px;
 }
 .flyout-item {
   display: flex;
@@ -185,16 +201,16 @@ body {
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.6);
   transition: all 0.12s;
   white-space: nowrap;
 }
 .flyout-item:hover {
-  background: rgba(232, 52, 74, 0.2);
+  background: rgba(232, 52, 74, 0.15);
   color: white;
 }
 .flyout-item.fi-active {
-  background: rgba(232, 52, 74, 0.28);
+  background: rgba(232, 52, 74, 0.2);
   color: white;
 }
 .flyout-item .fi-icon {
@@ -205,14 +221,17 @@ body {
 }
 .flyout-sep {
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   margin: 4px 8px;
 }
+
 .snav-sep {
   height: 1px;
   background: rgba(255, 255, 255, 0.06);
   margin: 6px 14px;
 }
+
+/* SIDEBAR FOOTER */
 .sidebar-footer {
   padding: 14px 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
@@ -233,6 +252,7 @@ body {
   font-weight: 700;
   font-size: 13px;
   color: white;
+  flex-shrink: 0;
   cursor: pointer;
   border: 2px solid rgba(255, 255, 255, 0.15);
 }
@@ -254,13 +274,18 @@ body {
   background: rgba(232, 52, 74, 0.2);
   color: var(--red2);
 }
+
+/* ── MAIN ── */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
+  max-width: calc(100vw - 90px);
 }
+
+/* TOP BAR */
 .topbar {
   height: 62px;
   background: white;
@@ -312,6 +337,8 @@ body {
   color: var(--red);
   cursor: pointer;
 }
+
+/* CONTENT */
 .content {
   flex: 1;
   overflow-y: auto;
@@ -334,6 +361,8 @@ body {
     transform: none;
   }
 }
+
+/* PAGE HEADER */
 .phead {
   margin-bottom: 22px;
 }
@@ -347,6 +376,8 @@ body {
   color: var(--muted);
   margin-top: 4px;
 }
+
+/* STAT CARDS */
 .stat-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -390,6 +421,8 @@ body {
 .s-blue {
   color: var(--blue);
 }
+
+/* GRID */
 .two-col {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -400,6 +433,8 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
 }
+
+/* TABLE CARD */
 .tcard {
   background: white;
   border-radius: 14px;
@@ -444,6 +479,8 @@ tr:last-child td {
 tr:hover td {
   background: #fdfcff;
 }
+
+/* BADGES */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -472,6 +509,8 @@ tr:hover td {
   background: #f3f4f6;
   color: #374151;
 }
+
+/* FORM CARD */
 .fcard {
   background: white;
   border-radius: 14px;
@@ -611,6 +650,8 @@ tr:hover td {
   background: var(--red-bg);
   color: var(--red);
 }
+
+/* WAITLIST */
 .wl-item {
   display: flex;
   align-items: center;
@@ -645,6 +686,8 @@ tr:hover td {
   font-size: 12px;
   color: var(--muted);
 }
+
+/* CHAIN */
 .chain-row {
   display: flex;
   align-items: center;
@@ -673,6 +716,10 @@ tr:hover td {
   background: var(--red-bg);
   border-color: var(--red);
 }
+.cnode-circle.ch {
+  background: #e8faf3;
+  border-color: var(--green);
+}
 .cnode-circle.cr {
   background: #eff6ff;
   border-color: var(--blue);
@@ -688,6 +735,8 @@ tr:hover td {
   padding: 0 4px;
   margin-bottom: 14px;
 }
+
+/* MINI INFO */
 .minfo {
   background: white;
   border-radius: 12px;
@@ -717,6 +766,8 @@ tr:hover td {
 .iv {
   font-weight: 600;
 }
+
+/* REGION */
 .rcard {
   background: white;
   border-radius: 12px;
@@ -745,6 +796,8 @@ tr:hover td {
   border-radius: 3px;
   background: var(--red);
 }
+
+/* COMPAT */
 .compat-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -788,6 +841,8 @@ tr:hover td {
 .cl .cp {
   color: var(--red);
 }
+
+/* SEARCH */
 .sbar {
   display: flex;
   align-items: center;
@@ -806,6 +861,8 @@ tr:hover td {
   font-family: "DM Sans", sans-serif;
   flex: 1;
 }
+
+/* BTN-SUB SMALL */
 .btn-sub-sm {
   background: var(--red);
   color: white;
@@ -816,4 +873,14 @@ tr:hover td {
   font-weight: 600;
   cursor: pointer;
   font-family: "DM Sans", sans-serif;
+}
+.snav-flyout {
+  position: absolute;
+  z-index: 300;
+}
+
+/* AFTER: */
+.snav-flyout {
+  position: fixed;
+  z-index: 9999;
 }
