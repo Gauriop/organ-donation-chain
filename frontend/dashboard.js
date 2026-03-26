@@ -75,6 +75,8 @@ const pageToNav = {
   "hosp-east": "snav-infra",
   "hosp-west": "snav-infra",
   staff: "snav-infra",
+  qopt: "snav-infra",
+  qopt: "snav-qopt",
 };
 
 // ── NAVIGATION ──
@@ -106,6 +108,7 @@ const titles = {
   "hosp-east": "East Hospitals",
   "hosp-west": "West Hospitals",
   staff: "Medical Staff",
+  qopt: "⚡ Query Optimization",
 };
 const loaders = {
   dashboard: loadDashboard,
@@ -133,6 +136,7 @@ const loaders = {
   "hosp-east": () => loadHospRegion("east"),
   "hosp-west": () => loadHospRegion("west"),
   staff: loadStaff,
+  qopt: loadQueryOptimizer,
 };
 
 function showPage(id, navEl) {
@@ -343,6 +347,252 @@ function drawBarChart(canvasId, labels, data, colors) {
   });
 }
 
+// ── QUERY OPTIMIZER ────────────────────────────────────────
+
+const QUERIES = [
+  {
+    id: "q1",
+    label: "Available Organs by Blood Type",
+    desc: "Organ matching — most frequent operation. Finds available organs matching a blood type.",
+    icon: "🫀",
+    color: "#e8344a",
+    index: "idx_organ_status + idx_donor_blood_type",
+    endpoint: "/api/qopt/available-organs",
+  },
+  {
+    id: "q2",
+    label: "Critical Waitlist Priority",
+    desc: "Emergency lookup — retrieves critical patients ordered by priority score.",
+    icon: "🚨",
+    color: "#f59e0b",
+    index: "idx_recipient_urgency_status + idx_waitlist_priority",
+    endpoint: "/api/qopt/critical-waitlist",
+  },
+  {
+    id: "q3",
+    label: "Compatible Donor-Recipient Pairs",
+    desc: "Finds compatible pairs with score ≥ 85%, ordered by compatibility score.",
+    icon: "🧬",
+    color: "#3b82f6",
+    index: "idx_compatibility_result_score",
+    endpoint: "/api/qopt/compatible-pairs",
+  },
+  {
+    id: "q4",
+    label: "Transplant Success by Hospital",
+    desc: "Hospital performance report — completed transplants with success rate.",
+    icon: "🏨",
+    color: "#1db87a",
+    index: "idx_transplant_status_outcome + idx_transplant_surgery_date",
+    endpoint: "/api/qopt/hospital-success",
+  },
+  {
+    id: "q5",
+    label: "Expiring Organs (24 hrs)",
+    desc: "Organs expiring within 24 hours — time-critical matching query.",
+    icon: "⏰",
+    color: "#e8344a",
+    index: "idx_organ_status + idx_organ_type_status",
+    endpoint: "/api/qopt/expiring-organs",
+  },
+  {
+    id: "q6",
+    label: "Active Donation Chains",
+    desc: "Full chain tracking — joins chain, links, donors and recipients.",
+    icon: "🔗",
+    color: "#8b5cf6",
+    index: "idx_chain_status + idx_chain_link_chain",
+    endpoint: "/api/qopt/active-chains",
+  },
+  {
+    id: "q7",
+    label: "Donor Utilization Rate",
+    desc: "How many organs from each donor type were actually transplanted.",
+    icon: "📊",
+    color: "#f59e0b",
+    index: "idx_donor_type_status + idx_organ_donor",
+    endpoint: "/api/qopt/donor-utilization",
+  },
+  {
+    id: "q8",
+    label: "Blood Type Demand vs Supply",
+    desc: "Compares available organs vs waiting recipients per blood type.",
+    icon: "🩸",
+    color: "#e8344a",
+    index: "idx_donor_blood_type + idx_recipient_blood_type",
+    endpoint: "/api/qopt/blood-type-match",
+  },
+];
+
+function loadQueryOptimizer() {
+  const grid = document.getElementById("qopt-cards");
+  if (!grid) return;
+  grid.innerHTML = QUERIES.map(
+    (q) => `
+          <div style="background:white;border-radius:16px;border:1px solid var(--border);overflow:hidden;" id="card-${q.id}">
+            <!-- Header -->
+            <div style="background:${q.color}18;border-bottom:1px solid ${q.color}30;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:22px;">${q.icon}</span>
+                <div>
+                  <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:#1a1826;">${q.label}</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px;">${q.desc}</div>
+                </div>
+              </div>
+              <button onclick="runSingleQuery('${q.id}')"
+                style="background:${q.color};color:white;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;">
+                ▶ Run
+              </button>
+            </div>
+            <!-- Timing Bar -->
+            <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;" id="timing-${q.id}">
+              <div style="background:#fef2f2;border-radius:10px;padding:12px;text-align:center;">
+                <div style="font-size:10px;font-weight:700;color:#e8344a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">🐌 Without Index</div>
+                <div style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:#e8344a;" id="before-${q.id}">—</div>
+                <div style="font-size:10px;color:var(--muted);">ms execution</div>
+              </div>
+              <div style="background:#f0fdf4;border-radius:10px;padding:12px;text-align:center;">
+                <div style="font-size:10px;font-weight:700;color:#1db87a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">🚀 With Index</div>
+                <div style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:#1db87a;" id="after-${q.id}">—</div>
+                <div style="font-size:10px;color:var(--muted);">ms execution</div>
+              </div>
+              <div style="background:#eff6ff;border-radius:10px;padding:12px;text-align:center;">
+                <div style="font-size:10px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">📈 Speedup</div>
+                <div style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:#3b82f6;" id="speedup-${q.id}">—</div>
+                <div style="font-size:10px;color:var(--muted);">× faster</div>
+              </div>
+            </div>
+            <!-- Progress bar -->
+            <div style="padding:0 20px 8px;display:none;" id="progress-${q.id}">
+              <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+                <div style="height:100%;background:${q.color};border-radius:2px;animation:progressAnim 1.5s ease infinite;" id="pbar-${q.id}"></div>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center;" id="pstatus-${q.id}">Running query...</div>
+            </div>
+            <!-- Index used -->
+            <div style="padding:8px 20px 14px;font-size:11px;color:var(--muted);">
+              <span style="background:#f0f0f8;border-radius:6px;padding:3px 8px;font-family:monospace;">Index: ${q.index}</span>
+            </div>
+            <!-- Results table -->
+            <div style="border-top:1px solid var(--border);display:none;" id="results-${q.id}">
+              <div style="padding:10px 20px;font-size:12px;font-weight:700;color:var(--muted);background:#fafafa;">Query Results <span id="rowcount-${q.id}" style="color:#3b82f6;"></span></div>
+              <div style="overflow-x:auto;max-height:200px;overflow-y:auto;" id="table-${q.id}"></div>
+            </div>
+          </div>`,
+  ).join("");
+}
+
+async function runSingleQuery(qid) {
+  const q = QUERIES.find((x) => x.id === qid);
+  if (!q) return;
+  const progEl = document.getElementById("progress-" + qid);
+  const resEl = document.getElementById("results-" + qid);
+  const beforeEl = document.getElementById("before-" + qid);
+  const afterEl = document.getElementById("after-" + qid);
+  const speedupEl = document.getElementById("speedup-" + qid);
+  const pstatEl = document.getElementById("pstatus-" + qid);
+  const rcEl = document.getElementById("rowcount-" + qid);
+  const tableEl = document.getElementById("table-" + qid);
+
+  if (progEl) progEl.style.display = "block";
+  if (resEl) resEl.style.display = "none";
+
+  try {
+    // Step 1: run WITHOUT index
+    if (pstatEl) pstatEl.textContent = "Step 1/2: Running without index...";
+    const token = sessionStorage.getItem("organlife_token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+    const r1 = await fetch(`${API}${q.endpoint}?indexed=false`, {
+      headers,
+    });
+    const j1 = await r1.json();
+    const beforeMs = j1.execution_ms || 0;
+    if (beforeEl) beforeEl.textContent = beforeMs.toFixed(2);
+
+    // Step 2: run WITH index
+    if (pstatEl) pstatEl.textContent = "Step 2/2: Running with index...";
+    const r2 = await fetch(`${API}${q.endpoint}?indexed=true`, {
+      headers,
+    });
+    const j2 = await r2.json();
+    const afterMs = j2.execution_ms || 0;
+    if (afterEl) afterEl.textContent = afterMs.toFixed(2);
+
+    // Speedup
+    const speedup = afterMs > 0 ? (beforeMs / afterMs).toFixed(1) : "∞";
+    if (speedupEl) speedupEl.textContent = speedup + "x";
+
+    // Show results table
+    if (j2.data && j2.data.length > 0) {
+      const cols = Object.keys(j2.data[0]);
+      const tableHTML = `<table style="width:100%;font-size:12px;">
+              <thead><tr>${cols.map((c) => `<th style="padding:8px 12px;text-align:left;background:#f8f7ff;font-size:11px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;">${c}</th>`).join("")}</tr></thead>
+              <tbody>${j2.data
+                .slice(0, 10)
+                .map(
+                  (row) =>
+                    `<tr>${cols.map((c) => `<td style="padding:7px 12px;border-top:1px solid var(--border);white-space:nowrap;">${row[c] ?? "-"}</td>`).join("")}</tr>`,
+                )
+                .join("")}</tbody>
+            </table>`;
+      if (tableEl) tableEl.innerHTML = tableHTML;
+      if (rcEl) rcEl.textContent = `(${j2.data.length} rows)`;
+      if (resEl) resEl.style.display = "block";
+    }
+
+    updateSummaryCards();
+  } catch (e) {
+    if (beforeEl) beforeEl.textContent = "ERR";
+    console.error(e);
+  }
+  if (progEl) progEl.style.display = "none";
+}
+
+async function runAllQueries(indexedOnly = false) {
+  const statusEl = document.getElementById("qopt-status");
+  if (statusEl) statusEl.textContent = "Running all queries...";
+  for (let i = 0; i < QUERIES.length; i++) {
+    if (statusEl)
+      statusEl.textContent = `Running query ${i + 1} of ${QUERIES.length}...`;
+    await runSingleQuery(QUERIES[i].id);
+    await new Promise((r) => setTimeout(r, 300));
+  }
+  if (statusEl) statusEl.textContent = "✅ All done!";
+  setTimeout(() => {
+    if (statusEl) statusEl.textContent = "";
+  }, 3000);
+}
+
+function updateSummaryCards() {
+  const befores = [],
+    afters = [];
+  QUERIES.forEach((q) => {
+    const b = parseFloat(
+      document.getElementById("before-" + q.id)?.textContent,
+    );
+    const a = parseFloat(document.getElementById("after-" + q.id)?.textContent);
+    if (!isNaN(b)) befores.push(b);
+    if (!isNaN(a)) afters.push(a);
+  });
+  if (befores.length) {
+    const avgB = (befores.reduce((s, v) => s + v, 0) / befores.length).toFixed(
+      2,
+    );
+    const avgA = afters.length
+      ? (afters.reduce((s, v) => s + v, 0) / afters.length).toFixed(2)
+      : "—";
+    const avgS =
+      afters.length && avgA !== "—" ? (avgB / avgA).toFixed(1) + "x" : "—";
+    const el1 = document.getElementById("qopt-avg-before");
+    if (el1) el1.textContent = avgB + "ms";
+    const el2 = document.getElementById("qopt-avg-after");
+    if (el2) el2.textContent = avgA + "ms";
+    const el3 = document.getElementById("qopt-avg-speedup");
+    if (el3) el3.textContent = avgS;
+  }
+}
+
 // ── DASHBOARD ──────────────────────────────────────────────
 async function loadDashboard() {
   // set greeting
@@ -355,7 +605,12 @@ async function loadDashboard() {
     `${greet}, ${user.username || "Admin"} 👋`;
   document.getElementById("dash-date").textContent = now.toLocaleDateString(
     "en-IN",
-    { weekday: "long", year: "numeric", month: "long", day: "numeric" },
+    {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    },
   );
 
   // stats

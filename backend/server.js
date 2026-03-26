@@ -674,6 +674,313 @@ app.get("/api/staff", async (req, res) => {
   );
 });
 
+// ── QUERY OPTIMIZATION ROUTES ────────────────────────────────
+// Each route runs the query TWICE:
+// 1. WITHOUT index (DROP index, run, measure time)
+// 2. WITH index (CREATE index, run, measure time)
+// Returns both execution times for comparison on the dashboard
+
+const { performance } = require("perf_hooks");
+
+async function runTimed(db, sql, params = []) {
+  const start = performance.now();
+  const r = await db.query(sql, params);
+  const end = performance.now();
+  return { rows: r.rows, ms: +(end - start).toFixed(3) };
+}
+
+// Q1: Available organs by blood type
+app.get("/api/qopt/available-organs", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query(
+          "DROP INDEX IF EXISTS idx_qopt_organ_status, idx_qopt_donor_blood",
+        )
+        .catch(() => {});
+    else {
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_organ_status ON organ(status)",
+        )
+        .catch(() => {});
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_donor_blood ON donor(blood_type)",
+        )
+        .catch(() => {});
+    }
+    const { rows, ms } = await runTimed(
+      db,
+      `SELECT o.organ_id, o.organ_type, d.name AS donor_name, d.blood_type,
+              h.name AS hospital_name, o.expiry_time
+       FROM organ o JOIN donor d ON o.donor_id=d.donor_id
+       JOIN hospital h ON d.hospital_id=h.hospital_id
+       WHERE o.status='Available' ORDER BY o.expiry_time ASC NULLS LAST`,
+    );
+    res.json({
+      success: true,
+      data: rows,
+      execution_ms: ms,
+      indexed,
+      index_used: indexed
+        ? "idx_qopt_organ_status, idx_qopt_donor_blood"
+        : "none (Seq Scan)",
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q2: Critical waitlist priority
+app.get("/api/qopt/critical-waitlist", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query(
+          "DROP INDEX IF EXISTS idx_qopt_rec_urgency, idx_qopt_wl_priority",
+        )
+        .catch(() => {});
+    else {
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_rec_urgency ON recipient(urgency_level, medical_status)",
+        )
+        .catch(() => {});
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_wl_priority ON waitlist(priority_score DESC)",
+        )
+        .catch(() => {});
+    }
+    const { rows, ms } = await runTimed(
+      db,
+      `SELECT w.waitlist_id, r.name AS recipient_name, r.blood_type,
+              r.urgency_level, w.organ_type, w.priority_score,
+              CURRENT_DATE - w.registration_date AS days_waiting
+       FROM waitlist w JOIN recipient r ON w.recipient_id=r.recipient_id
+       WHERE r.urgency_level='Critical' AND r.medical_status='Active'
+       ORDER BY w.priority_score DESC`,
+    );
+    res.json({ success: true, data: rows, execution_ms: ms, indexed });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q3: Compatible donor-recipient pairs
+app.get("/api/qopt/compatible-pairs", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query("DROP INDEX IF EXISTS idx_qopt_compat_result")
+        .catch(() => {});
+    else
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_compat_result ON compatibility_test(test_result, compatibility_score DESC)",
+        )
+        .catch(() => {});
+    const { rows, ms } = await runTimed(
+      db,
+      `SELECT ct.test_id, d.name AS donor_name, d.blood_type AS donor_blood,
+              r.name AS recipient_name, r.urgency_level,
+              ct.compatibility_score, ct.test_result
+       FROM compatibility_test ct
+       JOIN donor d ON ct.donor_id=d.donor_id
+       JOIN recipient r ON ct.recipient_id=r.recipient_id
+       WHERE ct.test_result='Compatible' AND ct.compatibility_score>=85.0
+         AND r.medical_status='Active'
+       ORDER BY ct.compatibility_score DESC`,
+    );
+    res.json({ success: true, data: rows, execution_ms: ms, indexed });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q4: Transplant success by hospital
+app.get("/api/qopt/hospital-success", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db.query("DROP INDEX IF EXISTS idx_qopt_tr_status").catch(() => {});
+    else
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_tr_status ON transplant_record(status, outcome)",
+        )
+        .catch(() => {});
+    const { rows, ms } = await runTimed(
+      db,
+      `SELECT h.name AS hospital_name,
+              COUNT(tr.transplant_id) AS total_transplants,
+              SUM(CASE WHEN tr.outcome='Successful' THEN 1 ELSE 0 END) AS successful,
+              ROUND(SUM(CASE WHEN tr.outcome='Successful' THEN 1 ELSE 0 END)::NUMERIC*100.0/NULLIF(COUNT(tr.transplant_id),0),2) AS success_rate
+       FROM hospital h JOIN transplant_record tr ON h.hospital_id=tr.hospital_id
+       GROUP BY h.hospital_id, h.name ORDER BY success_rate DESC NULLS LAST`,
+    );
+    res.json({ success: true, data: rows, execution_ms: ms, indexed });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q5: Expiring organs within 24 hours
+app.get("/api/qopt/expiring-organs", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query("DROP INDEX IF EXISTS idx_qopt_org_expiry")
+        .catch(() => {});
+    else
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_org_expiry ON organ(status, expiry_time)",
+        )
+        .catch(() => {});
+    const { rows, ms } = await runTimed(
+      db,
+      `SELECT o.organ_id, o.organ_type, d.name AS donor_name,
+              h.name AS hospital_name, o.expiry_time,
+              ROUND(EXTRACT(EPOCH FROM (o.expiry_time - NOW()))/3600,1) AS hours_left
+       FROM organ o JOIN donor d ON o.donor_id=d.donor_id
+       JOIN hospital h ON d.hospital_id=h.hospital_id
+       WHERE o.status='Available' AND o.expiry_time > NOW()
+       ORDER BY o.expiry_time ASC`,
+    );
+    res.json({ success: true, data: rows, execution_ms: ms, indexed });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q6: Active donation chains
+app.get("/api/qopt/active-chains", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query("DROP INDEX IF EXISTS idx_qopt_chain_status, idx_qopt_cl_chain")
+        .catch(() => {});
+    else {
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_chain_status ON donation_chain(status)",
+        )
+        .catch(() => {});
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_cl_chain ON chain_link(chain_id)",
+        )
+        .catch(() => {});
+    }
+    const { rows, ms } = await runTimed(
+      db,
+      `SELECT dc.chain_name, dc.status AS chain_status,
+              cl.sequence_number, d.name AS donor_name,
+              d.blood_type AS donor_blood, r.name AS recipient_name, r.urgency_level
+       FROM donation_chain dc
+       JOIN chain_link cl ON dc.chain_id=cl.chain_id
+       JOIN donor d ON cl.donor_id=d.donor_id
+       JOIN recipient r ON cl.recipient_id=r.recipient_id
+       WHERE dc.status IN ('In Progress','Planned')
+       ORDER BY dc.chain_id, cl.sequence_number`,
+    );
+    res.json({ success: true, data: rows, execution_ms: ms, indexed });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q7: Donor utilization rate
+app.get("/api/qopt/donor-utilization", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query("DROP INDEX IF EXISTS idx_qopt_donor_type, idx_qopt_organ_donor")
+        .catch(() => {});
+    else {
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_donor_type ON donor(donor_type, medical_status)",
+        )
+        .catch(() => {});
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_organ_donor ON organ(donor_id, status)",
+        )
+        .catch(() => {});
+    }
+    const { rows, ms } = await runTimed(
+      db,
+      `SELECT d.donor_type,
+              COUNT(DISTINCT d.donor_id) AS total_donors,
+              COUNT(DISTINCT o.organ_id) AS total_organs,
+              COUNT(DISTINCT CASE WHEN o.status='Transplanted' THEN o.organ_id END) AS transplanted,
+              ROUND(COUNT(DISTINCT CASE WHEN o.status='Transplanted' THEN o.organ_id END)::NUMERIC*100.0/NULLIF(COUNT(DISTINCT o.organ_id),0),2) AS utilization_rate
+       FROM donor d LEFT JOIN organ o ON d.donor_id=o.donor_id
+       GROUP BY d.donor_type`,
+    );
+    res.json({ success: true, data: rows, execution_ms: ms, indexed });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q8: Blood type demand vs supply
+app.get("/api/qopt/blood-type-match", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query("DROP INDEX IF EXISTS idx_qopt_don_blood, idx_qopt_rec_blood")
+        .catch(() => {});
+    else {
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_don_blood ON donor(blood_type)",
+        )
+        .catch(() => {});
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_rec_blood ON recipient(blood_type)",
+        )
+        .catch(() => {});
+    }
+    const { rows, ms } = await runTimed(
+      db,
+      `SELECT bt.blood_type,
+              COALESCE(supply.available_organs,0) AS available_organs,
+              COALESCE(demand.waiting_recipients,0) AS waiting_recipients,
+              COALESCE(demand.waiting_recipients,0) - COALESCE(supply.available_organs,0) AS shortage
+       FROM (SELECT DISTINCT blood_type FROM donor) bt
+       LEFT JOIN (SELECT d.blood_type, COUNT(o.organ_id) AS available_organs
+                  FROM organ o JOIN donor d ON o.donor_id=d.donor_id
+                  WHERE o.status='Available' GROUP BY d.blood_type) supply USING(blood_type)
+       LEFT JOIN (SELECT blood_type, COUNT(*) AS waiting_recipients
+                  FROM recipient WHERE medical_status='Active' GROUP BY blood_type) demand USING(blood_type)
+       ORDER BY shortage DESC`,
+    );
+    res.json({ success: true, data: rows, execution_ms: ms, indexed });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // ── SPECIAL QUERIES ───────────────────────────────────────────
 app.get("/api/query/urgent-cases", async (req, res) => {
   await run(
@@ -728,6 +1035,197 @@ app.get("/api/query/compatible-pairs", async (req, res) => {
     [],
     req.db,
   );
+});
+
+// ── QUERY OPTIMIZATION ROUTES ────────────────────────────────
+// These routes run EXPLAIN ANALYZE and return timing + plan info
+// Used by the Query Optimization page in the dashboard
+
+// Drop all custom indexes (simulate no-index state)
+app.post("/api/optimize/drop-indexes", async (req, res) => {
+  try {
+    await pool.query(`
+      DROP INDEX IF EXISTS idx_organ_status;
+      DROP INDEX IF EXISTS idx_donor_blood_type;
+      DROP INDEX IF EXISTS idx_donor_hospital;
+      DROP INDEX IF EXISTS idx_donor_type_status;
+      DROP INDEX IF EXISTS idx_recipient_blood_type;
+      DROP INDEX IF EXISTS idx_recipient_urgency_status;
+      DROP INDEX IF EXISTS idx_recipient_urgency;
+      DROP INDEX IF EXISTS idx_recipient_status;
+      DROP INDEX IF EXISTS idx_waitlist_priority;
+      DROP INDEX IF EXISTS idx_waitlist_recipient;
+      DROP INDEX IF EXISTS idx_compatibility_result_score;
+      DROP INDEX IF EXISTS idx_compatibility_donor;
+      DROP INDEX IF EXISTS idx_compatibility_recipient;
+      DROP INDEX IF EXISTS idx_compatibility_result;
+      DROP INDEX IF EXISTS idx_transplant_status_outcome;
+      DROP INDEX IF EXISTS idx_transplant_surgery_date;
+      DROP INDEX IF EXISTS idx_transplant_donor;
+      DROP INDEX IF EXISTS idx_transplant_recipient;
+      DROP INDEX IF EXISTS idx_transplant_hospital;
+      DROP INDEX IF EXISTS idx_chain_status;
+      DROP INDEX IF EXISTS idx_chain_link_chain;
+      DROP INDEX IF EXISTS idx_donor_blood;
+      DROP INDEX IF EXISTS idx_recipient_blood;
+      DROP INDEX IF EXISTS idx_organ_donor;
+      DROP INDEX IF EXISTS idx_waitlist_organ_type;
+      DROP INDEX IF EXISTS idx_transplant_status;
+      DROP INDEX IF EXISTS idx_transplant_outcome;
+      DROP INDEX IF EXISTS idx_chain_link_donor;
+      DROP INDEX IF EXISTS idx_chain_link_recipient;
+    `);
+    res.json({ success: true, message: "All custom indexes dropped" });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Create all indexes
+app.post("/api/optimize/create-indexes", async (req, res) => {
+  try {
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_organ_status ON organ(status);
+      CREATE INDEX IF NOT EXISTS idx_donor_blood_type ON donor(blood_type);
+      CREATE INDEX IF NOT EXISTS idx_donor_hospital ON donor(hospital_id);
+      CREATE INDEX IF NOT EXISTS idx_donor_type_status ON donor(donor_type, medical_status);
+      CREATE INDEX IF NOT EXISTS idx_recipient_blood_type ON recipient(blood_type);
+      CREATE INDEX IF NOT EXISTS idx_recipient_urgency_status ON recipient(urgency_level, medical_status);
+      CREATE INDEX IF NOT EXISTS idx_waitlist_priority ON waitlist(priority_score DESC);
+      CREATE INDEX IF NOT EXISTS idx_waitlist_recipient ON waitlist(recipient_id);
+      CREATE INDEX IF NOT EXISTS idx_compatibility_result_score ON compatibility_test(test_result, compatibility_score DESC);
+      CREATE INDEX IF NOT EXISTS idx_compatibility_donor ON compatibility_test(donor_id);
+      CREATE INDEX IF NOT EXISTS idx_compatibility_recipient ON compatibility_test(recipient_id);
+      CREATE INDEX IF NOT EXISTS idx_transplant_status_outcome ON transplant_record(status, outcome);
+      CREATE INDEX IF NOT EXISTS idx_transplant_surgery_date ON transplant_record(surgery_date DESC);
+      CREATE INDEX IF NOT EXISTS idx_transplant_donor ON transplant_record(donor_id);
+      CREATE INDEX IF NOT EXISTS idx_transplant_recipient ON transplant_record(recipient_id);
+      CREATE INDEX IF NOT EXISTS idx_chain_status ON donation_chain(status);
+      CREATE INDEX IF NOT EXISTS idx_chain_link_chain ON chain_link(chain_id);
+    `);
+    res.json({ success: true, message: "All indexes created" });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Run EXPLAIN ANALYZE for a named query and return parsed results
+app.get("/api/optimize/run/:queryId", async (req, res) => {
+  const queries = {
+    q1: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT o.organ_id, o.organ_type, d.name AS donor_name, d.blood_type, h.name AS hospital_name, o.expiry_time
+         FROM organ o JOIN donor d ON o.donor_id=d.donor_id JOIN hospital h ON d.hospital_id=h.hospital_id
+         WHERE o.status='Available' AND d.blood_type='O+'`,
+
+    q2: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT w.waitlist_id, r.name, r.blood_type, r.urgency_level, w.organ_type, w.priority_score,
+                CURRENT_DATE - w.registration_date AS days_waiting
+         FROM waitlist w JOIN recipient r ON w.recipient_id=r.recipient_id
+         WHERE r.urgency_level='Critical' AND r.medical_status='Active'
+         ORDER BY w.priority_score DESC`,
+
+    q3: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT ct.test_id, d.name AS donor_name, d.blood_type, r.name AS recipient_name,
+                r.urgency_level, ct.compatibility_score, ct.test_result
+         FROM compatibility_test ct
+         JOIN donor d ON ct.donor_id=d.donor_id JOIN recipient r ON ct.recipient_id=r.recipient_id
+         WHERE ct.test_result='Compatible' AND ct.compatibility_score>=85.0 AND r.medical_status='Active'
+         ORDER BY ct.compatibility_score DESC`,
+
+    q4: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT tr.transplant_id, d.name AS donor_name, r.name AS recipient_name,
+                o.organ_type, h.name AS hospital_name, ms.name AS surgeon_name,
+                tr.surgery_date, tr.status, tr.outcome
+         FROM transplant_record tr
+         JOIN donor d ON tr.donor_id=d.donor_id JOIN recipient r ON tr.recipient_id=r.recipient_id
+         JOIN organ o ON tr.organ_id=o.organ_id JOIN hospital h ON tr.hospital_id=h.hospital_id
+         JOIN medical_staff ms ON tr.staff_id=ms.staff_id
+         WHERE tr.status='Completed' AND tr.outcome='Successful'
+         ORDER BY tr.surgery_date DESC`,
+
+    q5: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT dc.chain_name, dc.status, cl.sequence_number,
+                d.name AS donor_name, d.blood_type, r.name AS recipient_name, r.urgency_level
+         FROM donation_chain dc
+         JOIN chain_link cl ON dc.chain_id=cl.chain_id
+         JOIN donor d ON cl.donor_id=d.donor_id JOIN recipient r ON cl.recipient_id=r.recipient_id
+         WHERE dc.status='In Progress'
+         ORDER BY dc.chain_id, cl.sequence_number`,
+
+    q6: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT d.donor_type, COUNT(DISTINCT d.donor_id) AS total_donors,
+                COUNT(DISTINCT o.organ_id) AS total_organs,
+                COUNT(DISTINCT CASE WHEN o.status='Transplanted' THEN o.organ_id END) AS transplanted
+         FROM donor d LEFT JOIN organ o ON d.donor_id=o.donor_id
+         GROUP BY d.donor_type`,
+
+    q7: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT h.name AS hospital_name, COUNT(tr.transplant_id) AS total,
+                SUM(CASE WHEN tr.outcome='Successful' THEN 1 ELSE 0 END) AS successful,
+                ROUND(SUM(CASE WHEN tr.outcome='Successful' THEN 1 ELSE 0 END)::NUMERIC*100.0/NULLIF(COUNT(tr.transplant_id),0),2) AS success_rate
+         FROM hospital h JOIN transplant_record tr ON h.hospital_id=tr.hospital_id
+         WHERE tr.status='Completed'
+         GROUP BY h.hospital_id, h.name ORDER BY success_rate DESC`,
+
+    q8: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT r.recipient_id, r.name, r.blood_type, w.organ_type, r.urgency_level,
+                w.priority_score, h.name AS hospital_name, CURRENT_DATE-r.registration_date AS days_registered
+         FROM recipient r JOIN waitlist w ON r.recipient_id=w.recipient_id
+         JOIN hospital h ON r.hospital_id=h.hospital_id
+         WHERE r.urgency_level='Critical' AND r.medical_status='Active'
+         ORDER BY w.priority_score DESC`,
+
+    q9: `EXPLAIN (ANALYZE, FORMAT TEXT)
+         SELECT ms.name, ms.specialization, h.name AS hospital_name,
+                COUNT(tr.transplant_id) AS transplants_done,
+                SUM(CASE WHEN tr.outcome='Successful' THEN 1 ELSE 0 END) AS successful
+         FROM medical_staff ms LEFT JOIN transplant_record tr ON ms.staff_id=tr.staff_id
+         JOIN hospital h ON ms.hospital_id=h.hospital_id
+         GROUP BY ms.staff_id, ms.name, ms.specialization, h.name
+         ORDER BY transplants_done DESC`,
+
+    q10: `EXPLAIN (ANALYZE, FORMAT TEXT)
+          SELECT o.organ_id, o.organ_type, d.name AS donor_name, h.name AS hospital_name,
+                 o.expiry_time, ROUND(EXTRACT(EPOCH FROM (o.expiry_time-NOW()))/3600,1) AS hours_left
+          FROM organ o JOIN donor d ON o.donor_id=d.donor_id JOIN hospital h ON d.hospital_id=h.hospital_id
+          WHERE o.status='Available' AND o.expiry_time>NOW()
+          ORDER BY o.expiry_time ASC`,
+  };
+
+  const sql = queries[req.params.queryId];
+  if (!sql)
+    return res.status(404).json({ success: false, error: "Query not found" });
+
+  try {
+    const result = await pool.query(sql);
+    const plan = result.rows.map((r) => r["QUERY PLAN"]).join("\n");
+
+    // parse planning time, execution time, scan type from plan text
+    const execMatch = plan.match(/Execution Time:\s*([\d.]+)\s*ms/);
+    const planMatch = plan.match(/Planning Time:\s*([\d.]+)\s*ms/);
+    const scanType = plan.includes("Index Scan")
+      ? "Index Scan"
+      : plan.includes("Index Only Scan")
+        ? "Index Only Scan"
+        : plan.includes("Bitmap Heap Scan")
+          ? "Bitmap Scan"
+          : "Seq Scan";
+    const costMatch = plan.match(/cost=([\d.]+)\.\.([\d.]+)/);
+
+    res.json({
+      success: true,
+      data: {
+        plan,
+        scanType,
+        planningTime: planMatch ? parseFloat(planMatch[1]) : null,
+        executionTime: execMatch ? parseFloat(execMatch[1]) : null,
+        costStart: costMatch ? parseFloat(costMatch[1]) : null,
+        costEnd: costMatch ? parseFloat(costMatch[2]) : null,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
 });
 
 // ── SERVE FRONTEND ────────────────────────────────────────────

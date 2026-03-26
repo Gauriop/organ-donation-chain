@@ -183,6 +183,17 @@ body {
     transform: none;
   }
 }
+@keyframes progressAnim {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    width: 95%;
+  }
+}
 
 .flyout-title {
   font-size: 9px;

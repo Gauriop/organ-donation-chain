@@ -371,7 +371,35 @@
               >
                 <span class="fi-icon">👨‍⚕️</span> Medical Staff
               </div>
+              <div
+                class="flyout-item"
+                onclick="
+                  showPage('qopt', null);
+                  setFlyActive(this);
+                  closeFlyouts();
+                "
+              >
+                <span class="fi-icon">⚡</span> Query Optimizer
+              </div>
             </div>
+          </div>
+
+          <!-- Query Optimizer -->
+          <div class="snav-group">
+            <button
+              class="snav-btn"
+              id="snav-qopt"
+              onclick="
+                showPage('qopt', null);
+                document
+                  .querySelectorAll('.snav-btn')
+                  .forEach((b) => b.classList.remove('active'));
+                this.classList.add('active');
+              "
+            >
+              <span class="sni">⚡</span>
+              <span class="snlbl">Query</span>
+            </button>
           </div>
         </nav>
 
@@ -3008,6 +3036,213 @@
             </div>
           </div>
 
+          <!-- ── QUERY OPTIMIZATION ── -->
+          <div id="page-qopt" class="page">
+            <div class="phead">
+              <h2>⚡ Query Optimization</h2>
+              <p>
+                Live EXPLAIN ANALYZE — before vs after index comparison with
+                real execution times
+              </p>
+            </div>
+
+            <!-- INFO BANNER -->
+            <div
+              style="
+                background: linear-gradient(135deg, #1e1c2a, #2d2a3e);
+                border-radius: 16px;
+                padding: 20px 24px;
+                margin-bottom: 22px;
+                color: white;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+              "
+            >
+              <div style="font-size: 32px">⚡</div>
+              <div>
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-weight: 800;
+                    font-size: 16px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  How This Works
+                </div>
+                <div style="font-size: 12px; opacity: 0.75; line-height: 1.6">
+                  Each query runs twice — once WITHOUT an index (Seq Scan) and
+                  once WITH an index (Index Scan). The execution time difference
+                  shows the real impact of indexing. PostgreSQL's EXPLAIN
+                  ANALYZE is used to measure actual wall-clock time.
+                </div>
+              </div>
+            </div>
+
+            <!-- SUMMARY COMPARISON BAR -->
+            <div
+              style="
+                background: white;
+                border-radius: 16px;
+                border: 1px solid var(--border);
+                padding: 20px;
+                margin-bottom: 22px;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 16px;
+                  flex-wrap: wrap;
+                  gap: 10px;
+                "
+              >
+                <div
+                  style="
+                    font-family: &quot;Nunito&quot;, sans-serif;
+                    font-weight: 700;
+                    font-size: 15px;
+                  "
+                >
+                  📊 All Queries — Before vs After
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center">
+                  <span
+                    id="qopt-status"
+                    style="font-size: 12px; color: var(--muted)"
+                  ></span>
+                  <button
+                    onclick="runAllQueries()"
+                    style="
+                      background: var(--red);
+                      color: white;
+                      border: none;
+                      border-radius: 10px;
+                      padding: 9px 20px;
+                      font-size: 12px;
+                      font-weight: 700;
+                      cursor: pointer;
+                      font-family: &quot;DM Sans&quot;, sans-serif;
+                    "
+                  >
+                    ▶▶ Run All 8 Queries
+                  </button>
+                </div>
+              </div>
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(3, 1fr);
+                  gap: 16px;
+                  margin-bottom: 16px;
+                "
+              >
+                <div
+                  style="
+                    background: #fef2f2;
+                    border-radius: 12px;
+                    padding: 14px;
+                    text-align: center;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: #e8344a;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      margin-bottom: 4px;
+                    "
+                  >
+                    🐌 Avg Without Index
+                  </div>
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-size: 26px;
+                      font-weight: 900;
+                      color: #e8344a;
+                    "
+                    id="qopt-avg-before"
+                  >
+                    —
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: #f0fdf4;
+                    border-radius: 12px;
+                    padding: 14px;
+                    text-align: center;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: #1db87a;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      margin-bottom: 4px;
+                    "
+                  >
+                    🚀 Avg With Index
+                  </div>
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-size: 26px;
+                      font-weight: 900;
+                      color: #1db87a;
+                    "
+                    id="qopt-avg-after"
+                  >
+                    —
+                  </div>
+                </div>
+                <div
+                  style="
+                    background: #eff6ff;
+                    border-radius: 12px;
+                    padding: 14px;
+                    text-align: center;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: #3b82f6;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      margin-bottom: 4px;
+                    "
+                  >
+                    ⚡ Avg Speedup
+                  </div>
+                  <div
+                    style="
+                      font-family: &quot;Nunito&quot;, sans-serif;
+                      font-size: 26px;
+                      font-weight: 900;
+                      color: #3b82f6;
+                    "
+                    id="qopt-avg-speedup"
+                  >
+                    —
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- QUERY CARDS -->
+            <div id="qopt-cards" style="display: grid; gap: 16px"></div>
+          </div>
+
           <!-- ── FRAGMENT: AVAILABLE ORGANS ── -->
           <div id="page-organs-available" class="page">
             <div class="phead">
@@ -3270,7 +3505,6 @@
       <!-- /main -->
     </div>
     <!-- /app -->
-
     <script src="dashboard.js"></script>
   </body>
 </html>
