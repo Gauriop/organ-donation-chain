@@ -2618,33 +2618,42 @@
                   >Select a chain to see the donor → recipient flow</span
                 >
               </div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Link ID</th>
-                    <th>Chain</th>
-                    <th>Seq #</th>
-                    <th>Donor</th>
-                    <th>Donor Blood</th>
-                    <th>Recipient</th>
-                    <th>Urgency</th>
-                  </tr>
-                </thead>
-                <tbody id="tbody-chain-links-detail">
-                  <tr>
-                    <td
-                      colspan="7"
-                      style="
-                        text-align: center;
-                        padding: 20px;
-                        color: var(--muted);
-                      "
-                    >
-                      Select a chain above
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Seq</th>
+                      <th>Donor</th>
+                      <th>Blood</th>
+                      <th>Age</th>
+                      <th>Type</th>
+                      <th>Donor Hospital</th>
+                      <th>Region</th>
+                      <th>→</th>
+                      <th>Recipient</th>
+                      <th>Blood</th>
+                      <th>Age</th>
+                      <th>Urgency</th>
+                      <th>Recipient Hospital</th>
+                      <th>Region</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-chain-links-detail">
+                    <tr>
+                      <td
+                        colspan="14"
+                        style="
+                          text-align: center;
+                          padding: 20px;
+                          color: var(--muted);
+                        "
+                      >
+                        Select a chain above
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 
@@ -3128,7 +3137,7 @@
                       font-family: &quot;DM Sans&quot;, sans-serif;
                     "
                   >
-                    ▶▶ Run All 8 Queries
+                    ▶▶ Run All 12 Queries
                   </button>
                 </div>
               </div>
@@ -3505,6 +3514,7 @@
       <!-- /main -->
     </div>
     <!-- /app -->
+
     <script src="dashboard.js"></script>
   </body>
 </html>

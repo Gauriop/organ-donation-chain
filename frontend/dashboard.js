@@ -422,18 +422,58 @@ const QUERIES = [
     index: "idx_donor_blood_type + idx_recipient_blood_type",
     endpoint: "/api/qopt/blood-type-match",
   },
+  {
+    id: "q9",
+    label: "Hospital Capacity vs Load",
+    desc: "How many donors, recipients and transplants each hospital handles vs its capacity.",
+    icon: "🏨",
+    color: "#8b5cf6",
+    index: "idx_transplant_hospital",
+    endpoint: "/api/qopt/hospital-load",
+  },
+  {
+    id: "q10",
+    label: "Regional Performance Comparison",
+    desc: "North vs South vs East vs West — hospitals, donors, recipients, transplants per region.",
+    icon: "🗺️",
+    color: "#06b6d4",
+    index: "idx_hospital_region",
+    endpoint: "/api/qopt/region-performance",
+  },
+  {
+    id: "q11",
+    label: "Staff Workload by Specialization",
+    desc: "Which specialization handles the most transplants — avg per staff member.",
+    icon: "👨‍⚕️",
+    color: "#1db87a",
+    index: "idx_staff_specialization + idx_transplant_staff",
+    endpoint: "/api/qopt/staff-workload",
+  },
+  {
+    id: "q12",
+    label: "Urgency Distribution by Hospital",
+    desc: "How many Critical/High/Medium/Low recipients each hospital is managing.",
+    icon: "🚑",
+    color: "#e8344a",
+    index: "idx_recipient_hospital_urgency",
+    endpoint: "/api/qopt/urgency-by-hospital",
+  },
 ];
 
 function loadQueryOptimizer() {
   const grid = document.getElementById("qopt-cards");
   if (!grid) return;
+  // update total count
+  const tot = document.getElementById("qopt-total-count");
+  if (tot) tot.textContent = QUERIES.length;
   grid.innerHTML = QUERIES.map(
-    (q) => `
+    (q, idx) => `
           <div style="background:white;border-radius:16px;border:1px solid var(--border);overflow:hidden;" id="card-${q.id}">
             <!-- Header -->
             <div style="background:${q.color}18;border-bottom:1px solid ${q.color}30;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
               <div style="display:flex;align-items:center;gap:12px;">
-                <span style="font-size:22px;">${q.icon}</span>
+                <div style="width:28px;height:28px;background:${q.color};border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:800;flex-shrink:0;">Q${idx + 1}</div>
+                <span style="font-size:20px;">${q.icon}</span>
                 <div>
                   <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:#1a1826;">${q.label}</div>
                   <div style="font-size:11px;color:var(--muted);margin-top:2px;">${q.desc}</div>
@@ -449,12 +489,12 @@ function loadQueryOptimizer() {
               <div style="background:#fef2f2;border-radius:10px;padding:12px;text-align:center;">
                 <div style="font-size:10px;font-weight:700;color:#e8344a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">🐌 Without Index</div>
                 <div style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:#e8344a;" id="before-${q.id}">—</div>
-                <div style="font-size:10px;color:var(--muted);">ms execution</div>
+                <div style="font-size:10px;color:var(--muted);">ms (avg of 3 runs)</div>
               </div>
               <div style="background:#f0fdf4;border-radius:10px;padding:12px;text-align:center;">
                 <div style="font-size:10px;font-weight:700;color:#1db87a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">🚀 With Index</div>
                 <div style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:#1db87a;" id="after-${q.id}">—</div>
-                <div style="font-size:10px;color:var(--muted);">ms execution</div>
+                <div style="font-size:10px;color:var(--muted);">ms (avg of 3 runs)</div>
               </div>
               <div style="background:#eff6ff;border-radius:10px;padding:12px;text-align:center;">
                 <div style="font-size:10px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">📈 Speedup</div>
@@ -462,16 +502,31 @@ function loadQueryOptimizer() {
                 <div style="font-size:10px;color:var(--muted);">× faster</div>
               </div>
             </div>
-            <!-- Progress bar -->
-            <div style="padding:0 20px 8px;display:none;" id="progress-${q.id}">
-              <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
-                <div style="height:100%;background:${q.color};border-radius:2px;animation:progressAnim 1.5s ease infinite;" id="pbar-${q.id}"></div>
+            <!-- Visual speedup bar -->
+            <div style="padding:0 20px 4px;" id="speedbar-wrap-${q.id}" style="display:none;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:10px;color:var(--muted);width:80px;flex-shrink:0;">No Index</span>
+                <div style="flex:1;height:8px;background:#fde8ec;border-radius:4px;overflow:hidden;">
+                  <div id="speedbar-before-${q.id}" style="height:100%;background:#e8344a;border-radius:4px;width:100%;transition:width .6s;"></div>
+                </div>
               </div>
-              <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center;" id="pstatus-${q.id}">Running query...</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                <span style="font-size:10px;color:var(--muted);width:80px;flex-shrink:0;">With Index</span>
+                <div style="flex:1;height:8px;background:#e8faf3;border-radius:4px;overflow:hidden;">
+                  <div id="speedbar-after-${q.id}" style="height:100%;background:#1db87a;border-radius:4px;width:0%;transition:width .6s;"></div>
+                </div>
+              </div>
             </div>
-            <!-- Index used -->
+            <!-- Progress bar -->
+            <div style="padding:8px 20px;display:none;" id="progress-${q.id}">
+              <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+                <div style="height:100%;background:${q.color};border-radius:2px;animation:progressAnim 1.5s ease infinite;"></div>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center;" id="pstatus-${q.id}">Running...</div>
+            </div>
+            <!-- Index info -->
             <div style="padding:8px 20px 14px;font-size:11px;color:var(--muted);">
-              <span style="background:#f0f0f8;border-radius:6px;padding:3px 8px;font-family:monospace;">Index: ${q.index}</span>
+              <span style="background:#f0f0f8;border-radius:6px;padding:3px 8px;font-family:monospace;">📑 Index: ${q.index}</span>
             </div>
             <!-- Results table -->
             <div style="border-top:1px solid var(--border);display:none;" id="results-${q.id}">
@@ -503,25 +558,45 @@ async function runSingleQuery(qid) {
     const token = sessionStorage.getItem("organlife_token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    const r1 = await fetch(`${API}${q.endpoint}?indexed=false`, {
-      headers,
-    });
+    const r1 = await fetch(`${API}${q.endpoint}?indexed=false`, { headers });
     const j1 = await r1.json();
     const beforeMs = j1.execution_ms || 0;
     if (beforeEl) beforeEl.textContent = beforeMs.toFixed(2);
 
     // Step 2: run WITH index
     if (pstatEl) pstatEl.textContent = "Step 2/2: Running with index...";
-    const r2 = await fetch(`${API}${q.endpoint}?indexed=true`, {
-      headers,
-    });
+    const r2 = await fetch(`${API}${q.endpoint}?indexed=true`, { headers });
     const j2 = await r2.json();
     const afterMs = j2.execution_ms || 0;
     if (afterEl) afterEl.textContent = afterMs.toFixed(2);
 
-    // Speedup
-    const speedup = afterMs > 0 ? (beforeMs / afterMs).toFixed(1) : "∞";
-    if (speedupEl) speedupEl.textContent = speedup + "x";
+    // Speedup — handle edge cases
+    let speedupText = "—";
+    let speedupColor = "#3b82f6";
+    if (beforeMs > 0 && afterMs > 0) {
+      const ratio = beforeMs / afterMs;
+      speedupText = ratio.toFixed(2) + "x";
+      speedupColor =
+        ratio >= 2 ? "#1db87a" : ratio >= 1.2 ? "#f59e0b" : "#3b82f6";
+    } else if (beforeMs > 0 && afterMs === 0) {
+      speedupText = "∞";
+    }
+    if (speedupEl) {
+      speedupEl.textContent = speedupText;
+      speedupEl.style.color = speedupColor;
+    }
+
+    // Visual speedup bar
+    const wrapEl = document.getElementById("speedbar-wrap-" + qid);
+    const barB = document.getElementById("speedbar-before-" + qid);
+    const barA = document.getElementById("speedbar-after-" + qid);
+    if (wrapEl && barB && barA && beforeMs > 0) {
+      wrapEl.style.display = "block";
+      const pct = Math.min((afterMs / beforeMs) * 100, 100);
+      setTimeout(() => {
+        barA.style.width = pct + "%";
+      }, 100);
+    }
 
     // Show results table
     if (j2.data && j2.data.length > 0) {
@@ -605,12 +680,7 @@ async function loadDashboard() {
     `${greet}, ${user.username || "Admin"} 👋`;
   document.getElementById("dash-date").textContent = now.toLocaleDateString(
     "en-IN",
-    {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    },
+    { weekday: "long", year: "numeric", month: "long", day: "numeric" },
   );
 
   // stats
@@ -1086,24 +1156,46 @@ async function loadChainLinks(chainId, chainName) {
   // auto-scroll to links section
   const flowEl = document.getElementById("chain-flow");
   if (flowEl) flowEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // ── VISUAL CHAIN FLOW (enhanced with hospital info) ──
   if (flowEl) {
     if (links.length) {
       flowEl.innerHTML = links
         .map(
           (l, i) => `
-              <div style="display:flex;align-items:center;gap:8px;">
-                <div style="background:#e8f0fe;border:2px solid #3b82f6;border-radius:10px;padding:8px 12px;text-align:center;min-width:100px;">
-                  <div style="font-size:10px;color:#3b82f6;font-weight:700;margin-bottom:2px;">DONOR ${l.sequence_number}</div>
-                  <div style="font-size:12px;font-weight:600;color:#1a1826;">${(l.donor_name || "").split(" ")[0]}</div>
-                  <div style="font-size:10px;color:var(--muted);">${l.donor_blood || ""}</div>
+              <div style="display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;">
+                <!-- DONOR CARD -->
+                <div style="background:#e8f0fe;border:2px solid #3b82f6;border-radius:12px;padding:10px 14px;text-align:center;min-width:130px;">
+                  <div style="font-size:9px;color:#3b82f6;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">DONOR · Step ${l.sequence_number}</div>
+                  <div style="font-size:13px;font-weight:700;color:#1a1826;margin-bottom:2px;">${l.donor_name}</div>
+                  <div style="display:flex;justify-content:center;gap:6px;margin-bottom:4px;">
+                    ${badge(l.donor_blood)}
+                    <span style="font-size:10px;background:#dbeafe;color:#1d4ed8;padding:1px 6px;border-radius:8px;">${l.donor_type || "Living"}</span>
+                  </div>
+                  <div style="font-size:10px;color:#3b82f6;font-weight:600;margin-top:4px;">🏥 ${l.donor_hospital || "-"}</div>
+                  <div style="font-size:9px;color:var(--muted);">${l.donor_hospital_location || ""}</div>
+                  ${l.donor_region ? `<div style="font-size:9px;background:#eff6ff;color:#3b82f6;border-radius:6px;padding:1px 6px;margin-top:3px;display:inline-block;">${l.donor_region} Region</div>` : ""}
                 </div>
-                <div style="font-size:18px;color:#e8344a;">🫀</div>
-                <div style="background:#fef3f2;border:2px solid #e8344a;border-radius:10px;padding:8px 12px;text-align:center;min-width:100px;">
-                  <div style="font-size:10px;color:#e8344a;font-weight:700;margin-bottom:2px;">RECIPIENT ${l.sequence_number}</div>
-                  <div style="font-size:12px;font-weight:600;color:#1a1826;">${(l.recipient_name || "").split(" ")[0]}</div>
-                  <div style="font-size:10px;color:var(--muted);">${badge(l.urgency_level)}</div>
+                <!-- ARROW + ORGAN -->
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:20px;gap:2px;">
+                  <div style="font-size:20px;">🫀</div>
+                  <div style="font-size:9px;color:var(--muted);font-weight:600;">donates to</div>
+                  <div style="font-size:18px;color:var(--muted);">→</div>
                 </div>
-                ${i < links.length - 1 ? '<div style="font-size:20px;color:var(--muted);margin:0 4px;">→</div>' : ""}
+                <!-- RECIPIENT CARD -->
+                <div style="background:#fef3f2;border:2px solid #e8344a;border-radius:12px;padding:10px 14px;text-align:center;min-width:130px;">
+                  <div style="font-size:9px;color:#e8344a;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">RECIPIENT · Step ${l.sequence_number}</div>
+                  <div style="font-size:13px;font-weight:700;color:#1a1826;margin-bottom:2px;">${l.recipient_name}</div>
+                  <div style="display:flex;justify-content:center;gap:6px;margin-bottom:4px;">
+                    ${badge(l.recipient_blood)}
+                    ${badge(l.urgency_level)}
+                  </div>
+                  <div style="font-size:10px;color:#e8344a;font-weight:600;margin-top:4px;">🏥 ${l.recipient_hospital || "-"}</div>
+                  <div style="font-size:9px;color:var(--muted);">${l.recipient_hospital_location || ""}</div>
+                  ${l.recipient_region ? `<div style="font-size:9px;background:#fef2f2;color:#e8344a;border-radius:6px;padding:1px 6px;margin-top:3px;display:inline-block;">${l.recipient_region} Region</div>` : ""}
+                </div>
+                <!-- NEXT ARROW -->
+                ${i < links.length - 1 ? '<div style="display:flex;align-items:center;padding-top:20px;font-size:24px;color:#9ca3af;margin:0 4px;">⟶</div>' : ""}
               </div>`,
         )
         .join("");
@@ -1112,24 +1204,43 @@ async function loadChainLinks(chainId, chainName) {
     }
   }
 
-  // links table
+  // ── DETAILED TABLE ──
   const el2 = document.getElementById("tbody-chain-links-detail");
   if (el2) {
     el2.innerHTML = links.length
       ? links
           .map(
             (l) => `<tr>
-                <td>#CL-${l.link_id}</td>
-                <td>#DC-${l.chain_id}</td>
-                <td><b style="color:#3b82f6;">${l.sequence_number}</b></td>
-                <td>${l.donor_name}</td>
+                <td><b style="color:#3b82f6;font-size:15px;">${l.sequence_number}</b></td>
+                <td>
+                  <div style="font-weight:600;">${l.donor_name}</div>
+                  <div style="font-size:11px;color:var(--muted);">${l.donor_age} yrs · ${l.donor_type || "-"}</div>
+                </td>
                 <td>${badge(l.donor_blood)}</td>
-                <td>${l.recipient_name}</td>
+                <td>${l.donor_age} yrs</td>
+                <td><span style="font-size:11px;">${l.donor_type || "-"}</span></td>
+                <td>
+                  <div style="font-weight:600;font-size:12px;">${l.donor_hospital || "-"}</div>
+                  <div style="font-size:10px;color:var(--muted);">${l.donor_hospital_location || ""}</div>
+                </td>
+                <td>${l.donor_region ? `<span style="background:#eff6ff;color:#3b82f6;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">${l.donor_region}</span>` : "-"}</td>
+                <td style="text-align:center;font-size:18px;">🫀→</td>
+                <td>
+                  <div style="font-weight:600;">${l.recipient_name}</div>
+                  <div style="font-size:11px;color:var(--muted);">${l.recipient_age} yrs</div>
+                </td>
+                <td>${badge(l.recipient_blood)}</td>
+                <td>${l.recipient_age} yrs</td>
                 <td>${badge(l.urgency_level)}</td>
+                <td>
+                  <div style="font-weight:600;font-size:12px;">${l.recipient_hospital || "-"}</div>
+                  <div style="font-size:10px;color:var(--muted);">${l.recipient_hospital_location || ""}</div>
+                </td>
+                <td>${l.recipient_region ? `<span style="background:#fef2f2;color:#e8344a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">${l.recipient_region}</span>` : "-"}</td>
               </tr>`,
           )
           .join("")
-      : `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No links in this chain</td></tr>`;
+      : `<tr><td colspan="14" style="text-align:center;padding:24px;color:var(--muted)">No links in this chain</td></tr>`;
   }
 }
 async function loadTransplants() {

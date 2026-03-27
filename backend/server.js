@@ -600,12 +600,30 @@ app.get("/api/chains", async (req, res) => {
 app.get("/api/chains/:id/links", async (req, res) => {
   await run(
     res,
-    `SELECT cl.*, d.name AS donor_name, d.blood_type AS donor_blood,
-            r.name AS recipient_name, r.urgency_level
+    `SELECT cl.*,
+            d.name          AS donor_name,
+            d.blood_type    AS donor_blood,
+            d.age           AS donor_age,
+            d.donor_type    AS donor_type,
+            d.medical_status AS donor_status,
+            hd.name         AS donor_hospital,
+            hd.location     AS donor_hospital_location,
+            hd.region       AS donor_region,
+            r.name          AS recipient_name,
+            r.blood_type    AS recipient_blood,
+            r.age           AS recipient_age,
+            r.urgency_level AS urgency_level,
+            r.medical_status AS recipient_status,
+            hr.name         AS recipient_hospital,
+            hr.location     AS recipient_hospital_location,
+            hr.region       AS recipient_region
      FROM chain_link cl
-     JOIN donor d ON cl.donor_id=d.donor_id
-     JOIN recipient r ON cl.recipient_id=r.recipient_id
-     WHERE cl.chain_id=$1 ORDER BY cl.sequence_number`,
+     JOIN donor     d  ON cl.donor_id     = d.donor_id
+     JOIN recipient r  ON cl.recipient_id = r.recipient_id
+     JOIN hospital  hd ON d.hospital_id   = hd.hospital_id
+     JOIN hospital  hr ON r.hospital_id   = hr.hospital_id
+     WHERE cl.chain_id=$1
+     ORDER BY cl.sequence_number`,
     [req.params.id],
     req.db,
   );
@@ -976,6 +994,189 @@ app.get("/api/qopt/blood-type-match", async (req, res) => {
        ORDER BY shortage DESC`,
     );
     res.json({ success: true, data: rows, execution_ms: ms, indexed });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q9: Hospital capacity vs transplant load
+app.get("/api/qopt/hospital-load", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db.query("DROP INDEX IF EXISTS idx_qopt_tr_hosp").catch(() => {});
+    else
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_tr_hosp ON transplant_record(hospital_id)",
+        )
+        .catch(() => {});
+    const runs = [];
+    for (let i = 0; i < 3; i++) {
+      const { ms } = await runTimed(
+        db,
+        `SELECT h.hospital_id, h.name, h.transplant_capacity, h.region,
+                COUNT(DISTINCT d.donor_id) AS total_donors,
+                COUNT(DISTINCT r.recipient_id) AS total_recipients,
+                COUNT(DISTINCT tr.transplant_id) AS total_transplants,
+                ROUND(COUNT(DISTINCT tr.transplant_id)::NUMERIC * 100.0 / NULLIF(h.transplant_capacity,0),1) AS capacity_used_pct
+         FROM hospital h
+         LEFT JOIN donor d ON h.hospital_id = d.hospital_id
+         LEFT JOIN recipient r ON h.hospital_id = r.hospital_id
+         LEFT JOIN transplant_record tr ON h.hospital_id = tr.hospital_id
+         GROUP BY h.hospital_id, h.name, h.transplant_capacity, h.region
+         ORDER BY capacity_used_pct DESC NULLS LAST`,
+      );
+      runs.push(ms);
+    }
+    const { rows } = await runTimed(
+      db,
+      `SELECT h.hospital_id, h.name, h.transplant_capacity, h.region, COUNT(DISTINCT d.donor_id) AS total_donors, COUNT(DISTINCT r.recipient_id) AS total_recipients, COUNT(DISTINCT tr.transplant_id) AS total_transplants, ROUND(COUNT(DISTINCT tr.transplant_id)::NUMERIC*100.0/NULLIF(h.transplant_capacity,0),1) AS capacity_used_pct FROM hospital h LEFT JOIN donor d ON h.hospital_id=d.hospital_id LEFT JOIN recipient r ON h.hospital_id=r.hospital_id LEFT JOIN transplant_record tr ON h.hospital_id=tr.hospital_id GROUP BY h.hospital_id,h.name,h.transplant_capacity,h.region ORDER BY capacity_used_pct DESC NULLS LAST`,
+    );
+    const ms = runs.reduce((a, b) => a + b, 0) / runs.length;
+    res.json({
+      success: true,
+      data: rows,
+      execution_ms: +ms.toFixed(3),
+      indexed,
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q10: Regional hospital performance comparison
+app.get("/api/qopt/region-performance", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query("DROP INDEX IF EXISTS idx_qopt_hosp_region")
+        .catch(() => {});
+    else
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_hosp_region ON hospital(region)",
+        )
+        .catch(() => {});
+    const runs = [];
+    const sql = `SELECT h.region,
+                COUNT(DISTINCT h.hospital_id) AS hospitals,
+                SUM(h.transplant_capacity) AS total_capacity,
+                COUNT(DISTINCT d.donor_id) AS donors,
+                COUNT(DISTINCT r.recipient_id) AS recipients,
+                COUNT(DISTINCT tr.transplant_id) AS transplants
+         FROM hospital h
+         LEFT JOIN donor d ON h.hospital_id=d.hospital_id
+         LEFT JOIN recipient r ON h.hospital_id=r.hospital_id
+         LEFT JOIN transplant_record tr ON h.hospital_id=tr.hospital_id
+         WHERE h.region IS NOT NULL
+         GROUP BY h.region ORDER BY transplants DESC`;
+    for (let i = 0; i < 3; i++) {
+      const { ms } = await runTimed(db, sql);
+      runs.push(ms);
+    }
+    const { rows } = await runTimed(db, sql);
+    const ms = runs.reduce((a, b) => a + b, 0) / runs.length;
+    res.json({
+      success: true,
+      data: rows,
+      execution_ms: +ms.toFixed(3),
+      indexed,
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q11: Staff workload by specialization
+app.get("/api/qopt/staff-workload", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query("DROP INDEX IF EXISTS idx_qopt_staff_spec, idx_qopt_tr_staff")
+        .catch(() => {});
+    else {
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_staff_spec ON medical_staff(specialization)",
+        )
+        .catch(() => {});
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_tr_staff ON transplant_record(staff_id)",
+        )
+        .catch(() => {});
+    }
+    const sql = `SELECT ms.specialization,
+                COUNT(DISTINCT ms.staff_id) AS total_staff,
+                COUNT(tr.transplant_id) AS total_transplants,
+                ROUND(COUNT(tr.transplant_id)::NUMERIC / NULLIF(COUNT(DISTINCT ms.staff_id),0),1) AS avg_per_staff,
+                SUM(CASE WHEN tr.outcome='Successful' THEN 1 ELSE 0 END) AS successful
+         FROM medical_staff ms
+         LEFT JOIN transplant_record tr ON ms.staff_id=tr.staff_id
+         GROUP BY ms.specialization ORDER BY total_transplants DESC`;
+    const runs = [];
+    for (let i = 0; i < 3; i++) {
+      const { ms } = await runTimed(db, sql);
+      runs.push(ms);
+    }
+    const { rows } = await runTimed(db, sql);
+    const ms = runs.reduce((a, b) => a + b, 0) / runs.length;
+    res.json({
+      success: true,
+      data: rows,
+      execution_ms: +ms.toFixed(3),
+      indexed,
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Q12: Recipient urgency distribution by hospital
+app.get("/api/qopt/urgency-by-hospital", async (req, res) => {
+  const indexed = req.query.indexed === "true";
+  const db = req.db;
+  try {
+    if (!indexed)
+      await db
+        .query("DROP INDEX IF EXISTS idx_qopt_rec_hosp_urg")
+        .catch(() => {});
+    else
+      await db
+        .query(
+          "CREATE INDEX IF NOT EXISTS idx_qopt_rec_hosp_urg ON recipient(hospital_id, urgency_level)",
+        )
+        .catch(() => {});
+    const sql = `SELECT h.name AS hospital_name, h.region,
+                COUNT(CASE WHEN r.urgency_level='Critical' THEN 1 END) AS critical,
+                COUNT(CASE WHEN r.urgency_level='High'     THEN 1 END) AS high,
+                COUNT(CASE WHEN r.urgency_level='Medium'   THEN 1 END) AS medium,
+                COUNT(CASE WHEN r.urgency_level='Low'      THEN 1 END) AS low,
+                COUNT(r.recipient_id) AS total
+         FROM hospital h
+         JOIN recipient r ON h.hospital_id=r.hospital_id
+         WHERE r.medical_status='Active'
+         GROUP BY h.hospital_id, h.name, h.region
+         ORDER BY critical DESC, total DESC`;
+    const runs = [];
+    for (let i = 0; i < 3; i++) {
+      const { ms } = await runTimed(db, sql);
+      runs.push(ms);
+    }
+    const { rows } = await runTimed(db, sql);
+    const ms = runs.reduce((a, b) => a + b, 0) / runs.length;
+    res.json({
+      success: true,
+      data: rows,
+      execution_ms: +ms.toFixed(3),
+      indexed,
+    });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
