@@ -67,6 +67,7 @@ const pageToNav = {
   compatibility: "snav-organs",
   "compat-summary": "snav-organs",
   "donation-chain": "snav-organs",
+  "chain-builder": "snav-organs",
   transplants: "snav-transplants",
   "transplant-medical": "snav-transplants",
   hospitals: "snav-infra",
@@ -100,6 +101,7 @@ const titles = {
   compatibility: "Compatibility Test",
   "compat-summary": "Compatibility Summary",
   "donation-chain": "Donation Chain",
+  "chain-builder": "🏗️ Build Chain",
   transplants: "Transplant Records",
   "transplant-medical": "Medical Details",
   hospitals: "Hospitals",
@@ -128,6 +130,7 @@ const loaders = {
   compatibility: loadCompatibility,
   "compat-summary": loadCompatSummary,
   "donation-chain": loadChains,
+  "chain-builder": initChainBuilder,
   transplants: loadTransplants,
   "transplant-medical": loadTransplantMedical,
   hospitals: loadHospitals,
@@ -666,6 +669,320 @@ function updateSummaryCards() {
     const el3 = document.getElementById("qopt-avg-speedup");
     if (el3) el3.textContent = avgS;
   }
+}
+
+// ── CHAIN BUILDER ────────────────────────────────────────
+let cbDonors = [],
+  cbRecipients = [],
+  cbLinks = [];
+
+function initChainBuilder() {
+  cbLinks = [];
+  updateChainPreview();
+  document.getElementById("cb-chain-name").value =
+    "Chain " +
+    String.fromCharCode(65 + Math.floor(Math.random() * 26)) +
+    "-2024";
+  document.getElementById("cb-success").style.display = "none";
+  document.getElementById("cb-error").style.display = "none";
+}
+
+async function loadChainBuilderData() {
+  const statusEl = document.getElementById("cb-load-status");
+  statusEl.textContent = "Loading donors and recipients...";
+  try {
+    const token = sessionStorage.getItem("organlife_token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const r = await fetch(`${API}/api/chains/suggest-pairs`, { headers });
+    const j = await r.json();
+    if (!j.success) throw new Error(j.error);
+
+    cbDonors = j.donors;
+    cbRecipients = j.recipients;
+
+    // Fill donor select
+    const ds = document.getElementById("cb-donor-select");
+    ds.innerHTML =
+      '<option value="">-- Select a donor --</option>' +
+      cbDonors
+        .map(
+          (d) =>
+            `<option value="${d.donor_id}" data-blood="${d.blood_type}" data-hosp="${d.hospital_name}" data-region="${d.region || ""}">${d.name} | ${d.blood_type} | ${d.hospital_name} (${d.region || "?"})</option>`,
+        )
+        .join("");
+
+    // Fill recipient select
+    const rs = document.getElementById("cb-recipient-select");
+    rs.innerHTML =
+      '<option value="">-- Select a recipient --</option>' +
+      cbRecipients
+        .map(
+          (r) =>
+            `<option value="${r.recipient_id}" data-blood="${r.blood_type}" data-hosp="${r.hospital_name}" data-organ="${r.organ_type}" data-urgency="${r.urgency_level}" data-region="${r.region || ""}">${r.name} | ${r.blood_type} | Needs ${r.organ_type} | ${r.urgency_level} | ${r.hospital_name}</option>`,
+        )
+        .join("");
+
+    // Attach change listeners for compatibility check
+    ds.onchange = checkCompatibility;
+    rs.onchange = checkCompatibility;
+
+    // Show suggestions table
+    showSuggestions(j.data);
+    statusEl.textContent = `✅ Loaded ${cbDonors.length} donors, ${cbRecipients.length} recipients, ${j.data.length} compatible pairs`;
+  } catch (e) {
+    statusEl.textContent = "❌ Error: " + e.message;
+  }
+}
+
+function checkCompatibility() {
+  const ds = document.getElementById("cb-donor-select");
+  const rs = document.getElementById("cb-recipient-select");
+  const checkEl = document.getElementById("cb-compat-check");
+  const dOpt = ds.selectedOptions[0];
+  const rOpt = rs.selectedOptions[0];
+  if (!dOpt?.value || !rOpt?.value) {
+    checkEl.style.display = "none";
+    return;
+  }
+
+  const dBlood = dOpt.dataset.blood;
+  const rBlood = rOpt.dataset.blood;
+  const dHosp = dOpt.dataset.hosp;
+  const rHosp = rOpt.dataset.hosp;
+  const dInfo = document.getElementById("cb-donor-info");
+  const rInfo = document.getElementById("cb-recipient-info");
+  if (dInfo)
+    dInfo.textContent = `🏥 ${dHosp} · ${dOpt.dataset.region || ""} Region`;
+  if (rInfo)
+    rInfo.textContent = `🏥 ${rHosp} · ${rOpt.dataset.region || ""} Region`;
+
+  const compatMap = {
+    "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+    "O+": ["O+", "A+", "B+", "AB+"],
+    "A-": ["A-", "A+", "AB-", "AB+"],
+    "A+": ["A+", "AB+"],
+    "B-": ["B-", "B+", "AB-", "AB+"],
+    "B+": ["B+", "AB+"],
+    "AB-": ["AB-", "AB+"],
+    "AB+": ["AB+"],
+  };
+  const isCompat = (compatMap[dBlood] || []).includes(rBlood);
+  checkEl.style.display = "block";
+  if (isCompat) {
+    checkEl.style.background = "#e8faf3";
+    checkEl.style.color = "#0a7a4e";
+    checkEl.innerHTML = `✅ <b>Compatible!</b> ${dBlood} donor can donate to ${rBlood} recipient. ${dHosp} → ${rHosp}`;
+  } else {
+    checkEl.style.background = "#fef2f2";
+    checkEl.style.color = "#e8344a";
+    checkEl.innerHTML = `❌ <b>Incompatible!</b> ${dBlood} cannot donate to ${rBlood}. Choose a different pair.`;
+  }
+}
+
+function addChainLink() {
+  const ds = document.getElementById("cb-donor-select");
+  const rs = document.getElementById("cb-recipient-select");
+  const dOpt = ds.selectedOptions[0];
+  const rOpt = rs.selectedOptions[0];
+  if (!dOpt?.value || !rOpt?.value)
+    return alert("Please select both a donor and recipient");
+
+  const compatMap = {
+    "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+    "O+": ["O+", "A+", "B+", "AB+"],
+    "A-": ["A-", "A+", "AB-", "AB+"],
+    "A+": ["A+", "AB+"],
+    "B-": ["B-", "B+", "AB-", "AB+"],
+    "B+": ["B+", "AB+"],
+    "AB-": ["AB-", "AB+"],
+    "AB+": ["AB+"],
+  };
+  const dBlood = dOpt.dataset.blood;
+  const rBlood = rOpt.dataset.blood;
+  if (!(compatMap[dBlood] || []).includes(rBlood))
+    return alert(`❌ Incompatible! ${dBlood} cannot donate to ${rBlood}`);
+
+  // Check for duplicates
+  if (
+    cbLinks.find(
+      (l) => l.donor_id == dOpt.value || l.recipient_id == rOpt.value,
+    )
+  )
+    return alert("This donor or recipient is already in the chain!");
+
+  cbLinks.push({
+    donor_id: +dOpt.value,
+    donor_name: dOpt.text.split("|")[0].trim(),
+    donor_blood: dBlood,
+    donor_hospital: dOpt.dataset.hosp,
+    donor_region: dOpt.dataset.region,
+    recipient_id: +rOpt.value,
+    recipient_name: rOpt.text.split("|")[0].trim(),
+    recipient_blood: rBlood,
+    recipient_hospital: rOpt.dataset.hosp,
+    recipient_urgency: rOpt.dataset.urgency,
+    recipient_organ: rOpt.dataset.organ,
+    recipient_region: rOpt.dataset.region,
+  });
+  ds.value = "";
+  rs.value = "";
+  document.getElementById("cb-donor-info").textContent = "";
+  document.getElementById("cb-recipient-info").textContent = "";
+  document.getElementById("cb-compat-check").style.display = "none";
+  updateChainPreview();
+}
+
+function removeChainLink(idx) {
+  cbLinks.splice(idx, 1);
+  updateChainPreview();
+}
+
+function updateChainPreview() {
+  const el = document.getElementById("cb-chain-preview");
+  if (!el) return;
+  if (!cbLinks.length) {
+    el.innerHTML =
+      '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0;">Add links below to build your chain</div>';
+    return;
+  }
+  el.innerHTML =
+    cbLinks
+      .map(
+        (l, i) => `
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+            <span style="background:#1a1826;color:white;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;flex-shrink:0;">Step ${i + 1}</span>
+            <div style="background:#eff6ff;border-radius:8px;padding:4px 10px;font-size:11px;flex:1;">
+              <b>${l.donor_name}</b> <span style="color:#3b82f6;">[${l.donor_blood}]</span> · ${l.donor_hospital}
+            </div>
+            <span style="font-size:16px;">🫀→</span>
+            <div style="background:#fef2f2;border-radius:8px;padding:4px 10px;font-size:11px;flex:1;">
+              <b>${l.recipient_name}</b> <span style="color:#e8344a;">[${l.recipient_blood}]</span> · ${l.recipient_hospital}
+              <span style="background:#fde8ec;color:#e8344a;border-radius:4px;padding:1px 5px;font-size:9px;margin-left:4px;">${l.recipient_urgency}</span>
+            </div>
+            <button onclick="removeChainLink(${i})" style="background:#fef2f2;color:#e8344a;border:1px solid #fecdd3;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;flex-shrink:0;">✕</button>
+          </div>`,
+      )
+      .join("") +
+    `<div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:right;">${cbLinks.length} link${cbLinks.length > 1 ? "s" : ""} · ${cbLinks.length} donors → ${cbLinks.length} recipients</div>`;
+}
+
+async function submitChain() {
+  const name = document.getElementById("cb-chain-name").value.trim();
+  const successEl = document.getElementById("cb-success");
+  const errorEl = document.getElementById("cb-error");
+  successEl.style.display = "none";
+  errorEl.style.display = "none";
+
+  if (!name)
+    return (
+      (errorEl.textContent = "Please enter a chain name"),
+      (errorEl.style.display = "block")
+    );
+  if (!cbLinks.length)
+    return (
+      (errorEl.textContent = "Add at least one link to the chain"),
+      (errorEl.style.display = "block")
+    );
+
+  try {
+    const token = sessionStorage.getItem("organlife_token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+    const r = await fetch(`${API}/api/chains/create`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        chain_name: name,
+        links: cbLinks.map((l) => ({
+          donor_id: l.donor_id,
+          recipient_id: l.recipient_id,
+        })),
+      }),
+    });
+    const j = await r.json();
+    if (j.success) {
+      successEl.textContent = `🎉 ${j.message} (Chain #DC-${j.chain_id})`;
+      successEl.style.display = "block";
+      cbLinks = [];
+      updateChainPreview();
+      document.getElementById("cb-chain-name").value =
+        "Chain " +
+        String.fromCharCode(65 + Math.floor(Math.random() * 26)) +
+        "-2024";
+    } else {
+      errorEl.textContent = "❌ " + j.error;
+      errorEl.style.display = "block";
+    }
+  } catch (e) {
+    errorEl.textContent = "❌ " + e.message;
+    errorEl.style.display = "block";
+  }
+}
+
+function showSuggestions(pairs) {
+  const el = document.getElementById("cb-suggestions");
+  if (!pairs.length) {
+    el.innerHTML =
+      '<div style="color:var(--muted);padding:20px;text-align:center;">No compatible pairs found</div>';
+    return;
+  }
+  el.innerHTML = `<div style="overflow-x:auto;max-height:300px;overflow-y:auto;">
+          <table style="width:100%;font-size:12px;">
+            <thead><tr style="background:#f8f7ff;">
+              <th style="padding:8px 12px;text-align:left;">Donor</th>
+              <th>Blood</th>
+              <th style="padding:8px 12px;text-align:left;">Donor Hospital</th>
+              <th>→</th>
+              <th style="padding:8px 12px;text-align:left;">Recipient</th>
+              <th>Blood</th>
+              <th>Urgency</th>
+              <th>Needs</th>
+              <th style="padding:8px 12px;text-align:left;">Recipient Hospital</th>
+              <th>Cross?</th>
+              <th></th>
+            </tr></thead>
+            <tbody>${pairs
+              .slice(0, 50)
+              .map(
+                (
+                  p,
+                ) => `<tr style="cursor:pointer;" onmouseover="this.style.background='#f8f7ff'" onmouseout="this.style.background=''"
+              onclick="selectPair(${p.donor_id},${p.recipient_id})">
+              <td style="padding:7px 12px;font-weight:600;">${p.donor_name}</td>
+              <td style="padding:7px 12px;">${badge(p.donor_blood)}</td>
+              <td style="padding:7px 12px;font-size:11px;">${p.donor_hospital}<br><span style="color:var(--muted);">${p.donor_region || ""}</span></td>
+              <td style="padding:7px 12px;text-align:center;">🫀</td>
+              <td style="padding:7px 12px;font-weight:600;">${p.recipient_name}</td>
+              <td style="padding:7px 12px;">${badge(p.recipient_blood)}</td>
+              <td style="padding:7px 12px;">${badge(p.recipient_urgency)}</td>
+              <td style="padding:7px 12px;font-size:11px;">${p.recipient_organ_needed}</td>
+              <td style="padding:7px 12px;font-size:11px;">${p.recipient_hospital}<br><span style="color:var(--muted);">${p.recipient_region || ""}</span></td>
+              <td style="padding:7px 12px;text-align:center;">${p.cross_region ? '<span style="color:#f59e0b;font-weight:700;">✈ Cross</span>' : '<span style="color:#1db87a;">Local</span>'}</td>
+              <td style="padding:7px 12px;"><button onclick="event.stopPropagation();selectPair(${p.donor_id},${p.recipient_id})" style="background:var(--red);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;">Select</button></td>
+            </tr>`,
+              )
+              .join("")}</tbody>
+          </table>
+          ${pairs.length > 50 ? `<div style="text-align:center;padding:8px;font-size:11px;color:var(--muted);">Showing 50 of ${pairs.length} pairs</div>` : ""}
+        </div>`;
+}
+
+function selectPair(donorId, recipientId) {
+  const ds = document.getElementById("cb-donor-select");
+  const rs = document.getElementById("cb-recipient-select");
+  if (ds) {
+    ds.value = donorId;
+    ds.dispatchEvent(new Event("change"));
+  }
+  if (rs) {
+    rs.value = recipientId;
+    rs.dispatchEvent(new Event("change"));
+  }
+  document
+    .getElementById("cb-donor-select")
+    .scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 // ── DASHBOARD ──────────────────────────────────────────────

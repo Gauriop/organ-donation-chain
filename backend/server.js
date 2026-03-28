@@ -629,6 +629,179 @@ app.get("/api/chains/:id/links", async (req, res) => {
   );
 });
 
+// ── CHAIN CREATION ROUTES ─────────────────────────────────────
+
+// Get compatible donor-recipient pairs for building a chain
+// Returns approved donors + active recipients with compatibility info
+app.get("/api/chains/suggest-pairs", async (req, res) => {
+  try {
+    const db = req.db;
+    // Get all approved donors with their hospital
+    const donors = await db.query(`
+      SELECT d.donor_id, d.name, d.blood_type, d.donor_type, d.age,
+             h.name AS hospital_name, h.hospital_id, h.region
+      FROM donor d
+      JOIN hospital h ON d.hospital_id = h.hospital_id
+      WHERE d.medical_status = 'Approved'
+      ORDER BY d.name`);
+
+    // Get all active recipients on waitlist with their hospital
+    const recipients = await db.query(`
+      SELECT r.recipient_id, r.name, r.blood_type, r.urgency_level, r.age,
+             w.organ_type, w.priority_score,
+             h.name AS hospital_name, h.hospital_id, h.region
+      FROM recipient r
+      JOIN waitlist w ON r.recipient_id = w.recipient_id
+      JOIN hospital h ON r.hospital_id = h.hospital_id
+      WHERE r.medical_status = 'Active'
+      ORDER BY CASE WHEN r.urgency_level='Critical' THEN 1
+                    WHEN r.urgency_level='High' THEN 2
+                    WHEN r.urgency_level='Medium' THEN 3
+                    ELSE 4 END, w.priority_score DESC`);
+
+    // Blood type compatibility map
+    const compatible = (donorBT, recipientBT) => {
+      const compat = {
+        "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+        "O+": ["O+", "A+", "B+", "AB+"],
+        "A-": ["A-", "A+", "AB-", "AB+"],
+        "A+": ["A+", "AB+"],
+        "B-": ["B-", "B+", "AB-", "AB+"],
+        "B+": ["B+", "AB+"],
+        "AB-": ["AB-", "AB+"],
+        "AB+": ["AB+"],
+      };
+      return (compat[donorBT] || []).includes(recipientBT);
+    };
+
+    // Find compatible pairs
+    const pairs = [];
+    for (const d of donors.rows) {
+      for (const r of recipients.rows) {
+        if (compatible(d.blood_type, r.blood_type)) {
+          pairs.push({
+            donor_id: d.donor_id,
+            donor_name: d.name,
+            donor_blood: d.blood_type,
+            donor_type: d.donor_type,
+            donor_age: d.age,
+            donor_hospital: d.hospital_name,
+            donor_hospital_id: d.hospital_id,
+            donor_region: d.region,
+            recipient_id: r.recipient_id,
+            recipient_name: r.name,
+            recipient_blood: r.blood_type,
+            recipient_urgency: r.urgency_level,
+            recipient_age: r.age,
+            recipient_organ_needed: r.organ_type,
+            recipient_priority: r.priority_score,
+            recipient_hospital: r.hospital_name,
+            recipient_hospital_id: r.hospital_id,
+            recipient_region: r.region,
+            cross_region: d.region !== r.region,
+          });
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      data: pairs,
+      donors: donors.rows,
+      recipients: recipients.rows,
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Create a new donation chain with links
+app.post("/api/chains/create", async (req, res) => {
+  const { chain_name, links } = req.body;
+  // links = [{donor_id, recipient_id}, ...] in sequence order
+  if (!chain_name || !links || !links.length)
+    return res
+      .status(400)
+      .json({
+        success: false,
+        error: "Chain name and at least one link required",
+      });
+
+  const db = req.db;
+  try {
+    await db.query("BEGIN");
+
+    // 1. Create the chain record
+    const chainRes = await db.query(
+      `INSERT INTO donation_chain (chain_name, start_date, status, total_transplants)
+       VALUES ($1, CURRENT_DATE, 'Planned', 0) RETURNING *`,
+      [chain_name],
+    );
+    const chain = chainRes.rows[0];
+
+    // 2. Insert each link
+    for (let i = 0; i < links.length; i++) {
+      await db.query(
+        `INSERT INTO chain_link (chain_id, donor_id, recipient_id, sequence_number)
+         VALUES ($1, $2, $3, $4)`,
+        [chain.chain_id, links[i].donor_id, links[i].recipient_id, i + 1],
+      );
+    }
+
+    // 3. Update status to In Progress
+    await db.query(
+      `UPDATE donation_chain SET status='In Progress' WHERE chain_id=$1`,
+      [chain.chain_id],
+    );
+
+    await db.query("COMMIT");
+
+    res.json({
+      success: true,
+      message: `Chain "${chain_name}" created with ${links.length} links!`,
+      chain_id: chain.chain_id,
+      chain_name: chain.chain_name,
+    });
+  } catch (e) {
+    await db.query("ROLLBACK");
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// Get all approved donors (for chain builder dropdown)
+app.get("/api/chains/donors", async (req, res) => {
+  await run(
+    res,
+    `SELECT d.donor_id, d.name, d.blood_type, d.donor_type, d.age,
+            h.name AS hospital_name, h.region
+     FROM donor d JOIN hospital h ON d.hospital_id=h.hospital_id
+     WHERE d.medical_status='Approved'
+     ORDER BY d.name`,
+    [],
+    req.db,
+  );
+});
+
+// Get all active recipients on waitlist (for chain builder dropdown)
+app.get("/api/chains/recipients", async (req, res) => {
+  await run(
+    res,
+    `SELECT r.recipient_id, r.name, r.blood_type, r.urgency_level, r.age,
+            w.organ_type, w.priority_score,
+            h.name AS hospital_name, h.region
+     FROM recipient r
+     JOIN waitlist w ON r.recipient_id=w.recipient_id
+     JOIN hospital h ON r.hospital_id=h.hospital_id
+     WHERE r.medical_status='Active'
+     ORDER BY CASE WHEN r.urgency_level='Critical' THEN 1
+                   WHEN r.urgency_level='High' THEN 2
+                   WHEN r.urgency_level='Medium' THEN 3
+                   ELSE 4 END`,
+    [],
+    req.db,
+  );
+});
+
 // ── TRANSPLANTS ───────────────────────────────────────────────
 app.get("/api/transplants", async (req, res) => {
   const { status, outcome } = req.query;
