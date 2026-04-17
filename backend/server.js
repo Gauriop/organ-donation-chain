@@ -236,15 +236,31 @@ app.get("/api/hospitals", async (req, res) => {
   const { region, search } = req.query;
   let sql = "SELECT * FROM hospital WHERE 1=1";
   const p = [];
+
   if (region) {
     p.push(region);
     sql += ` AND region=$${p.length}`;
   }
+
   if (search) {
     p.push(`%${search}%`);
     sql += ` AND (name ILIKE $${p.length} OR location ILIKE $${p.length})`;
   }
-  await run(res, sql + " ORDER BY name", p, req.db);
+
+  sql += `
+    ORDER BY
+      CASE region
+        WHEN 'East' THEN 1
+        WHEN 'West' THEN 2
+        WHEN 'North' THEN 3
+        WHEN 'South' THEN 4
+        ELSE 5
+      END,
+      location,
+      name
+  `;
+
+  await run(res, sql, p, req.db);
 });
 app.post("/api/hospitals", async (req, res) => {
   const {
@@ -720,12 +736,10 @@ app.post("/api/chains/create", async (req, res) => {
   const { chain_name, links } = req.body;
   // links = [{donor_id, recipient_id}, ...] in sequence order
   if (!chain_name || !links || !links.length)
-    return res
-      .status(400)
-      .json({
-        success: false,
-        error: "Chain name and at least one link required",
-      });
+    return res.status(400).json({
+      success: false,
+      error: "Chain name and at least one link required",
+    });
 
   const db = req.db;
   try {

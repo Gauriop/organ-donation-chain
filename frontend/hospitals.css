@@ -487,3 +487,62 @@ body {
 [data-count] {
   font-variant-numeric: tabular-nums;
 }
+/* ── PASTE THIS INTO hospitals.css ── */
+
+/* City section wrapper — full width inside the hospitals-section */
+.city-section {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+/* City header row */
+.city-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 12px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #f0eef8;
+}
+
+.city-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Nunito", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1826;
+  letter-spacing: -0.3px;
+}
+
+.city-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c5cbf, #a078e0);
+  flex-shrink: 0;
+}
+
+.city-section-count {
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #7c7a8e;
+  background: #f5f3fc;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* The actual card grid inside each city section */
+.city-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Override: when showing grouped view, hospitals-grid is a block container */
+#hospitals-grid:has(.city-section) {
+  display: block !important;
+  padding: 0 32px;
+}
